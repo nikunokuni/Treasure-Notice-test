@@ -464,8 +464,8 @@ body {
   margin-top:6px; padding:6px 16px; background:var(--mint); color:white;
   border:none; border-radius:20px; font-size:var(--fs-sm); cursor:pointer; font-weight:700;
 }
-.finding-item { opacity:0; transform:translateY(12px); }
-.finding-item.visible { animation: finding-in .5s cubic-bezier(.34,1.28,.64,1) forwards; }
+.finding-item-anim { opacity:0; transform:translateY(12px); }
+.finding-item-visible { animation: finding-in ... }
 @keyframes finding-in { 0%{opacity:0;transform:translateY(12px);} 100%{opacity:1;transform:translateY(0);} }
 
 /* ══════════════════════════════
