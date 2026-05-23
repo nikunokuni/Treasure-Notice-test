@@ -438,6 +438,7 @@ function render() {
     if (S.flow==='chat')    content = renderChat();
     if (S.flow==='summary') content = renderSummary();
     root.innerHTML = renderChatHeader() + content;
+    if (S.flow==='summary') setTimeout(triggerFindingAnim, 50);
   } else {
     tw.style.display = 'block';
     tw.innerHTML     = renderTabs();
@@ -801,8 +802,8 @@ const App = {
     if(++m>11){m=0;y++;} S.calYear=y; S.calMonth=m; render();
   },
 
-  toggleOpinion()     { S.opinionOpen=!S.opinionOpen; render(); },
-  toggleShowOpinion() { S.showOpinion=!S.showOpinion; persistSave(); render(); },
+  toggleOpinion()     { S.opinionOpen=!S.opinionOpen; render(); setTimeout(triggerFindingAnim, 50); },
+  toggleShowOpinion() { S.showOpinion=!S.showOpinion; persistSave(); render(); setTimeout(triggerFindingAnim, 50); },
 
   setFontSize(size) {
     S.fontSize = size;
