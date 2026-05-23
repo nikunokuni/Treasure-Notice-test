@@ -397,10 +397,9 @@ function renderSummary() {
                  <span class="spinner"></span>まとめているよ…
                </div>`
             : items.map((f,i) => `
-                <div class="finding-item finding-item-anim"
-                     style="animation-delay:${0.1 + i * 0.18}s">
-                  <div class="finding-dot" style="background:${colors[i % colors.length]}"></div>
-                  <div class="finding-text">${esc(f)}</div>
+                <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;opacity:1;">
+                  <div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;background:${colors[i % colors.length]}"></div>
+                  <div style="font-size:var(--fs-sm);color:var(--deep);line-height:1.7;">${esc(f)}</div>
                 </div>`).join('')}
         </div>
 
