@@ -14,7 +14,7 @@ export default async function handler(req) {
           role: m.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: m.content }],
         })),
-        generationConfig: { maxOutputTokens: 1000 },
+        generationConfig: { maxOutputTokens: 5000 },
       }),
     }
   );
