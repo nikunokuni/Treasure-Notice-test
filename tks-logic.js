@@ -373,7 +373,9 @@ ${u.likes ? `「${u.likes}」が好き。対話の中で1回は、お題「${S.o
 function summarySystem() {
   const conv = S.messages.map(m => {
     const who = m.role==='ai' ? 'たからちゃん' : m.role==='child' ? S.user.name||'子ども' : S.user.parentName;
-    return `[${who}] ${m.text}`;
+    // JSONに埋め込むためダブルクォートと制御文字をエスケープ
+    const safeText = (m.text || '').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r?\n/g,' ');
+    return `[${who}] ${safeText}`;
   }).join('\n');
   const max = opinionMaxChars();
 
@@ -714,7 +716,29 @@ const App = {
         [{ role:'user', content:'まとめてください。' }],
         summarySystem()
       );
-      const data = JSON.parse(res.replace(/```json|```/g,'').trim());
+      const cleaned = res.replace(/```json|```/g,'').trim();
+      let data;
+      try {
+        data = JSON.parse(cleaned);
+      } catch(parseErr) {
+        // JSONが壊れている場合、正規表現でfindings/opinionを抽出
+        console.warn('JSON parse failed, trying regex extraction:', parseErr);
+        data = {};
+        const findingsMatch = cleaned.match(/"findings"\s*:\s*\[([\s\S]*?)\]/);
+        if (findingsMatch) {
+          const items = [];
+          const re = /"((?:[^"\\]|\\.)*?)"/g;
+          let m;
+          while ((m = re.exec(findingsMatch[1])) !== null) {
+            items.push(m[1].replace(/\\"/g,'"').replace(/\\n/g,'\n'));
+          }
+          if (items.length) data.findings = items;
+        }
+        const opinionMatch = cleaned.match(/"opinion"\s*:\s*"([\s\S]*?)"\s*\}?\s*$/);
+        if (opinionMatch) {
+          data.opinion = opinionMatch[1].replace(/\\"/g,'"').replace(/\\n/g,'\n');
+        }
+      }
       S.summaryItems   = data.findings || [];
       S.summaryOpinion = data.opinion  || '';
     } catch(err) {
