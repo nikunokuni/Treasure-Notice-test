@@ -777,7 +777,9 @@ const App = {
     const last = S.records[S.records.length-1];
     if (last) last.bookmarked = S.bookmarked;
     persistSave();
-    render();
+    // ボタンだけ更新（render()全体を避ける）
+    const btn = document.querySelector('.bookmark-btn');
+    if (btn) btn.classList.toggle('active', S.bookmarked);
   },
 
   toggleRecordFav(idx) {
@@ -802,7 +804,26 @@ const App = {
     if(++m>11){m=0;y++;} S.calYear=y; S.calMonth=m; render();
   },
 
-  toggleOpinion()     { S.opinionOpen=!S.opinionOpen; render(); setTimeout(triggerFindingAnim, 50); },
+  toggleOpinion() {
+    S.opinionOpen = !S.opinionOpen;
+    const chevron = document.querySelector('.ai-opinion-chevron');
+    const body    = document.querySelector('.ai-opinion-body');
+    const paras   = S.summaryOpinion.split(/\n/).filter(Boolean);
+    if (chevron) chevron.classList.toggle('open', S.opinionOpen);
+    if (S.opinionOpen) {
+      if (!body) {
+        const card = document.querySelector('.ai-opinion-card');
+        if (card) {
+          const div = document.createElement('div');
+          div.className = 'ai-opinion-body';
+          div.innerHTML = paras.map(p => `<div class="ai-opinion-para">${esc(p)}</div>`).join('');
+          card.appendChild(div);
+        }
+      }
+    } else {
+      if (body) body.remove();
+    }
+  },
   toggleShowOpinion() { S.showOpinion=!S.showOpinion; persistSave(); render(); setTimeout(triggerFindingAnim, 50); },
 
   setFontSize(size) {
@@ -962,7 +983,44 @@ const App = {
     const el = document.getElementById('summary-capture-area');
     if (!el) return;
     try {
-      const canvas = await html2canvas(el, { backgroundColor: '#fdf6e3', scale: 2 });
+      // CSS変数を実値に展開したクローンを作成
+      const clone = el.cloneNode(true);
+      clone.style.cssText = `
+        position:fixed; left:-9999px; top:0;
+        width:${el.offsetWidth}px;
+        background:#fdf6e3; padding:16px;
+        font-family:'Zen Maru Gothic',sans-serif;
+      `;
+      // CSS変数を実値に置換するヘルパー
+      const cs = getComputedStyle(document.documentElement);
+      const varMap = {
+        'var(--deep)':        cs.getPropertyValue('--deep').trim()        || '#2d1b00',
+        'var(--amber)':       cs.getPropertyValue('--amber').trim()       || '#e8860a',
+        'var(--amber-pale)':  cs.getPropertyValue('--amber-pale').trim()  || '#fff3cd',
+        'var(--teal)':        cs.getPropertyValue('--teal').trim()        || '#0a9396',
+        'var(--coral)':       cs.getPropertyValue('--coral').trim()       || '#e76f51',
+        'var(--mint)':        cs.getPropertyValue('--mint').trim()        || '#52b788',
+        'var(--fs-xs)':       cs.getPropertyValue('--fs-xs').trim()       || '10px',
+        'var(--fs-sm)':       cs.getPropertyValue('--fs-sm').trim()       || '11px',
+        'var(--fs-base)':     cs.getPropertyValue('--fs-base').trim()     || '13px',
+        'var(--fs-md)':       cs.getPropertyValue('--fs-md').trim()       || '14px',
+        'var(--fs-xl)':       cs.getPropertyValue('--fs-xl').trim()       || '18px',
+      };
+      clone.querySelectorAll('*').forEach(node => {
+        if (node.style.cssText) {
+          let s = node.style.cssText;
+          Object.entries(varMap).forEach(([k,v]) => { s = s.replaceAll(k, v); });
+          node.style.cssText = s;
+        }
+        // finding-item-anim が opacity:0 のままにならないよう強制表示
+        if (node.classList?.contains('finding-item-anim')) {
+          node.style.opacity = '1';
+          node.style.transform = 'none';
+        }
+      });
+      document.body.appendChild(clone);
+      const canvas = await html2canvas(clone, { backgroundColor: '#fdf6e3', scale: 2, useCORS: true });
+      document.body.removeChild(clone);
       const a = document.createElement('a');
       a.download = 'たからもの_' + (S.odai?.name || 'きろく') + '.png';
       a.href = canvas.toDataURL('image/png');
