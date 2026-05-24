@@ -464,8 +464,8 @@ body {
   margin-top:6px; padding:6px 16px; background:var(--mint); color:white;
   border:none; border-radius:20px; font-size:var(--fs-sm); cursor:pointer; font-weight:700;
 }
-.finding-item-anim { opacity:0; transform:translateY(12px); }
-.finding-item-visible { animation: finding-in .5s cubic-bezier(.34,1.28,.64,1) forwards; }
+.finding-item { opacity:0; transform:translateY(12px); }
+.finding-item.visible { animation: finding-in .5s cubic-bezier(.34,1.28,.64,1) forwards; }
 @keyframes finding-in { 0%{opacity:0;transform:translateY(12px);} 100%{opacity:1;transform:translateY(0);} }
 
 /* ══════════════════════════════
@@ -628,3 +628,209 @@ body {
 .note-entry-name { font-size:var(--fs-sm); font-weight:700; color:var(--deep); }
 .note-entry-date { font-size:var(--fs-xs); color:rgba(45,27,0,0.35); margin-left:auto; }
 .note-entry-text { font-size:var(--fs-sm); color:var(--deep); line-height:1.6; padding-left:24px; }
+/* ══════════════════════════════
+   v6 追加スタイル
+   ══════════════════════════════ */
+
+/* ── チャットヘッダー：続きバッジ ── */
+.chat-header-continue {
+  font-size:var(--fs-xs); color:var(--teal);
+  background:rgba(10,147,150,0.1); padding:2px 8px; border-radius:12px;
+  font-weight:700;
+}
+
+/* ══════════════════════════════
+   4フェーズバー（プログレスバー置き換え）
+   ══════════════════════════════ */
+.phase-bar-wrap {
+  padding:10px 16px 6px;
+  flex-shrink:0;
+  background:var(--paper);
+  border-bottom:1px solid rgba(232,134,10,0.1);
+}
+.phase-bar {
+  display:flex; align-items:center; justify-content:space-between;
+}
+.phase-dot {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  flex:0 0 auto;
+}
+.phase-dot-circle {
+  width:22px; height:22px; border-radius:50%;
+  background:rgba(45,27,0,0.1); color:rgba(45,27,0,0.35);
+  font-size:10px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .3s;
+}
+.phase-dot.phase-done .phase-dot-circle {
+  background:var(--mint); color:white;
+}
+.phase-dot.phase-active .phase-dot-circle {
+  background:var(--amber); color:white;
+  box-shadow:0 0 0 3px rgba(232,134,10,0.2);
+}
+.phase-dot-label {
+  font-size:9px; color:rgba(45,27,0,0.4); letter-spacing:.05em; white-space:nowrap;
+}
+.phase-dot.phase-done  .phase-dot-label { color:var(--mint); }
+.phase-dot.phase-active .phase-dot-label { color:var(--amber); font-weight:700; }
+.phase-line {
+  flex:1; height:2px; background:rgba(45,27,0,0.08);
+  margin:0 4px; margin-bottom:14px;
+}
+
+/* ══════════════════════════════
+   チャット：まとめボタン改修
+   ══════════════════════════════ */
+.finish-btn {
+  display:block; width:100%; padding:10px;
+  background:rgba(45,27,0,0.08);
+  color:rgba(45,27,0,0.4);
+  border:2px dashed rgba(45,27,0,0.15); border-radius:14px;
+  font-family:'Kaisei Decol',serif; font-size:var(--fs-md);
+  letter-spacing:.12em; cursor:pointer; flex-shrink:0;
+  transition:all .3s;
+}
+.finish-btn.finish-btn-ready {
+  background:var(--deep); color:var(--amber-light);
+  border:none;
+  box-shadow:0 3px 0 rgba(0,0,0,0.22);
+  animation:finish-pulse 1.2s ease-in-out 1;
+}
+@keyframes finish-pulse {
+  0%   { transform:scale(1); }
+  40%  { transform:scale(1.03); }
+  100% { transform:scale(1); }
+}
+.finish-btn.finish-btn-ready:active {
+  transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,0.22);
+}
+
+/* ══════════════════════════════
+   サマリー：続きの選択UI
+   ══════════════════════════════ */
+.status-choice {
+  background:white; border-radius:16px; padding:14px;
+  border:1.5px solid rgba(45,27,0,0.07); margin-bottom:12px;
+}
+.status-choice-label {
+  font-size:var(--fs-xs); letter-spacing:.2em; color:rgba(45,27,0,0.4);
+  margin-bottom:10px; text-align:center;
+}
+.status-choice-row { display:flex; gap:8px; }
+.status-btn {
+  flex:1; padding:12px 8px; border-radius:14px; border:none;
+  font-family:'Kaisei Decol',serif; font-size:var(--fs-base);
+  letter-spacing:.08em; cursor:pointer;
+  transition:transform .1s, box-shadow .1s;
+}
+.status-btn:active { transform:translateY(2px); }
+.status-btn-open {
+  background:linear-gradient(135deg,var(--teal),#0a7377);
+  color:white; box-shadow:0 3px 0 rgba(10,100,103,0.35);
+}
+.status-btn-closed {
+  background:linear-gradient(135deg,var(--mint),#3a9e6a);
+  color:white; box-shadow:0 3px 0 rgba(50,140,90,0.35);
+}
+
+/* ══════════════════════════════
+   ホーム：続きのたからカード
+   ══════════════════════════════ */
+.continue-card {
+  background:linear-gradient(135deg,rgba(10,147,150,0.12),rgba(10,147,150,0.05));
+  border:1.5px solid rgba(10,147,150,0.3); border-radius:16px;
+  padding:12px 14px; margin-bottom:12px; cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
+}
+.continue-card:active { transform:scale(0.98); }
+.continue-card-label {
+  font-size:var(--fs-xs); letter-spacing:.15em; color:var(--teal);
+  font-weight:700; margin-bottom:8px;
+}
+.continue-card-body {
+  display:flex; align-items:center; gap:10px;
+}
+.continue-card-emoji { font-size:26px; flex-shrink:0; }
+.continue-card-name  { font-family:'Kaisei Decol',serif; font-size:var(--fs-lg); color:var(--deep); }
+.continue-card-sub   { font-size:var(--fs-xs); color:rgba(45,27,0,0.45); margin-top:2px; }
+.continue-card-arrow { font-size:18px; color:rgba(10,147,150,0.45); margin-left:auto; }
+
+/* ══════════════════════════════
+   レンズ選択：続きバナー・ロック
+   ══════════════════════════════ */
+.continue-banner {
+  background:rgba(10,147,150,0.08); border:1.5px solid rgba(10,147,150,0.25);
+  border-radius:12px; padding:10px 14px; margin-bottom:12px;
+  font-size:var(--fs-sm); color:var(--teal); font-weight:700;
+}
+.lens-locked {
+  opacity:.35; pointer-events:none; filter:grayscale(0.6);
+}
+
+/* ══════════════════════════════
+   たからばこ：続きカード・ステータスバッジ
+   ══════════════════════════════ */
+.takara-item-open {
+  border-color:rgba(10,147,150,0.25);
+  background:linear-gradient(135deg,white,rgba(10,147,150,0.03));
+}
+.takara-status-badge {
+  font-size:var(--fs-xs); padding:2px 7px; border-radius:12px;
+  font-weight:700; flex-shrink:0;
+}
+.status-open   { background:rgba(10,147,150,0.1); color:var(--teal); }
+.status-closed { background:rgba(82,183,136,0.1); color:var(--mint); }
+.takara-continue-row {
+  display:flex; gap:8px; margin-top:8px;
+}
+.btn-continue {
+  flex:1; padding:8px; background:var(--teal); color:white;
+  border:none; border-radius:10px; font-size:var(--fs-sm);
+  font-weight:700; cursor:pointer;
+  font-family:'Zen Maru Gothic',sans-serif;
+}
+.btn-close-status {
+  padding:8px 12px; background:rgba(82,183,136,0.1); color:var(--mint);
+  border:1.5px solid rgba(82,183,136,0.3); border-radius:10px;
+  font-size:var(--fs-sm); font-weight:700; cursor:pointer;
+  font-family:'Zen Maru Gothic',sans-serif;
+}
+
+/* ══════════════════════════════
+   サマリーアクション（選択後表示）
+   ══════════════════════════════ */
+.summary-actions {
+  display:flex; gap:8px; margin-bottom:12px; align-items:center;
+}
+.btn-again {
+  flex:1; padding:10px; background:white; color:var(--deep);
+  border:2px solid rgba(45,27,0,0.12); border-radius:14px;
+  font-size:12px; cursor:pointer;
+}
+.btn-next-odai {
+  flex:1.4; padding:10px; background:var(--amber); color:white;
+  border:none; border-radius:14px; font-family:'Kaisei Decol',serif;
+  font-size:13px; letter-spacing:.1em; cursor:pointer;
+  box-shadow:0 3px 0 rgba(180,90,0,0.28);
+}
+.summary-save-btn {
+  flex-shrink:0; width:40px; height:40px; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; background:white; color:var(--teal);
+  border:2px solid rgba(10,147,150,0.25); border-radius:14px;
+  cursor:pointer; transition:all .15s;
+}
+.summary-save-btn:active { background:rgba(10,147,150,0.08); transform:translateY(1px); }
+
+/* ── finding アニメーション（anim→visible で発火） ── */
+.finding-item-anim { opacity:0; transform:translateY(12px); }
+.finding-item-visible { animation: finding-in .5s cubic-bezier(.34,1.28,.64,1) forwards !important; }
+
+/* ══════════════════════════════
+   ヒーローストリーク（既存）調整
+   ══════════════════════════════ */
+.hero-streak-top {
+  display:flex; align-items:center; justify-content:space-between;
+}
+.hero-streak-label { font-size:var(--fs-xs); color:rgba(255,255,255,0.75); letter-spacing:.1em; }
