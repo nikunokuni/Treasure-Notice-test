@@ -1,5 +1,5 @@
 /* ═══════════════════════════════
-   たからさがし — logic  v5
+   たからさがし — logic  v6
    ═══════════════════════════════ */
 
 // ── 定数 ──
@@ -20,9 +20,7 @@ const agePrompts = [
   { id:'older',  label:'9〜12さい', icon:'🌳', desc:'論理的な思考・深い考察も可能' },
 ];
 
-// 日常的に触れそうなお題（大幅拡張）
 const ODAI_ALL = [
-  // 空・気象
   {emoji:'☁️',name:'くも',         label:'そら'},
   {emoji:'💧',name:'みず',         label:'自然'},
   {emoji:'🌙',name:'つき',         label:'そら'},
@@ -33,7 +31,6 @@ const ODAI_ALL = [
   {emoji:'⛅',name:'くもりそら',   label:'そら'},
   {emoji:'❄️',name:'ゆき',         label:'お天気'},
   {emoji:'🌫',name:'きり',         label:'お天気'},
-  // 乗り物・まち
   {emoji:'🚗',name:'くるま',       label:'のりもの'},
   {emoji:'🚂',name:'でんしゃ',     label:'のりもの'},
   {emoji:'🚌',name:'バス',         label:'のりもの'},
@@ -46,7 +43,6 @@ const ODAI_ALL = [
   {emoji:'🏪',name:'コンビニ',     label:'まち'},
   {emoji:'📮',name:'ポスト',       label:'まち'},
   {emoji:'🕳',name:'マンホール',   label:'まち'},
-  // 自然・いきもの
   {emoji:'🌳',name:'き',           label:'自然'},
   {emoji:'🌸',name:'さくら',       label:'自然'},
   {emoji:'🍂',name:'おちば',       label:'自然'},
@@ -60,7 +56,6 @@ const ODAI_ALL = [
   {emoji:'🐌',name:'かたつむり',   label:'いきもの'},
   {emoji:'🌻',name:'ひまわり',     label:'自然'},
   {emoji:'🍄',name:'きのこ',       label:'自然'},
-  // 食べもの・くらし
   {emoji:'🍚',name:'ごはん',       label:'たべもの'},
   {emoji:'🍞',name:'パン',         label:'たべもの'},
   {emoji:'🥚',name:'たまご',       label:'たべもの'},
@@ -69,7 +64,6 @@ const ODAI_ALL = [
   {emoji:'🍎',name:'りんご',       label:'たべもの'},
   {emoji:'🥦',name:'ブロッコリー', label:'たべもの'},
   {emoji:'🥕',name:'にんじん',     label:'たべもの'},
-  // 家のなか
   {emoji:'🪞',name:'かがみ',       label:'いえのなか'},
   {emoji:'💡',name:'でんきゅう',   label:'いえのなか'},
   {emoji:'🚿',name:'シャワー',     label:'いえのなか'},
@@ -77,12 +71,10 @@ const ODAI_ALL = [
   {emoji:'📺',name:'テレビ',       label:'いえのなか'},
   {emoji:'🧲',name:'じしゃく',     label:'いえのなか'},
   {emoji:'🔦',name:'かいちゅうでんとう',label:'いえのなか'},
-  // 体・感覚
   {emoji:'🤲',name:'て',           label:'からだ'},
   {emoji:'👣',name:'あしあと',     label:'からだ'},
   {emoji:'💨',name:'いき',         label:'からだ'},
   {emoji:'❤️',name:'しんぞう',     label:'からだ'},
-  // 学校・公園
   {emoji:'📏',name:'ものさし',     label:'がっこう'},
   {emoji:'✏️',name:'えんぴつ',     label:'がっこう'},
   {emoji:'📚',name:'ほん',         label:'がっこう'},
@@ -92,34 +84,26 @@ const ODAI_ALL = [
   {emoji:'🪨',name:'いし',         label:'こうえん'},
 ];
 
+// えいごレンズを削除した5枚構成
 const LENSES = [
   {id:'ことば',   icon:'📖', name:'ことば',
-   desc:'言葉・表現・言い方',
    kidDesc:'どんなことばでいえるかな？ ことばあそびもしよう！',
    cls:'lens-ことば'},
   {id:'かず',     icon:'🔢', name:'かず',
-   desc:'数・形・パターン',
    kidDesc:'かずや かたち・おおきさを くらべてみよう！',
    cls:'lens-かず'},
   {id:'かがく',   icon:'🔬', name:'かがく',
-   desc:'しくみ・なぜ？を探る',
    kidDesc:'なんで？どうして？を いっしょに かんがえよう！',
    cls:'lens-かがく'},
   {id:'しゃかい', icon:'🗺', name:'しゃかい',
-   desc:'人・社会・つながり',
    kidDesc:'だれが つくったの？どこから きたの？',
    cls:'lens-しゃかい'},
-  {id:'えいご',   icon:'🌍', name:'えいご',
-   desc:'英語で言うと？',
-   kidDesc:'えいごでいうと なんていうんだろう？',
-   cls:'lens-えいご'},
   {id:'じぶん',   icon:'💛', name:'じぶん',
-   desc:'今どう感じてる？',
    kidDesc:'きみはどう おもった？ すき？きらい？なんで？',
    cls:'lens-じぶん'},
 ];
 
-// ── ユーティリティ（render.jsから参照されるためここで定義） ──
+// ── ユーティリティ ──
 function fmtDate(iso) {
   const d = new Date(iso);
   return `${d.getMonth()+1}月${d.getDate()}日`;
@@ -143,7 +127,7 @@ const S = {
   speaker: 'child',
   isLoading: false,
   lastError: false,
-  lastSendPayload: null, // リトライ用
+  lastSendPayload: null,
   summaryItems: [],
   summaryOpinion: '',
   opinionOpen: false,
@@ -160,11 +144,15 @@ const S = {
   fontSize: 'medium',
   weeklyReport: '',
   reportLoading: false,
+  // 続きセッション用
+  prevRecord: null,
+  // フェーズ管理
+  chatPhase: 1,  // 1〜4
 };
 
 // ── localStorage 永続化 ──
-const STORAGE_KEY = 'tks_v6_state';
-const STORAGE_KEY_OLD = 'tks_v5_state'; // マイグレーション用
+const STORAGE_KEY = 'tks_v7_state';
+const STORAGE_KEY_OLD = 'tks_v6_state';
 
 function persistSave() {
   try {
@@ -184,15 +172,13 @@ function persistSave() {
 
 function persistLoad() {
   try {
-    // v5→v6 マイグレーション
     const oldRaw = localStorage.getItem(STORAGE_KEY_OLD);
     if (oldRaw && !localStorage.getItem(STORAGE_KEY)) {
       const old = JSON.parse(oldRaw);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(old));
       localStorage.removeItem(STORAGE_KEY_OLD);
-      console.info('tks: migrated v5→v6');
+      console.info('tks: migrated v6→v7');
     }
-
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const saved = JSON.parse(raw);
@@ -212,13 +198,25 @@ function persistLoad() {
 // ── ヘルパー ──
 const $id = id => document.getElementById(id);
 
-function isSmallKid() { return S.user.ageGroup === 'young'; }
 function opinionMaxChars() {
   return S.user.ageGroup==='young' ? 60 : S.user.ageGroup==='middle' ? 100 : 150;
 }
 
 function applyFontSize() {
   document.body.classList.toggle('fs-large', S.fontSize === 'large');
+}
+
+// ── フェーズ判定 ──
+// AIの返答テキストからフェーズ移行シグナルを検出
+function detectPhaseFromAI(text) {
+  // フェーズ4シグナル：AIがまとめを促す言葉を含む場合
+  const phase4signals = [
+    'ひとことでいうと', 'まとめてみよう', 'たからをしまおう',
+    'どういうものだと思う？', 'ひとことで', 'いちばんおもしろかった',
+    'わかったことを', 'きょうのたから'
+  ];
+  if (phase4signals.some(s => text.includes(s))) return 4;
+  return null;
 }
 
 // ── API ──
@@ -247,127 +245,132 @@ async function analyzePhoto(b64, mime) {
 // ── プロンプト ──
 function chatSystem() {
   const u = S.user;
+  const userMsgCount = S.messages.filter(m => m.role !== 'ai').length;
+  // 4往復ごとに親への誘導タイミング
+  const parentDue = userMsgCount > 0 && userMsgCount % 4 === 0;
 
-  // ── 年齢レイヤー ──
-  const agePrompts = {
-    young: `【年齢レイヤー：3〜5さい】
-- 全文ひらがな・カタカナのみ。漢字は使わない
-- 1文は10〜15文字以内。短く、テンポよく
-- 「〜だね！」「〜してみて！」など明るく語りかける
-- 抽象的な概念は使わず、五感（見る・触る・聞く・におい・味）で表現する
-- 否定・訂正をしない。必ず全肯定してから次の問いへ
-- 難しい言葉が出たらすぐやさしい言い換えをする`,
-    middle: `【年齢レイヤー：6〜8さい】
-- ひらがな中心だが、簡単な漢字（小1〜2レベル）は使ってよい
-- 1文は20文字前後。テンポ感を保ちつつ少し情報を増やせる
-- 「なぜだろう？」「どう思う？」と自分の考えを引き出す問いを積極的に使う
-- 豆知識を1つ混ぜるとわくわく感が増す
-- 答えが出なくても「それでいいよ」と安心させる`,
-    older: `【年齢レイヤー：9〜12さい】
-- 漢字・熟語も適切に使用可。ただし難しすぎる単語はふりがな付きで
-- 1文は30文字前後まで可。論理的なつながりを意識した文章
-- 「もし〇〇だったら？」「他にどんな例があるかな？」と仮説・応用を促す
-- 子どもの意見に軽く反論したり別の視点を提示してもよい（思考を深めるため）
-- 「なぜそう思う？」と根拠を言語化させることを重視する`,
-  };
+  // ── 基本レイヤー（全員共通：口調・褒め方・基本ルール） ──
+  const baseLayer = `あなたは「たからちゃん」です。
+子どもが日常で見つけたものについて、一緒に「子どもなりの答え」を作る案内役です。
 
-  // ── タイプレイヤー ──
-  const typePrompts = {
-    A: `【はっけんタイプ】
-- 口調：ゆっくり、やさしく。「あ、ほんとだ！」「すごい、気づいたね！」を使う
-- 観察を深める問いを中心にする：「色は？」「さわったらどんな感じ？」「においは？」
-- 1つのものをじっくり多角的に観察させる。次のお題へ急がない
-- 発見した事実をそのまま大切にする。「正解・不正解」を意識させない`,
-    B: `【しらべるタイプ】
-- 口調：少し知的でわくわくする感じ。「実はね…」「知ってた？」をよく使う
-- 言葉の由来・豆知識・分類・比較を会話に自然に混ぜる
-- 「正式な名前は〇〇というんだよ」と知識の精度を上げる方向へ誘う
-- 「他にも同じ仲間はいるかな？」と知識を広げる問いを使う
-- 事実確認を楽しむ姿勢を引き出す`,
-    C: `【そうぞうタイプ】
-- 口調：一緒に冒険するような、わくわくした探偵スタイル
-- 見えない部分・中の構造・なぜそうなっているか、を推理させる
-- 「背景はどうなってると思う？」「もしこれがなかったら？」と想像・仮説を引き出す
-- 「もしかして〜かもしれない」という推論を全力で受け止め、さらに深める
-- 答えが合っていなくても「いい仮説だね！」と思考プロセスを褒める`,
-  };
-
-  // ── レンズレイヤー ──
-  const lensPrompts = {
-    ことば: `【ことばレンズ】
-- 「他の言い方をするとしたら？」と表現の幅を広げる
-- オノマトペ（ふわふわ・ざらざら・ぴかぴかなど）を積極的に使い表現を楽しむ
-- 「この気持ちを1つの言葉で言うと？」と語彙を引き出す
-- 比喩・たとえ話を一緒に作る（「まるで〇〇みたい、というのはどう？」）`,
-    かず: `【かずレンズ】
-- 「いくつある？」「どのくらいの大きさ？」と数量・サイズを意識させる
-- 「〇〇と比べると大きい？小さい？」と比較の視点を引き出す
-- 形・対称性・パターン・規則性に気づかせる問いを混ぜる
-- 「もし10倍の大きさだったら？」と数の感覚を遊びながら広げる`,
-    かがく: `【かがくレンズ】
-- 「なんでそうなってると思う？」と原因・仕組みを引き出す
-- 「触ったらどんな感じ？固い？やわらかい？冷たい？」と物質の性質に気づかせる
-- 「もし雨が降ったらどうなる？」など条件を変えた変化を想像させる
-- 子どもの仮説を「実験したらわかるね！」と次の行動につなげる`,
-    しゃかい: `【しゃかいレンズ】
-- 「これは誰が作ったんだろう？」「どんな人が使うんだろう？」と人の役割に気づかせる
-- 「どこから来たんだろう？」「次にどこへ行くんだろう？」とものの流れを想像させる
-- 「これがなかった昔はどうしてたんだろう？」と歴史・変化の視点を入れる
-- 「みんなのためにあるルールってなんだろう？」と社会のつながりを考えさせる`,
-    えいご: `【えいごレンズ】
-- 3〜5歳の場合はカタカナ読みのみ。アルファベット表記は最小限にする
-- 英語の単語を教えるときは必ずカタカナ読みも添える（例：dog＝ドッグ）
-- 「英語で言うと〇〇（カタカナ）だよ、言ってみて！」と発話を楽しく促す
-- 簡単な英語フレーズ（What is this? / I like 〇〇!）を会話に自然に挟む
-- 英語の語源や面白い語呂合わせがあれば紹介して記憶の助けにする
-- 正確な発音より「言ってみること」を全力で褒める`,
-    じぶん: `【じぶんレンズ】
-- 「好き？嫌い？なんで？」と自分の感情を言語化させることを最優先にする
-- 「前に似たようなこと経験したことある？」と記憶・体験とつなげる
-- 「${u.name||'きみ'}だったらどうする？」と自分ごととして考えさせる
-- 「正解はないよ。きみはどう感じた？それが一番大事」と自己肯定感を育む
-- 親に「${u.parentName}は子どもの頃どうだったと思う？」と橋渡しする`,
-  };
-
-  const base = `あなたは「たからちゃん」です。
-子どもが日常で見つけたものについて、一緒に考える案内役です。
-
-【レイヤー優先順位】
-指示が矛盾する場合は「年齢レイヤー ＞ タイプレイヤー ＞ レンズレイヤー」の順で優先し、年齢に合った言葉・トーンに調整すること。
-
-【登場人物と話しかけのルール】
-この会話には2人が参加している。
-- [${u.name || 'こども'}]：子ども。メインの対話相手。基本的には子どもに向けて問いかける
-- [${u.parentName}]：保護者。ときどき（3〜4往復に1回程度）話しかけてよい
-必ず1人だけに向けて問いかけること。子どもと大人に同時に問いかけない。
-[${u.parentName}]への問いかけは「${u.parentName}はどう思う？」「${u.parentName}は子どもの頃どうだった？」など親子の対話を引き出す内容にする。
-
-【基本ルール】
-- 子どもの答えをまず受け止めてから次の問いへ
-- 1回の返答は2〜3文以内
-- 絵文字を1つだけ使う
-- 「なんとなく」「わからない」も大切に受け取る
-- 答えが出なくても「それでいいよ」と安心させてから別の角度で問いかける
-- 押しつけや説教はしない。答えを先に言わない
-- まとめの提案はしない。対話はおしまいボタンが押されるまで続ける
-- ${u.strengths ? `${u.name||'この子'}の得意なこと（${u.strengths}）を活かせるような問いかけを自然に混ぜる` : '得意なことが登録されたら、それを活かす問いかけをする'}
-
-【好きなものの活用】
-${u.likes ? `「${u.likes}」が好き。対話の中で1回は、お題「${S.odai?.name}」と好きなものを自然に絡めた問いかけをする（例：「${u.likes}と比べてどう？」「${u.likes}みたいなところはある？」）` : '好きなものが登録されたら、お題と絡めた問いかけをする'}
+【たからちゃんの話し方】
+- 子どもの言葉をそのまま繰り返してから次の問いへ（受容→深掘り）
+- 褒めるときは「えらい」より「気づいたね！」「おもしろい！」「そっか！」
+- 間違いは否定せず「そう思うんだね、じゃあ〜はどう？」で転換する
+- 「なんとなく」「わからない」も大切に受け取り、別の角度で聞き直す
+- 絵文字は1つだけ使う
+- 1回の返答は2文以内。問いは必ず1つだけ
+- 答えを先に言わない。押しつけや説教はしない
+- [${u.parentName}]に直接話しかけることは禁止。
+  ただし4往復ごとのタイミングでは「${u.parentName}はどう思うか聞いてみて！」と
+  子どもを通じて親に橋渡しする（子どもが自然に親を引き込む形にする）
 
 【子どもの情報】
-- 呼び方: ${u.name || 'お子さん'}
-- 好きなもの: ${u.likes || '未登録'}
-- 得意なこと: ${u.strengths || '未登録'}
+- 呼び方: ${u.name || 'きみ'}
+- すきなもの: ${u.likes || 'なし'}
+- とくいなこと: ${u.strengths || 'なし'}
+${u.likes ? `- 対話の中で自然なタイミングで「${u.likes}と比べてみたらどう？」と絡める` : ''}
 
-【今回のお題】「${S.odai?.name}」`;
+【今回のお題】「${S.odai?.name}」
+【レンズ】${S.lens}`;
+
+  // ── 年齢レイヤー（語彙・文長・抽象度のみ） ──
+  const ageLayers = {
+    young: `【ことばのルール：3〜5さい】
+- 全文ひらがな・カタカナのみ。漢字は使わない
+- 1文は15文字以内。短く、テンポよく
+- 抽象的な概念は使わず、五感（見る・触る・聞く・におい）で表現する`,
+    middle: `【ことばのルール：6〜8さい】
+- 小学校1〜2年レベルの漢字まで使用可
+- 1文は25文字以内
+- 「なぜ？」「どう思う？」まで扱える`,
+    older: `【ことばのルール：9〜12さい】
+- 小学校全学年の漢字を使用可
+- 1文は40文字以内
+- 仮説・根拠・比較まで扱える`,
+  };
+
+  // ── タイプレイヤー（何から深掘るか） ──
+  const typeLayers = {
+    A: `【はっけんタイプ：観察から出発】
+フェーズ2では「色・形・さわった感じ・音・におい」を引き出す問いを使う。
+見える事実を丁寧に拾い上げる。`,
+    B: `【しらべるタイプ：名前・なかまから出発】
+フェーズ2では「名前・なかま・ほかとのちがい」を引き出す問いを使う。
+知識の精度を上げる方向へ自然に誘う。`,
+    C: `【そうぞうタイプ：仮説から出発】
+フェーズ2では「中はどうなってると思う？」「なんでそうなってる？」を使う。
+推論をそのまま全力で受け止め、さらに深める。`,
+  };
+
+  // ── レンズレイヤー（問いの方向性） ──
+  const lensLayers = {
+    ことば: `【ことばレンズ：言葉にする方向】
+フェーズ3では「これを一言で言うとしたら？」「まるで〇〇みたい、はどう？」
+オノマトペ（ふわふわ・ざらざら）を一緒に作る。`,
+    かず: `【かずレンズ：数・形・大きさの方向】
+フェーズ3では「どのくらいの大きさ？」「○○と比べると？」「いくつある？」
+パターンや規則性に気づかせる問いを使う。`,
+    かがく: `【かがくレンズ：しくみ・なぜ？の方向】
+フェーズ3では「なんでそうなってると思う？」「もし〜だったらどうなる？」
+子どもの仮説を「実験したらわかるね！」と次の行動につなげる。`,
+    しゃかい: `【しゃかいレンズ：人・つながりの方向】
+フェーズ3では「だれがつくったんだろう？」「なんのためにあるの？」
+「これがなかった昔はどうしてたんだろう？」と人の役割に気づかせる。`,
+    じぶん: `【じぶんレンズ：感情・自分との関係の方向】
+フェーズ3では「好き？嫌い？なんで？」「前に似たような経験した？」
+「正解はないよ。きみはどう感じた？それが一番大事」と自己肯定感を育む。`,
+  };
+
+  // ── 4フェーズ構造 ──
+  const phaseLayer = `【会話の4フェーズ — 必ずこの順番で進める】
+
+■ フェーズ1「いまどこ？」（1往復で完了）
+  最初の問いはここから始める。
+  「どこで見つけたの？」「そのとき、まわりに何があった？」
+  場所・状況・環境が掴めたら即フェーズ2へ。
+
+■ フェーズ2「よくみると？」（1往復で完了）
+  [タイプ]の視点でお題を観察させる。
+  まだ「なぜ？」は聞かない。見える事実だけを引き出す。
+
+■ フェーズ3「どう思う？」（1〜2往復）
+  [レンズ]の方向で「なぜ？」を深掘りする。
+  子どもが「〜だと思う」と仮説を言えたら成功。
+  その仮説を全肯定してさらに深める。
+
+■ フェーズ4「まとめ」（フェーズ3完了後に移行）
+  「じゃあ、${S.odai?.name}ってひとことで言うとどういうもの？」と聞く。
+  子どもの答えを大切に受け取ったあと、
+  「今日のたから、しまってみよう！ 下のボタンを押してね 📦」と誘導する。
+
+【重要】フェーズは順番通りに進める。飛ばさない。戻らない。
+現在の会話数: ${userMsgCount}回目
+${parentDue ? `→ このタイミングで「${u.parentName}はどう思うか聞いてみて！」と子どもを通じて促すこと` : ''}`;
+
+  // 続きセッションの場合は前回の発見をコンテキストに追加
+  const prevLayer = S.prevRecord ? `【前回のたから（続きセッション）】
+お題「${S.prevRecord.odai?.name}」を${S.prevRecord.lens}レンズで探索した。
+前回の発見: ${(S.prevRecord.findings || []).join('、')}
+→ フェーズ1は省略してフェーズ2から始める。
+→ 冒頭で「まえに${S.prevRecord.findings?.[0] || ''}って気づいてたんだよね！」と確認してからスタート。` : '';
+
+  // ── 末尾に最重要ルールを再掲（lost-in-the-middle対策） ──
+  const finalRules = `【最重要・必ず守る】
+① 1回の返答で問うのは1つだけ
+② 答えを先に言わない
+③ 2文以内
+④ フェーズを順番通りに進める`;
 
   return [
-    base,
-    agePrompts[u.ageGroup] || agePrompts.young,
-    typePrompts[u.type] || typePrompts.A,
-    lensPrompts[S.lens] || '',
-  ].join('\n\n');
+    baseLayer,
+    ageLayers[u.ageGroup] || ageLayers.young,
+    typeLayers[u.type]    || typeLayers.A,
+    lensLayers[S.lens]    || '',
+    phaseLayer,
+    prevLayer,
+    finalRules,
+  ].filter(Boolean).join('\n\n');
 }
 
 function summarySystem() {
@@ -384,12 +387,16 @@ function summarySystem() {
 【会話記録】
 ${conv}
 
-【重要】findingsは必ず上記の会話の中で実際に出た言葉・気づき・発見をもとにしてください。
+【重要ルール】
+- findingsは必ず上記の会話の中で実際に出た言葉・気づき・発見のみを使う
+- 会話にない言葉の補完・推測・創作は禁止
+- 会話が浅い場合は1個でよい（無理に3つ作らない）
+- 子どもが自分の言葉で言った「答え」があれば、それを最初のfindingにする
 
 【出力形式】JSONのみ（Markdownなし）:
 {
-  "findings": ["会話に出た発見1（子どもの言葉を活かした短い文）","発見2","発見3"],
-  "opinion": "保護者向けの温かいコメント。${max}文字以内。2〜3段落に分け、段落の区切りは必ず \\n（バックスラッシュn）で表現すること（生の改行は使わない）。押しつけがましくない。${S.user.ageGroup==='young'?'ひらがな多め。':''}"
+  "findings": ["子どもが実際に言った言葉を活かした発見（1〜3個）"],
+  "opinion": "保護者向けの温かいコメント。${max}文字以内。2〜3段落。段落区切りは\\n。押しつけがましくない。${S.user.ageGroup==='young'?'ひらがな多め。':''}"
 }`;
 }
 
@@ -438,7 +445,6 @@ function render() {
     if (S.flow==='chat')    content = renderChat();
     if (S.flow==='summary') content = renderSummary();
     root.innerHTML = renderChatHeader() + content;
-    if (S.flow==='summary') setTimeout(triggerFindingAnim, 50);
   } else {
     tw.style.display = 'block';
     tw.innerHTML     = renderTabs();
@@ -515,7 +521,6 @@ function bindEvents() {
       reader.readAsDataURL(file);
     });
   }
-
 }
 
 function scrollChat() {
@@ -525,42 +530,48 @@ function scrollChat() {
   }, 80);
 }
 
-function burstCalAnimation() {
-  const lensCount = {};
-  S.records.forEach(r => { if (r.lens) lensCount[r.lens] = (lensCount[r.lens]||0) + 1; });
-  const items = [];
-  LENSES.forEach(l => { for(let i=0;i<(lensCount[l.id]||0);i++) items.push(l.icon); });
-  if (items.length === 0) return;
+function triggerCalBurst() {
+  const emojis = S.records.map(r => r.odai?.emoji).filter(Boolean);
+  if (emojis.length === 0) return;
 
-  const wrap = document.createElement('div');
-  wrap.className = 'cal-burst-wrap';
-  document.body.appendChild(wrap);
-  const cx = window.innerWidth/2, cy = window.innerHeight/2;
-  items.forEach((icon, i) => {
-    const el = document.createElement('div');
+  const frame = document.getElementById('app') || document.body;
+  const rect  = frame.getBoundingClientRect();
+  const cx    = rect.left + rect.width  / 2;
+  const cy    = rect.top  + rect.height / 2;
+
+  document.querySelectorAll('.cal-burst-wrap').forEach(el => el.remove());
+
+  const layer = document.createElement('div');
+  layer.className = 'cal-burst-wrap';
+  document.body.appendChild(layer);
+
+  const count = Math.min(emojis.length, 20);
+  for (let i = 0; i < count; i++) {
+    const el    = document.createElement('div');
     el.className = 'cal-burst-item';
-    el.textContent = icon;
-    const angle = (i/items.length)*360, dist = 80+Math.random()*80;
-    const rad = angle*Math.PI/180;
-    el.style.left = cx+'px'; el.style.top = cy+'px';
-    el.style.setProperty('--tx', Math.cos(rad)*dist+'px');
-    el.style.setProperty('--ty', Math.sin(rad)*dist+'px');
-    el.style.animationDelay = (i*.05)+'s';
-    wrap.appendChild(el);
-  });
-  setTimeout(() => wrap.remove(), 2000);
+    const angle  = (i / count) * Math.PI * 2;
+    const dist   = 90 + Math.random() * 120;
+    const tx     = Math.round(Math.cos(angle) * dist);
+    const ty     = Math.round(Math.sin(angle) * dist);
+    el.style.cssText =
+      `left:${cx}px;top:${cy}px;--tx:${tx}px;--ty:${ty}px;` +
+      `animation-delay:${i * 0.045}s;`;
+    el.textContent = emojis[i % emojis.length];
+    layer.appendChild(el);
+  }
+  setTimeout(() => layer.remove(), 1800);
 }
 
 // ── App ──
 const App = {
 
- switchTab(tab) {
-  const prev = S.tab;
-  S.tab  = tab;
-  S.flow = 'home';
-  render();
-  if (tab === 'cal' && prev !== 'cal') setTimeout(triggerCalBurst, 100);
-},
+  switchTab(tab) {
+    const prev = S.tab;
+    S.tab  = tab;
+    S.flow = 'home';
+    render();
+    if (tab === 'cal' && prev !== 'cal') setTimeout(triggerCalBurst, 100);
+  },
 
   closeChatFlow() { S.flow='home'; S.tab='home'; render(); },
 
@@ -575,7 +586,7 @@ const App = {
       }
       S.user.name = name;
     } else if (S.step === 1) {
-      // タイプ選択（クリックで即反映済み、値チェックのみ）
+      // タイプ選択（クリックで即反映済み）
     } else if (S.step === 2) {
       S.user.likes     = $id('ob-likes')?.value?.trim() || '';
       S.user.strengths = $id('ob-str')?.value?.trim()   || '';
@@ -608,11 +619,25 @@ const App = {
   },
 
   // ── お題→レンズへ ──
-  goToLens(o) {
-    S.odai=o; S.lens=null; S.flow='lens';
-    S._savedThisSession=false; render();
+  goToLens(o, prevRecord = null) {
+    S.odai = o;
+    S.lens = null;
+    S.flow = 'lens';
+    S._savedThisSession = false;
+    S.prevRecord = prevRecord;
+    // 続きセッションの場合はレンズを固定
+    if (prevRecord) S.lens = prevRecord.lens;
+    render();
   },
   replayOdai(o) { App.goToLens(o); },
+
+  // 続きセッション開始
+  continueRecord(idx) {
+    const rec = S.records[idx];
+    if (!rec) return;
+    // goToLensがS.lensをprevRecord.lensで固定する
+    App.goToLens(rec.odai, rec);
+  },
 
   async submitFree() {
     const txt = $id('free-in')?.value?.trim();
@@ -628,27 +653,48 @@ const App = {
     }
   },
 
-  selectLens(id) { S.lens = S.lens===id ? null : id; render(); },
+  selectLens(id) {
+    // 続きセッション中はレンズ変更不可
+    if (S.prevRecord) return;
+    S.lens = S.lens===id ? null : id;
+    render();
+  },
 
   // ── チャット開始 ──
   async startChat() {
     if (!S.lens) return;
-    S.messages=[]; S.flow='chat'; S.isLoading=true; S.lastError=false;
+    S.messages = [];
+    S.flow = 'chat';
+    S.isLoading = true;
+    S.lastError = false;
+    S.chatPhase = 1;
     render();
+
+    const hour = new Date().getHours();
+    const timeOfDay = hour < 11 ? 'あさ' : hour < 17 ? 'ひるま' : 'よる';
+    const startMsg = S.prevRecord
+      ? `続きのセッションです。前回の発見を踏まえてフェーズ2から始めてください。`
+      : `${timeOfDay}です。フェーズ1から始めてください。最初の問いかけを1つだけ。`;
+
     try {
       const text = await callAI(
-        [{ role:'user', content:'最初の問いかけを1つだけ。' }],
+        [{ role:'user', content: startMsg }],
         chatSystem()
       );
       S.messages.push({ role:'ai', text });
+      // フェーズ検出
+      const detected = detectPhaseFromAI(text);
+      if (detected) S.chatPhase = detected;
     } catch(err) {
       console.error('chat start error:', err);
-      S.messages.push({ role:'ai', text:`${S.odai?.name}について、どんなことを知ってる？🔍` });
+      S.messages.push({ role:'ai', text:`${S.odai?.name}、どこで見つけたの？🔍` });
     }
-    S.isLoading=false; render(); scrollChat();
+    S.isLoading = false;
+    render();
+    scrollChat();
   },
 
-  setSpeaker(sp) { S.speaker=sp; render(); },
+  setSpeaker(sp) { S.speaker = sp; render(); },
 
   // ── メッセージ送信 ──
   async sendChat() {
@@ -656,36 +702,49 @@ const App = {
     const txt = inp?.value?.trim();
     if (!txt || S.isLoading) return;
 
-    S.messages.push({ role:S.speaker, text:txt });
-    S.isLoading=true; S.lastError=false;
-    render(); scrollChat();
+    const sentAs = S.speaker;
+    S.messages.push({ role: sentAs, text: txt });
+    // 送信後はスピーカーを子どもに自動リセット
+    S.speaker = 'child';
+    S.isLoading = true;
+    S.lastError = false;
+    if (inp) inp.value = '';
+    render();
+    scrollChat();
 
     const payload = App._buildApiMsgs();
-    S.lastSendPayload = payload; // リトライ用に保存
+    S.lastSendPayload = payload;
 
     try {
       const text = await callAI(payload, chatSystem());
       S.messages.push({ role:'ai', text });
       S.lastError = false;
+      // AIの返答からフェーズ4へ移行を検出
+      const detected = detectPhaseFromAI(text);
+      if (detected === 4 && S.chatPhase < 4) S.chatPhase = 4;
     } catch(err) {
       console.error('chat error:', err);
       S.lastError = true;
-      // 最後のユーザーメッセージは残す（リトライで再送）
     }
-    S.isLoading=false; render(); scrollChat();
+    S.isLoading = false;
+    render();
+    scrollChat();
   },
 
   async retryLastSend() {
     if (!S.lastSendPayload || S.isLoading) return;
-    S.isLoading=true; S.lastError=false; render(); scrollChat();
+    S.isLoading = true; S.lastError = false;
+    render(); scrollChat();
     try {
       const text = await callAI(S.lastSendPayload, chatSystem());
       S.messages.push({ role:'ai', text });
-      S.lastError=false;
+      S.lastError = false;
     } catch(err) {
-      S.lastError=true;
+      S.lastError = true;
     }
-    S.isLoading=false; render(); scrollChat();
+    S.isLoading = false;
+    render();
+    scrollChat();
   },
 
   _buildApiMsgs() {
@@ -706,8 +765,12 @@ const App = {
 
   // ── サマリー生成 ──
   async goSummary() {
-    S.flow='summary'; S.summaryItems=[]; S.summaryOpinion='';
-    S.opinionOpen=false; S.bookmarked=false; S.currentNote='';
+    S.flow = 'summary';
+    S.summaryItems = [];
+    S.summaryOpinion = '';
+    S.opinionOpen = false;
+    S.bookmarked = false;
+    S.currentNote = '';
     render();
 
     try {
@@ -715,14 +778,12 @@ const App = {
         [{ role:'user', content:'まとめてください。' }],
         summarySystem()
       );
-      console.log('[goSummary] raw response:', res);
       const data = JSON.parse(res.replace(/```json|```/g,'').trim());
-      console.log('[goSummary] parsed:', data);
       S.summaryItems   = data.findings || [];
       S.summaryOpinion = data.opinion  || '';
     } catch(err) {
       console.error('summary error:', err);
-      S.summaryItems   = ['いっぱい考えた！','気になることが見つかった'];
+      S.summaryItems   = ['いっぱい考えた！'];
       S.summaryOpinion = 'ふたりとも、すごい発見だったね！';
     }
 
@@ -732,14 +793,12 @@ const App = {
     setTimeout(triggerFindingAnim, 50);
   },
 
-  // きろくノート保存
   saveNote() {
     const txt = $id('note-input')?.value?.trim() || '';
     S.currentNote = txt;
     const last = S.records[S.records.length-1];
     if (last) last.note = txt;
     persistSave();
-    // 保存フィードバック
     const btn = document.querySelector('.note-save-btn');
     if (btn) { btn.textContent='✓ ほぞんしたよ！'; setTimeout(()=>{ btn.textContent='💾 ほぞんする'; },1500); }
   },
@@ -754,6 +813,7 @@ const App = {
       findings:   [...S.summaryItems],
       bookmarked: false,
       note:       '',
+      status:     null,  // null | 'open' | 'closed'
     };
     S.records.push(entry);
     const today     = new Date().toDateString();
@@ -764,12 +824,33 @@ const App = {
     }
   },
 
+  // サマリー後のステータス選択
+  setRecordStatus(status) {
+    const last = S.records[S.records.length-1];
+    if (last) {
+      last.status = status;
+      persistSave();
+    }
+    if (status === 'open') {
+      // ホームへ戻る（「続きのたから」カードが出る）
+      S.flow='home'; S.tab='home'; S.randOdai=null; render();
+    } else {
+      S.flow='home'; S.tab='home'; S.randOdai=null; render();
+    }
+  },
+
   doAgain() {
-    S.lens=null; S.flow='lens'; S._savedThisSession=false; render();
+    S.lens = null;
+    S.flow = 'lens';
+    S._savedThisSession = false;
+    S.prevRecord = null;
+    render();
   },
 
   nextOdai() {
-    S.flow='home'; S.tab='home'; S.randOdai=null; render();
+    S.flow='home'; S.tab='home'; S.randOdai=null;
+    S.prevRecord = null;
+    render();
   },
 
   toggleBookmark() {
@@ -777,14 +858,20 @@ const App = {
     const last = S.records[S.records.length-1];
     if (last) last.bookmarked = S.bookmarked;
     persistSave();
-    // ボタンだけ更新（render()全体を避ける）
-    const btn = document.querySelector('.bookmark-btn');
-    if (btn) btn.classList.toggle('active', S.bookmarked);
+    render();
   },
 
   toggleRecordFav(idx) {
     if (S.records[idx]) {
       S.records[idx].bookmarked = !S.records[idx].bookmarked;
+      persistSave();
+      render();
+    }
+  },
+
+  setRecordStatusByIdx(idx, status) {
+    if (S.records[idx]) {
+      S.records[idx].status = status;
       persistSave();
       render();
     }
@@ -804,27 +891,8 @@ const App = {
     if(++m>11){m=0;y++;} S.calYear=y; S.calMonth=m; render();
   },
 
-  toggleOpinion() {
-    S.opinionOpen = !S.opinionOpen;
-    const chevron = document.querySelector('.ai-opinion-chevron');
-    const body    = document.querySelector('.ai-opinion-body');
-    const paras   = S.summaryOpinion.split(/\n/).filter(Boolean);
-    if (chevron) chevron.classList.toggle('open', S.opinionOpen);
-    if (S.opinionOpen) {
-      if (!body) {
-        const card = document.querySelector('.ai-opinion-card');
-        if (card) {
-          const div = document.createElement('div');
-          div.className = 'ai-opinion-body';
-          div.innerHTML = paras.map(p => `<div class="ai-opinion-para">${esc(p)}</div>`).join('');
-          card.appendChild(div);
-        }
-      }
-    } else {
-      if (body) body.remove();
-    }
-  },
-  toggleShowOpinion() { S.showOpinion=!S.showOpinion; persistSave(); render(); setTimeout(triggerFindingAnim, 50); },
+  toggleOpinion()     { S.opinionOpen=!S.opinionOpen; render(); },
+  toggleShowOpinion() { S.showOpinion=!S.showOpinion; persistSave(); render(); },
 
   setFontSize(size) {
     S.fontSize = size;
@@ -833,7 +901,6 @@ const App = {
     render();
   },
 
-  // ウィークリーレポート生成
   async generateReport() {
     const sys = weeklyReportSystem();
     if (!sys) {
@@ -864,18 +931,16 @@ const App = {
     S.user.name      = name;
     S.user.likes     = $id('s-likes')?.value?.trim() || '';
     S.user.strengths = $id('s-str')?.value?.trim()   || '';
-    // ageGroupはsetAge()で都度保存されるが念のため同期
     persistSave();
     App.switchTab('home');
   },
 
-  // ── CSV エクスポート ──
   exportCSV() {
     if (S.records.length === 0) {
       alert('まだきろくがないよ！たからさがしをしてからためしてね🔍');
       return;
     }
-    const header = ['日付','お題','絵文字','カテゴリ','レンズ','発見1','発見2','発見3','ノート','お気に入り'];
+    const header = ['日付','お題','絵文字','カテゴリ','レンズ','発見1','発見2','発見3','ノート','お気に入り','ステータス'];
     const rows = S.records.map(r => [
       r.date ? new Date(r.date).toLocaleDateString('ja-JP') : '',
       r.odai?.name   || '',
@@ -887,11 +952,12 @@ const App = {
       r.findings?.[2] || '',
       r.note         || '',
       r.bookmarked   ? '★' : '',
+      r.status       || '',
     ]);
     const csvContent = [header, ...rows]
       .map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
       .join('\n');
-    const bom  = '﻿'; // Excel用BOM
+    const bom  = '\uFEFF';
     const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
@@ -901,10 +967,7 @@ const App = {
     URL.revokeObjectURL(url);
   },
 
-  // ── CSV インポート ──
-  triggerImport() {
-    $id('csv-import-input')?.click();
-  },
+  triggerImport() { $id('csv-import-input')?.click(); },
 
   importCSV(event) {
     const file = event.target.files[0];
@@ -912,30 +975,29 @@ const App = {
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const text  = e.target.result.replace(/^﻿/, ''); // BOM除去
+        const text  = e.target.result.replace(/^\uFEFF/, '');
         const lines = text.split(/\r?\n/).filter(Boolean);
         if (lines.length < 2) throw new Error('データがないよ');
-
         let imported = 0;
         for (let i = 1; i < lines.length; i++) {
           const cols = lines[i].split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
                                .map(c => c.replace(/^"|"$/g,'').replace(/""/g,'"'));
           if (cols.length < 5) continue;
-          const [dateStr, name, emoji, label, lens, f1, f2, f3, note, fav] = cols;
+          const [dateStr, name, emoji, label, lens, f1, f2, f3, note, fav, status] = cols;
           const findings = [f1,f2,f3].filter(Boolean);
-          // 重複チェック（同日同お題は除外）
           const alreadyExists = S.records.some(r =>
             r.odai?.name === name &&
             r.date && new Date(r.date).toLocaleDateString('ja-JP') === dateStr
           );
           if (!alreadyExists) {
             S.records.push({
-              odai:       { name, emoji, label },
-              lens:       lens || '',
-              date:       dateStr ? new Date(dateStr).toISOString() : new Date().toISOString(),
+              odai: { name, emoji, label },
+              lens: lens || '',
+              date: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString(),
               findings,
               note:       note || '',
               bookmarked: fav === '★',
+              status:     status || null,
             });
             imported++;
           }
@@ -947,24 +1009,16 @@ const App = {
         console.error('import error:', err);
         alert('インポートに失敗したよ。CSVファイルをたしかめてね。');
       }
-      // inputをリセット（同じファイルを再度選べるように）
       event.target.value = '';
     };
     reader.readAsText(file, 'UTF-8');
   },
 
-  // ── フィードバック送信（Google フォーム） ──
   sendFeedback() {
     const txt = $id('feedback-text')?.value?.trim();
-    if (!txt) {
-      alert('メッセージをにゅうりょくしてね！');
-      return;
-    }
-    // Google フォームのプリフィル URL（entry.XXXXXXXXX はフォームのフィールドID）
+    if (!txt) { alert('メッセージをにゅうりょくしてね！'); return; }
     const FORM_URL = 'https://forms.gle/XEVhBG2636FCohLw9';
-    // フォームを新しいタブで開く
     window.open(FORM_URL, '_blank', 'noopener,noreferrer');
-    // テキストをクリップボードにコピー（フォームに貼り付けやすくする）
     if (navigator.clipboard) {
       navigator.clipboard.writeText(txt).then(() => {
         const btn = document.querySelector('#feedback-text');
@@ -978,59 +1032,18 @@ const App = {
     }
   },
 
-  // ── 画像として保存 ──
   async saveSummaryImage() {
     const el = document.getElementById('summary-capture-area');
     if (!el) return;
     try {
-      // CSS変数を実値に展開したクローンを作成
-      const clone = el.cloneNode(true);
-      clone.style.cssText = `
-        position:fixed; left:-9999px; top:0;
-        width:${el.offsetWidth}px;
-        background:#fdf6e3; padding:16px;
-        font-family:'Zen Maru Gothic',sans-serif;
-      `;
-      // CSS変数を実値に置換するヘルパー
-      const cs = getComputedStyle(document.documentElement);
-      const varMap = {
-        'var(--deep)':        cs.getPropertyValue('--deep').trim()        || '#2d1b00',
-        'var(--amber)':       cs.getPropertyValue('--amber').trim()       || '#e8860a',
-        'var(--amber-pale)':  cs.getPropertyValue('--amber-pale').trim()  || '#fff3cd',
-        'var(--teal)':        cs.getPropertyValue('--teal').trim()        || '#0a9396',
-        'var(--coral)':       cs.getPropertyValue('--coral').trim()       || '#e76f51',
-        'var(--mint)':        cs.getPropertyValue('--mint').trim()        || '#52b788',
-        'var(--fs-xs)':       cs.getPropertyValue('--fs-xs').trim()       || '10px',
-        'var(--fs-sm)':       cs.getPropertyValue('--fs-sm').trim()       || '11px',
-        'var(--fs-base)':     cs.getPropertyValue('--fs-base').trim()     || '13px',
-        'var(--fs-md)':       cs.getPropertyValue('--fs-md').trim()       || '14px',
-        'var(--fs-xl)':       cs.getPropertyValue('--fs-xl').trim()       || '18px',
-      };
-      clone.querySelectorAll('*').forEach(node => {
-        if (node.style.cssText) {
-          let s = node.style.cssText;
-          Object.entries(varMap).forEach(([k,v]) => { s = s.replaceAll(k, v); });
-          node.style.cssText = s;
-        }
-        // finding-item-anim が opacity:0 のままにならないよう強制表示
-        if (node.classList?.contains('finding-item-anim')) {
-          node.style.opacity = '1';
-          node.style.transform = 'none';
-        }
-      });
-      document.body.appendChild(clone);
-      const canvas = await html2canvas(clone, { backgroundColor: '#fdf6e3', scale: 2, useCORS: true });
-      document.body.removeChild(clone);
+      const canvas = await html2canvas(el, { backgroundColor: '#fdf6e3', scale: 2 });
       const a = document.createElement('a');
       a.download = 'たからもの_' + (S.odai?.name || 'きろく') + '.png';
       a.href = canvas.toDataURL('image/png');
       a.click();
-    } catch(err) {
-      console.error('saveSummaryImage error:', err);
-    }
+    } catch(err) { console.error('saveSummaryImage error:', err); }
   },
 
-  // ── PWA アップデート適用 ──
   applyUpdate() {
     if (App._waitingSW) {
       App._waitingSW.postMessage('skipWaiting');
@@ -1046,8 +1059,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('/sw.js');
-
-      // アップデート検知
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
         newSW.addEventListener('statechange', () => {
@@ -1058,15 +1069,10 @@ if ('serviceWorker' in navigator) {
           }
         });
       });
-
-      // SW切り替わり時にリロード
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload();
       });
-
-    } catch(err) {
-      console.warn('SW registration failed:', err);
-    }
+    } catch(err) { console.warn('SW registration failed:', err); }
   });
 }
 
