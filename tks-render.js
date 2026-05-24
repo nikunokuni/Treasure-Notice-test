@@ -1,6 +1,7 @@
 /* ═══════════════════════════════
-   UTILS — XSS-safe text escaping
+   たからさがし — render  v6
    ═══════════════════════════════ */
+
 function esc(str) {
   if (typeof str !== 'string') return '';
   return str
@@ -10,18 +11,18 @@ function esc(str) {
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#39;');
 }
-// AIレスポンス（信頼テキスト）の改行だけ許可
 function aiText(str) {
   return esc(str).replace(/\n/g,'<br>');
 }
+
 function renderTabs() {
   const tabs = [
-    { id:'home', icon:'🏠', label:'ホーム',       cls:'tab-home' },
-    { id:'cal',  icon:'🗓️', label:'カレンダー',   cls:'tab-cal'  },
-    { id:'box',  icon:'📦', label:'たからばこ',   cls:'tab-box'  },
-    { id:'note', icon:'📓', label:'ノート',       cls:'tab-note' },
-    { id:'fav',  icon:'⭐', label:'おきにいり',   cls:'tab-fav'  },
-    { id:'set',  icon:'⚙️', label:'せってい',     cls:'tab-set'  },
+    { id:'home', icon:'🏠', label:'ホーム',     cls:'tab-home' },
+    { id:'cal',  icon:'🗓️', label:'カレンダー', cls:'tab-cal'  },
+    { id:'box',  icon:'📦', label:'たからばこ', cls:'tab-box'  },
+    { id:'note', icon:'📓', label:'ノート',     cls:'tab-note' },
+    { id:'fav',  icon:'⭐', label:'おきにいり', cls:'tab-fav'  },
+    { id:'set',  icon:'⚙️', label:'せってい',   cls:'tab-set'  },
   ];
   return `
     <div class="tabs">
@@ -37,12 +38,14 @@ function renderTabs() {
 
 function renderChatHeader() {
   const lens = LENSES.find(l => l.id === S.lens);
+  const isContinue = !!S.prevRecord;
   return `
     <div class="chat-header">
       <div class="chat-header-info">
         <span class="chat-header-emoji">${esc(S.odai?.emoji || '')}</span>
         <span class="chat-header-name">${esc(S.odai?.name || '')}</span>
         ${lens ? `<span class="chat-header-lens">${lens.icon} ${esc(lens.name)}</span>` : ''}
+        ${isContinue ? `<span class="chat-header-continue">🔭 つづき</span>` : ''}
       </div>
       <button class="back-btn" onclick="App.closeChatFlow()">◀ ホームにもどる</button>
     </div>`;
@@ -152,12 +155,11 @@ function renderHome() {
   const r    = S.randOdai || pickRand();
   if (!S.randOdai) S.randOdai = r;
 
-  // ① ストリーク：今週7日分のドット
+  // ストリーク：今週7日分のドット
   const today  = new Date();
   const weekDots = Array.from({length: 7}, (_, i) => {
     const d = new Date(today);
     d.setDate(today.getDate() - (6 - i));
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
     const done = S.records.some(rec => {
       const rd = new Date(rec.date);
       return rd.getFullYear() === d.getFullYear()
@@ -170,15 +172,16 @@ function renderHome() {
 
   const streakMsg = S.streak === 0
     ? 'きょうからはじめよう！'
-    : S.streak < 3
-    ? `${S.streak}にちれんぞく！このちょうしで！`
-    : S.streak < 7
-    ? `すごい！${S.streak}にちれんぞく中🎉`
+    : S.streak < 3 ? `${S.streak}にちれんぞく！このちょうしで！`
+    : S.streak < 7 ? `すごい！${S.streak}にちれんぞく中🎉`
     : `${S.streak}にち！もうヒーローだ⭐`;
+
+  // 続きのたから（openのもの最新1件）
+  const openRec = S.records.slice().reverse().find(r => r.status === 'open');
+  const openIdx = openRec ? S.records.lastIndexOf(openRec) : -1;
 
   return `
     <div class="content">
-      <!-- ① ストリーク ヒーローエリア -->
       <div class="hero-streak">
         <div class="hero-streak-top">
           <div>
@@ -208,6 +211,19 @@ function renderHome() {
           ${age.icon} ${esc(age.label)} ›
         </div>
       </div>
+
+      ${openRec ? `
+        <div class="continue-card" onclick="App.continueRecord(${openIdx})">
+          <div class="continue-card-label">🔭 つづきのたから</div>
+          <div class="continue-card-body">
+            <span class="continue-card-emoji">${openRec.odai.emoji}</span>
+            <div>
+              <div class="continue-card-name">${esc(openRec.odai.name)}</div>
+              <div class="continue-card-sub">${fmtDate(openRec.date)} · ${esc(openRec.lens)}レンズ</div>
+            </div>
+            <span class="continue-card-arrow">›</span>
+          </div>
+        </div>` : ''}
 
       ${S.odaiGenerating ? `
         <div class="odai-generating">
@@ -256,6 +272,7 @@ function renderHome() {
 
 // ── レンズ選択 ──
 function renderLens() {
+  const isContinue = !!S.prevRecord;
   return `
     <div class="content">
       <div style="margin-bottom:12px">
@@ -264,10 +281,14 @@ function renderLens() {
           <span class="odai-pill-name">${esc(S.odai.name)}</span>
         </div>
       </div>
-      <div class="lens-hint">どのレンズでみてみる？<br>ひとつだけえらんでね 🔍</div>
+      ${isContinue ? `
+        <div class="continue-banner">
+          🔭 続きのセッション — ${esc(S.prevRecord.lens)}レンズで深掘りするよ
+        </div>` : `
+        <div class="lens-hint">どのレンズでみてみる？<br>ひとつだけえらんでね 🔍</div>`}
       <div class="lens-grid">
         ${LENSES.map(l => `
-          <div class="lens-card ${l.cls} ${S.lens === l.id ? 'selected' : ''}"
+          <div class="lens-card ${l.cls} ${S.lens === l.id ? 'selected' : ''} ${isContinue && l.id !== S.lens ? 'lens-locked' : ''}"
                onclick="App.selectLens('${l.id}')">
             <div style="display:flex;align-items:center;gap:8px">
               <span class="lens-icon">${l.icon}</span>
@@ -287,40 +308,25 @@ function renderLens() {
 function renderChat() {
   const u = S.user;
   const userMsgCount = S.messages.filter(m => m.role !== 'ai').length;
-  const lens = LENSES.find(l => l.id === S.lens);
+  const isPhase4 = S.chatPhase >= 4;
 
-  // ② プログレスバー：10往復を満タンとする
-  const CHAT_MAX = 10;
-  const progress = Math.min(userMsgCount / CHAT_MAX, 1);
-  const pct      = Math.round(progress * 100);
-
-  // レンズ別ヒント（最初の発言後に1回だけ表示）
-  const LENS_HINTS = {
-    'ことば':  'きょうのたからをあらわす<strong>おもしろいことば</strong>、みつかったかな？',
-    'かず':    '<strong>おおきさ・かず・かたち</strong>をよくみてみよう！くらべてみると楽しいよ',
-    'かがく':  '<strong>なぜ？どうして？</strong>って思ったら、ぜひ聞いてみよう！',
-    'しゃかい': 'だれかの<strong>やくに立ってる</strong>かな？どうやって作られてるんだろう？',
-    'えいご':  'このたから、えいごでなんていうか<strong>いっしょに調べよう</strong>🇺🇸',
-    'じぶん':  '<strong>どんなきもち</strong>がした？すきかきらいか、なんでも話してみよう',
-  };
-  const hintText  = lens ? (LENS_HINTS[lens.id] || '') : '';
-  const showHint  = hintText && userMsgCount >= 1 && userMsgCount <= 3;
+  // フェーズインジケーター
+  const phases = [
+    { n:1, label:'いまどこ？' },
+    { n:2, label:'よくみると？' },
+    { n:3, label:'どう思う？' },
+    { n:4, label:'まとめ' },
+  ];
+  const phaseBar = phases.map(p => `
+    <div class="phase-dot ${S.chatPhase >= p.n ? 'phase-done' : ''} ${S.chatPhase === p.n ? 'phase-active' : ''}">
+      <div class="phase-dot-circle">${S.chatPhase > p.n ? '✓' : p.n}</div>
+      <div class="phase-dot-label">${p.label}</div>
+    </div>`).join('<div class="phase-line"></div>');
 
   return `
-    <div class="chat-progress-wrap">
-      <div class="chat-progress-row">
-        <span class="chat-progress-label">おはなしのながれ</span>
-        <span class="chat-progress-count">${userMsgCount} / ${CHAT_MAX}</span>
-      </div>
-      <div class="chat-progress-bar">
-        <div class="chat-progress-fill" style="width:${pct}%"></div>
-      </div>
+    <div class="phase-bar-wrap">
+      <div class="phase-bar">${phaseBar}</div>
     </div>
-    ${showHint ? `
-      <div class="hint-bubble">
-        <span class="hint-icon">💡</span>
-        <div class="hint-text">${hintText}</div>
-      </div>` : ''}
     <div class="chat-wrap">
       <div class="speaker-row">
         <div class="speaker-btn ${S.speaker === 'child'  ? 'active-child'  : ''}"
@@ -347,12 +353,13 @@ function renderChat() {
         <input class="chat-input" id="chat-in"
           placeholder="${S.speaker === 'child' ? 'かんがえてみよう…' : esc(u.parentName) + 'もかんがえてみよう…'}"
           ${S.isLoading ? 'disabled' : ''}>
-        <button class="chat-send" id="chat-send" onclick="App.sendChat()"
+        <button class="chat-send" onclick="App.sendChat()"
           ${S.isLoading ? 'disabled' : ''}>➤</button>
       </div>
-      ${userMsgCount >= 5
-        ? `<button class="finish-btn" onclick="App.goSummary()">きょうのたからをまとめる ✨</button>`
-        : `<div style="text-align:center;font-size:10px;color:rgba(45,27,0,0.3);margin-bottom:4px">あと${5 - userMsgCount}かい話したらまとめられるよ</div>`}
+      <button class="finish-btn ${isPhase4 ? 'finish-btn-ready' : ''}"
+              onclick="App.goSummary()">
+        📦 たからをしまう
+      </button>
     </div>`;
 }
 
@@ -379,6 +386,8 @@ function renderSummary() {
   const paras = S.summaryOpinion.split(/\n/).filter(Boolean);
   const colors = ['#e8860a','#0a9396','#e76f51','#52b788','#9b89c4','#ffd166'];
   const savedNote = S.currentNote || '';
+  const lastRec = S.records[S.records.length - 1];
+  const alreadyChosen = lastRec && lastRec.status !== null && lastRec.status !== undefined;
 
   return `
     <div class="content">
@@ -417,7 +426,7 @@ function renderSummary() {
           </div>` : ''}
       </div>
 
-      <!-- きろくノート（子ども記入欄） -->
+      <!-- きろくノート -->
       <div class="note-card">
         <div class="note-label">📓 じぶんのきろくノート</div>
         <div style="font-size:10px;color:rgba(45,27,0,0.45);margin-bottom:6px">きょう気づいたこと、おもったことをかいてみよう</div>
@@ -425,15 +434,27 @@ function renderSummary() {
         <button class="note-save-btn" onclick="App.saveNote()">💾 ほぞんする</button>
       </div>
 
-      <div class="summary-actions">
-        <button class="btn-again"     onclick="App.doAgain()">🔄 別のレンズで</button>
-        <button class="btn-next-odai" onclick="App.nextOdai()">つぎのお題 ›</button>
-        <button class="summary-save-btn" onclick="App.saveSummaryImage()" title="がぞうとしてほぞん">📸</button>
-      </div>
+      <!-- 続きの選択 -->
+      ${!alreadyChosen ? `
+        <div class="status-choice">
+          <div class="status-choice-label">このたから、どうする？</div>
+          <div class="status-choice-row">
+            <button class="status-btn status-btn-open" onclick="App.setRecordStatus('open')">
+              🔭 つづきをさがす
+            </button>
+            <button class="status-btn status-btn-closed" onclick="App.setRecordStatus('closed')">
+              ✅ かんけつ！
+            </button>
+          </div>
+        </div>` : `
+        <div class="summary-actions">
+          <button class="btn-again"     onclick="App.doAgain()">🔄 別のレンズで</button>
+          <button class="btn-next-odai" onclick="App.nextOdai()">つぎのお題 ›</button>
+          <button class="summary-save-btn" onclick="App.saveSummaryImage()" title="がぞうとしてほぞん">📸</button>
+        </div>`}
     </div>`;
 }
 
-// ③ サマリー描画後にアニメーション起動（render() の末尾から呼ぶ）
 function triggerFindingAnim() {
   requestAnimationFrame(() => {
     document.querySelectorAll('.finding-item-anim').forEach(el => {
@@ -441,6 +462,7 @@ function triggerFindingAnim() {
     });
   });
 }
+
 // ── カレンダー ──
 function renderCal() {
   const now   = new Date();
@@ -463,7 +485,6 @@ function renderCal() {
   const monthName   = `${year}年${month+1}月`;
   const dows        = ['日','月','火','水','木','金','土'];
 
-  // スタンプに使う絵文字：記録のemojiを使う（なければ🔍）
   let cells = '';
   for (let i = 0; i < firstDay; i++) cells += `<div class="cal-day empty"></div>`;
   for (let d = 1; d <= daysInMonth; d++) {
@@ -494,41 +515,6 @@ function renderCal() {
     ${S.dayModal ? renderDayModal() : ''}`;
 }
 
-// ⑧ カレンダーを開いたときのお宝バースト演出
-function triggerCalBurst() {
-  const emojis = S.records.map(r => r.odai?.emoji).filter(Boolean);
-  if (emojis.length === 0) return;
-
-  // アプリ領域を基準に中央を計算
-  const frame = document.getElementById('app') || document.body;
-  const rect  = frame.getBoundingClientRect();
-  const cx    = rect.left + rect.width  / 2;
-  const cy    = rect.top  + rect.height / 2;
-
-  // 既存レイヤーがあれば除去
-  document.querySelectorAll('.cal-burst-wrap').forEach(el => el.remove());
-
-  const layer = document.createElement('div');
-  layer.className = 'cal-burst-wrap';
-  document.body.appendChild(layer);
-
-  const count = Math.min(emojis.length, 20);
-  for (let i = 0; i < count; i++) {
-    const el    = document.createElement('div');
-    el.className = 'cal-burst-item';
-    const angle  = (i / count) * Math.PI * 2;
-    const dist   = 90 + Math.random() * 120;
-    const tx     = Math.round(Math.cos(angle) * dist);
-    const ty     = Math.round(Math.sin(angle) * dist);
-    el.style.cssText =
-      `left:${cx}px;top:${cy}px;--tx:${tx}px;--ty:${ty}px;` +
-      `animation-delay:${i * 0.045}s;`;
-    el.textContent = emojis[i % emojis.length];
-    layer.appendChild(el);
-  }
-  setTimeout(() => layer.remove(), 1800);
-}
-
 function renderDayModal() {
   const m = S.dayModal;
   const records = S.records.filter(r => {
@@ -550,7 +536,6 @@ function renderBox() {
   const recs = S.records.slice().reverse();
   const lensUsed = [...new Set(S.records.map(r=>r.lens).filter(Boolean))].length;
 
-  // レンズ別集計
   const lensCount = {};
   LENSES.forEach(l => { lensCount[l.id] = 0; });
   S.records.forEach(r => { if (r.lens && lensCount[r.lens] !== undefined) lensCount[r.lens]++; });
@@ -559,8 +544,11 @@ function renderBox() {
   const lensColors = {
     'ことば': 'var(--coral)', 'かず': 'var(--teal)',
     'かがく': 'var(--mint)', 'しゃかい': 'var(--amber)',
-    'えいご': 'var(--lavender)', 'じぶん': '#ffd166'
+    'じぶん': '#ffd166'
   };
+
+  // openの記録を全件取得
+  const openRecs = S.records.map((r,i) => ({r,i})).filter(({r}) => r.status === 'open').reverse();
 
   return `
     <div class="content">
@@ -570,7 +558,22 @@ function renderBox() {
         <div class="stat-box"><div class="stat-num">${lensUsed}</div><div class="stat-lbl">レンズ数</div></div>
       </div>
 
-      <!-- レンズ比較 -->
+      ${openRecs.length > 0 ? `
+        <div class="section-ttl">🔭 つづきのたから</div>
+        ${openRecs.map(({r, i}) => `
+          <div class="takara-item takara-item-open">
+            <div class="takara-item-header">
+              <span class="takara-item-emoji">${r.odai.emoji}</span>
+              <span class="takara-item-name">${esc(r.odai.name)}</span>
+              <span class="takara-status-badge status-open">🔭 つづき</span>
+            </div>
+            <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.4);margin-bottom:8px">${fmtDate(r.date)} · ${esc(r.lens)}レンズ</div>
+            <div class="takara-continue-row">
+              <button class="btn-continue" onclick="App.continueRecord(${i})">つづきをさがす ›</button>
+              <button class="btn-close-status" onclick="App.setRecordStatusByIdx(${i},'closed')">✅ かんけつ</button>
+            </div>
+          </div>`).join('')}` : ''}
+
       ${S.records.length > 0 ? `
         <div class="section-ttl">レンズべつの発見</div>
         <div class="lens-compare-grid">
@@ -589,15 +592,13 @@ function renderBox() {
 
       ${recs.length === 0
         ? `<div class="empty-msg">📦<br>まだたからがないよ<br>さがしにいこう！</div>`
-        : recs.map(r => renderTakaraCard(r, true)).join('')}
+        : `<div class="section-ttl">すべてのたから</div>` + recs.map(r => renderTakaraCard(r, true)).join('')}
     </div>`;
 }
 
 // ── きろくノートタブ ──
 function renderNote() {
   const notes = S.records.filter(r => r.note && r.note.trim()).slice().reverse();
-  const allRecs = S.records.slice().reverse();
-
   return `
     <div class="content">
       <div style="font-family:'Kaisei Decol',serif;font-size:16px;color:var(--deep);margin-bottom:14px">
@@ -621,7 +622,6 @@ function renderNote() {
 }
 
 // ── おきにいり ──
-// ⑦ バッジをリスト上部に移動
 function renderFav() {
   const favs    = S.records.filter(r=>r.bookmarked).slice().reverse();
   const lensUsed = [...new Set(S.records.map(r=>r.lens).filter(Boolean))].length;
@@ -631,8 +631,6 @@ function renderFav() {
       <div style="font-family:'Kaisei Decol',serif;font-size:16px;color:var(--deep);margin-bottom:14px">
         ⭐ おきにいりのたから
       </div>
-
-      <!-- ⑦ バッジを上部に -->
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
         <div class="badge-grid">
@@ -641,11 +639,10 @@ function renderFav() {
           <div class="badge ${S.streak>=3?'badge-on':'badge-off'}">📅 3日れんぞく</div>
           <div class="badge ${S.records.some(r=>r.lens==='じぶん')?'badge-on':'badge-off'}">💛 じぶん探検家</div>
           <div class="badge ${S.records.length>=10?'badge-on':'badge-off'}">⭐ 10こ発見</div>
-          <div class="badge ${S.records.some(r=>r.lens==='えいご')?'badge-on':'badge-off'}">🌍 えいご探検家</div>
-          <div class="badge ${lensUsed>=6?'badge-on':'badge-off'}">🌈 レンズマスター</div>
+          <div class="badge ${S.records.some(r=>r.lens==='しゃかい')?'badge-on':'badge-off'}">🗺 しゃかい探検家</div>
+          <div class="badge ${lensUsed>=5?'badge-on':'badge-off'}">🌈 レンズマスター</div>
         </div>
       </div>
-
       ${favs.length === 0
         ? `<div class="empty-msg">⭐<br>おきにいりがまだないよ<br>🔖を押してみよう！</div>`
         : favs.map(r => renderTakaraCard(r, true)).join('')}
@@ -657,15 +654,18 @@ function renderTakaraCard(r, showFavBtn) {
   const lens   = LENSES.find(l=>l.id===r.lens);
   const colors = ['#e8860a','#0a9396','#e76f51','#52b788','#9b89c4','#ffd166'];
   const idx    = S.records.lastIndexOf(r);
+  const statusBadge = r.status === 'open'
+    ? `<span class="takara-status-badge status-open">🔭 つづき</span>`
+    : r.status === 'closed'
+    ? `<span class="takara-status-badge status-closed">✅ かんけつ</span>`
+    : '';
   return `
     <div class="takara-item">
       <div class="takara-item-header">
         <span class="takara-item-emoji">${r.odai.emoji}</span>
         <span class="takara-item-name">${esc(r.odai.name)}</span>
-        ${lens ? `
-          <div class="takara-item-meta${showFavBtn ? ' takara-item-meta--fav' : ''}">
-            <span class="takara-item-lens">${lens.icon} ${esc(lens.name)}</span>
-          </div>` : (showFavBtn ? '<div class="takara-item-meta takara-item-meta--fav"></div>' : '')}
+        ${lens ? `<span class="takara-item-lens">${lens.icon} ${esc(lens.name)}</span>` : ''}
+        ${statusBadge}
       </div>
       <div class="takara-findings">
         ${(r.findings||[]).map((f,i)=>`
@@ -736,7 +736,6 @@ function renderSettings() {
         </div>
       </div>
 
-      <!-- ウィークリーレポート -->
       <div class="settings-section">
         <div class="settings-ttl">ウィークリーレポート</div>
         <div style="font-size:11px;color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
@@ -755,12 +754,8 @@ function renderSettings() {
           </button>`}
       </div>
 
-      <!-- データ管理 -->
       <div class="settings-section">
         <div class="settings-ttl">データ管理</div>
-        <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.7">
-          きろくをCSVでかんりできるよ
-        </div>
         <div style="display:flex;gap:8px;margin-bottom:8px">
           <button class="btn-secondary" style="flex:1;padding:9px;font-size:var(--fs-sm)"
                   onclick="App.exportCSV()">📤 エクスポート</button>
@@ -769,17 +764,10 @@ function renderSettings() {
         </div>
         <input type="file" id="csv-import-input" accept=".csv"
                style="display:none" onchange="App.importCSV(event)">
-        <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.35);line-height:1.6">
-          ※インポートすると既存データに追加されます
-        </div>
       </div>
 
-      <!-- 意見・要望 -->
       <div class="settings-section">
         <div class="settings-ttl">意見・要望をおくる</div>
-        <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.7">
-          きづいたこと・ほしい機能・バグほうこくなど、なんでも！
-        </div>
         <textarea id="feedback-text" rows="3"
           style="width:100%;border:2px solid rgba(45,27,0,0.1);border-radius:10px;
                  padding:9px 12px;font-family:'Zen Maru Gothic',sans-serif;
@@ -793,5 +781,3 @@ function renderSettings() {
       <button class="btn-primary" onclick="App.saveSettings()">ほぞんする ✓</button>
     </div>`;
 }
-
-// fmtDate / pickRand は tks-logic.js で定義（ODAI_ALL への依存のため）
