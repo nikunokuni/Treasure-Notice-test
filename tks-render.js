@@ -69,13 +69,13 @@ function renderOnboard() {
       </div>
       <div class="form-block">
         <div class="form-label"><em>ねんれい</em>をえらんでね</div>
-        <div class="age-grid">${renderAgeCards(u.ageGroup)}</div>
+        ${renderAgeIconRow(u.ageGroup, "App.toggleObAge()", S.obAgeOpen)}
       </div>`;
   } else if (s === 1) {
     body = `
       <div class="form-block">
         <div class="form-label"><em>まなびのタイプ</em>をえらんでね</div>
-        <div class="type-grid">${renderTypeCards(u.type)}</div>
+        ${renderTypeIconRow(u.type, "App.toggleObType()", S.obTypeOpen)}
       </div>`;
   } else if (s === 2) {
     body = `
@@ -114,6 +114,39 @@ function renderOnboard() {
         ${s > 0 ? `<button class="btn-secondary" onclick="App.obBack()">← もどる</button>` : ''}
       </div>
     </div>`;
+}
+
+
+function renderAgeIconRow(current, toggleFn, isOpen) {
+  return `
+    <div class="icon-row-select" onclick="${toggleFn}">
+      ${agePrompts.map(a => `
+        <div class="icon-sel-item ${current === a.id ? 'icon-sel-active' : ''}">
+          <div class="icon-sel-badge ${current === a.id ? 'icon-sel-badge-on' : ''}">${a.icon}</div>
+          ${current === a.id ? `<div class="icon-sel-current-lbl">${a.label}</div>` : ''}
+        </div>`).join('')}
+      <span class="icon-row-chevron ${isOpen ? 'open' : ''}">▾</span>
+    </div>
+    ${isOpen ? `
+      <div class="icon-row-detail">
+        ${renderAgeCards(current)}
+      </div>` : ''}`;
+}
+
+function renderTypeIconRow(current, toggleFn, isOpen) {
+  return `
+    <div class="icon-row-select" onclick="${toggleFn}">
+      ${TYPES.map(t => `
+        <div class="icon-sel-item ${current === t.id ? 'icon-sel-active' : ''}">
+          <div class="icon-sel-badge ${current === t.id ? 'icon-sel-badge-type' : ''}">${t.icon}</div>
+          ${current === t.id ? `<div class="icon-sel-current-lbl">${t.name}</div>` : ''}
+        </div>`).join('')}
+      <span class="icon-row-chevron ${isOpen ? 'open' : ''}">▾</span>
+    </div>
+    ${isOpen ? `
+      <div class="icon-row-detail">
+        ${renderTypeCards(current)}
+      </div>` : ''}`;
 }
 
 function renderAgeCards(current) {
@@ -176,11 +209,37 @@ function renderHome() {
     : S.streak < 7 ? `すごい！${S.streak}にちれんぞく中🎉`
     : `${S.streak}にち！もうヒーローだ⭐`;
 
-  // 続きのたから（openのもの最新1件）
+  // 通算カウント
+  const totalDays   = calcTotalDays();
+  const totalTakara = S.records.length;
+
+  // 続きのたから
   const openRec = S.records.slice().reverse().find(r => r.status === 'open');
   const openIdx = openRec ? S.records.lastIndexOf(openRec) : -1;
 
+  // きのうのたから
+  const yestRec = getYesterdayRecord();
+  const yestIdx = yestRec ? S.records.lastIndexOf(yestRec) : -1;
+
+  // 先週のウィークリーたから
+  const wt = S.weeklyTakara;
+  const wtIdx = wt ? S.records.lastIndexOf(wt) : -1;
+
+  // ストリーク途切れポップ
+  const brokenPop = S.streakBrokenPop ? `
+    <div class="streak-broken-pop" id="streak-broken-pop">
+      <div class="streak-broken-inner">
+        <div class="streak-broken-emoji">😢</div>
+        <div>
+          <div class="streak-broken-ttl">れんぞくがとぎれちゃったよ</div>
+          <div class="streak-broken-sub">でも${S.streakBrokenCount}にちも続けたのはすごい！また今日からいこう🔥</div>
+        </div>
+        <button class="streak-broken-close" onclick="App.dismissStreakPop()">✕</button>
+      </div>
+    </div>` : '';
+
   return `
+    ${brokenPop}
     <div class="content">
       <div class="hero-streak">
         <div class="hero-streak-top">
@@ -194,6 +253,22 @@ function renderHome() {
           <div style="display:flex;gap:3px;align-items:center">${weekDots}</div>
         </div>
         <div class="hero-streak-msg">${streakMsg}</div>
+      </div>
+
+      <!-- 3つ横並びカウント -->
+      <div class="home-stats-row">
+        <div class="home-stat-box">
+          <div class="home-stat-num">${S.streak}</div>
+          <div class="home-stat-lbl">🔥 れんぞく</div>
+        </div>
+        <div class="home-stat-box">
+          <div class="home-stat-num">${totalDays}</div>
+          <div class="home-stat-lbl">📅 つうさん日</div>
+        </div>
+        <div class="home-stat-box">
+          <div class="home-stat-num">${totalTakara}</div>
+          <div class="home-stat-lbl">📦 たから数</div>
+        </div>
       </div>
 
       <div class="home-greeting">
@@ -222,6 +297,32 @@ function renderHome() {
               <div class="continue-card-sub">${fmtDate(openRec.date)} · ${esc(openRec.lens)}レンズ</div>
             </div>
             <span class="continue-card-arrow">›</span>
+          </div>
+        </div>` : ''}
+
+      ${yestRec ? `
+        <div class="yesterday-card" onclick="App.continueRecord(${yestIdx})">
+          <div class="yesterday-card-label">📖 きのうのたから</div>
+          <div class="yesterday-card-body">
+            <span class="yesterday-card-emoji">${yestRec.odai.emoji}</span>
+            <div style="flex:1">
+              <div class="yesterday-card-name">${esc(yestRec.odai.name)}</div>
+              ${yestRec.findings?.[0] ? `<div class="yesterday-card-finding">💡 ${esc(yestRec.findings[0])}</div>` : ''}
+            </div>
+            <span class="yesterday-card-cta">つづきをさがす ›</span>
+          </div>
+        </div>` : ''}
+
+      ${wt ? `
+        <div class="weekly-card" onclick="App.continueRecord(${wtIdx})">
+          <div class="weekly-card-label">🗓 せんしゅうのたから</div>
+          <div class="weekly-card-body">
+            <span class="weekly-card-emoji">${wt.odai.emoji}</span>
+            <div style="flex:1">
+              <div class="weekly-card-name">${esc(wt.odai.name)}</div>
+              <div class="weekly-card-sub">${fmtDate(wt.date)} · ${esc(wt.lens)}レンズ</div>
+            </div>
+            <span style="font-size:16px;color:rgba(155,137,196,0.5)">›</span>
           </div>
         </div>` : ''}
 
@@ -269,6 +370,7 @@ function renderHome() {
         </div>` : ''}
     </div>`;
 }
+
 
 // ── レンズ選択 ──
 function renderLens() {
@@ -550,6 +652,36 @@ function renderBox() {
   // openの記録を全件取得
   const openRecs = S.records.map((r,i) => ({r,i})).filter(({r}) => r.status === 'open').reverse();
 
+  // タグ（ラベル+カスタム）とレンズ、50個以上で表示
+  const showFilter = S.records.length >= 50;
+  const labelTags = [...new Set(S.records.map(r=>r.odai?.label).filter(Boolean))].sort();
+  const allTags = [...labelTags, ...S.customTags.filter(t=>!labelTags.includes(t))];
+  const lensTagIds = LENSES.map(l=>l.id);
+
+  // フィルタリング
+  let filteredRecs = recs;
+  if (S.boxFilterTag) {
+    if (lensTagIds.includes(S.boxFilterTag)) {
+      filteredRecs = recs.filter(r => r.lens === S.boxFilterTag);
+    } else {
+      filteredRecs = recs.filter(r => r.odai?.label === S.boxFilterTag || (r.odai?.customTags||[]).includes(S.boxFilterTag));
+    }
+  }
+
+  const filterBar = showFilter ? `
+    <div class="box-filter-bar">
+      <div class="box-filter-scroll">
+        <div class="box-filter-chip ${!S.boxFilterTag?'active':''}" onclick="App.setBoxFilter(null)">すべて</div>
+        ${allTags.map(t => `<div class="box-filter-chip ${S.boxFilterTag===t?'active':''}" onclick="App.setBoxFilter('${esc(t)}')">${esc(t)}</div>`).join('')}
+        <div class="box-filter-sep"></div>
+        ${LENSES.map(l => `<div class="box-filter-chip box-filter-lens ${S.boxFilterTag===l.id?'active':''}" onclick="App.setBoxFilter('${l.id}')">${l.icon} ${esc(l.name)}</div>`).join('')}
+      </div>
+      <div class="box-filter-addtag">
+        <input class="box-filter-taginput" id="custom-tag-input" placeholder="タグをつくる…">
+        <button class="box-filter-tagbtn" onclick="App.addCustomTag()">＋</button>
+      </div>
+    </div>` : '';
+
   return `
     <div class="content">
       <div class="stats-row">
@@ -590,11 +722,14 @@ function renderBox() {
             </div>`).join('')}
         </div>` : ''}
 
-      ${recs.length === 0
-        ? `<div class="empty-msg">📦<br>まだたからがないよ<br>さがしにいこう！</div>`
-        : `<div class="section-ttl">すべてのたから</div>` + recs.map(r => renderTakaraCard(r, true)).join('')}
+      ${filterBar}
+
+      ${filteredRecs.length === 0
+        ? `<div class="empty-msg">📦<br>${S.boxFilterTag ? 'このタグのたからはまだないよ' : 'まだたからがないよ<br>さがしにいこう！'}</div>`
+        : `<div class="section-ttl">すべてのたから ${S.boxFilterTag?`（${esc(S.boxFilterTag)}）`:''}</div>` + filteredRecs.map(r => renderTakaraCard(r, true)).join('')}
     </div>`;
 }
+
 
 // ── きろくノートタブ ──
 function renderNote() {
@@ -623,8 +758,24 @@ function renderNote() {
 
 // ── おきにいり ──
 function renderFav() {
-  const favs    = S.records.filter(r=>r.bookmarked).slice().reverse();
-  const lensUsed = [...new Set(S.records.map(r=>r.lens).filter(Boolean))].length;
+  const favs = S.records.filter(r=>r.bookmarked).slice().reverse();
+
+  // バッヂ評価
+  const badgeResults = BADGES.map(b => ({ ...b, earned: b.check(S) }));
+
+  // バッヂモーダル
+  const badgeModalHtml = S.badgeModal ? `
+    <div class="modal-overlay" onclick="App.closeBadge()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="text-align:center">
+        <button class="modal-close" onclick="App.closeBadge()">✕</button>
+        <div style="font-size:52px;margin:8px 0">${S.badgeModal.icon}</div>
+        <div style="font-family:'Kaisei Decol',serif;font-size:var(--fs-xl);color:var(--deep);margin-bottom:6px">${esc(S.badgeModal.name)}</div>
+        <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);line-height:1.7;margin-bottom:8px">${esc(S.badgeModal.cond)}</div>
+        <div class="badge-modal-status ${badgeResults.find(b=>b.id===S.badgeModal.id)?.earned ? 'earned' : 'not-earned'}">
+          ${badgeResults.find(b=>b.id===S.badgeModal.id)?.earned ? '✅ かくとくずみ！' : '🔒 まだかくとくしていないよ'}
+        </div>
+      </div>
+    </div>` : '';
 
   return `
     <div class="content">
@@ -633,21 +784,22 @@ function renderFav() {
       </div>
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
-        <div class="badge-grid">
-          <div class="badge ${S.records.length>=1?'badge-on':'badge-off'}">🔍 はじめての発見</div>
-          <div class="badge ${S.records.some(r=>r.lens==='かがく')?'badge-on':'badge-off'}">🔬 かがく探検家</div>
-          <div class="badge ${S.streak>=3?'badge-on':'badge-off'}">📅 3日れんぞく</div>
-          <div class="badge ${S.records.some(r=>r.lens==='じぶん')?'badge-on':'badge-off'}">💛 じぶん探検家</div>
-          <div class="badge ${S.records.length>=10?'badge-on':'badge-off'}">⭐ 10こ発見</div>
-          <div class="badge ${S.records.some(r=>r.lens==='しゃかい')?'badge-on':'badge-off'}">🗺 しゃかい探検家</div>
-          <div class="badge ${lensUsed>=5?'badge-on':'badge-off'}">🌈 レンズマスター</div>
+        <div class="badge-grid-large">
+          ${badgeResults.map(b => `
+            <div class="badge-large ${b.earned ? 'badge-large-on' : 'badge-large-off'}"
+                 onclick="App.openBadge('${b.id}')">
+              <div class="badge-large-icon">${b.earned ? b.icon : '○'}</div>
+              <div class="badge-large-name">${esc(b.name)}</div>
+            </div>`).join('')}
         </div>
       </div>
       ${favs.length === 0
         ? `<div class="empty-msg">⭐<br>おきにいりがまだないよ<br>🔖を押してみよう！</div>`
         : favs.map(r => renderTakaraCard(r, true)).join('')}
-    </div>`;
+    </div>
+    ${badgeModalHtml}`;
 }
+
 
 // ── たからカード（共通） ──
 function renderTakaraCard(r, showFavBtn) {
@@ -697,11 +849,11 @@ function renderSettings() {
         </div>
         <div class="settings-field">
           <div class="settings-field-label">ねんれい</div>
-          <div class="age-grid">${renderAgeCards(u.ageGroup)}</div>
+          ${renderAgeIconRow(u.ageGroup, "App.toggleSettingsAge()", S.settingsAgeOpen)}
         </div>
         <div class="settings-field">
           <div class="settings-field-label">まなびのタイプ</div>
-          <div class="type-grid">${renderTypeCards(u.type)}</div>
+          ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
         </div>
         <div class="settings-field">
           <div class="settings-field-label">すきなもの</div>
@@ -768,14 +920,11 @@ function renderSettings() {
 
       <div class="settings-section">
         <div class="settings-ttl">意見・要望をおくる</div>
-        <textarea id="feedback-text" rows="3"
-          style="width:100%;border:2px solid rgba(45,27,0,0.1);border-radius:10px;
-                 padding:9px 12px;font-family:'Zen Maru Gothic',sans-serif;
-                 font-size:var(--fs-sm);color:var(--deep);outline:none;
-                 background:var(--paper2);resize:none;margin-bottom:8px;line-height:1.7"
-          placeholder="ここにかいてね…"></textarea>
+        <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);margin-bottom:10px;line-height:1.6">
+          アプリをよりよくするために、きいてね！
+        </div>
         <button class="btn-primary" style="margin-bottom:0"
-                onclick="App.sendFeedback()">📨 おくる</button>
+                onclick="App.sendFeedback()">📨 フォームをひらく</button>
       </div>
 
       <button class="btn-primary" onclick="App.saveSettings()">ほぞんする ✓</button>
