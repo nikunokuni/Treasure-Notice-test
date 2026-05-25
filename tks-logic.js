@@ -1,5 +1,5 @@
 /* ═══════════════════════════════
-   たからさがし — logic  v6
+   たからさがし — logic  v7
    ═══════════════════════════════ */
 
 // ── 定数 ──
@@ -18,6 +18,31 @@ const agePrompts = [
   { id:'young',  label:'3〜5さい',  icon:'🐣', desc:'ひらがなメイン・短い文・五感中心' },
   { id:'middle', label:'6〜8さい',  icon:'🌱', desc:'すこし複雑な問いかけも楽しめる' },
   { id:'older',  label:'9〜12さい', icon:'🌳', desc:'論理的な思考・深い考察も可能' },
+];
+
+
+// ── バッヂ定義（20個） ──
+const BADGES = [
+  { id:'first',      icon:'🔍', name:'はじめての発見',   cond:'たからさがしを1回やった',           check: s => s.records.length >= 1 },
+  { id:'kagaku',     icon:'🔬', name:'かがく探検家',     cond:'かがくレンズで1回探検した',         check: s => s.records.some(r=>r.lens==="かがく") },
+  { id:'streak3',    icon:'📅', name:'3日れんぞく',      cond:'3日れんぞくでたからさがしをした',   check: s => s.streak >= 3 },
+  { id:'jibun',      icon:'💛', name:'じぶん探検家',     cond:'じぶんレンズで1回探検した',         check: s => s.records.some(r=>r.lens==="じぶん") },
+  { id:'ten',        icon:'⭐', name:'10こ発見',         cond:'たからを10こ集めた',               check: s => s.records.length >= 10 },
+  { id:'shakai',     icon:'🗺', name:'しゃかい探検家',   cond:'しゃかいレンズで1回探検した',       check: s => s.records.some(r=>r.lens==="しゃかい") },
+  { id:'lensmaster', icon:'🌈', name:'レンズマスター',   cond:'5つのレンズをすべて使った',         check: s => new Set(s.records.map(r=>r.lens).filter(Boolean)).size >= 5 },
+  { id:'kotoba',     icon:'📖', name:'ことば探検家',     cond:'ことばレンズで1回探検した',         check: s => s.records.some(r=>r.lens==="ことば") },
+  { id:'kazu',       icon:'🔢', name:'かず探検家',       cond:'かずレンズで1回探検した',           check: s => s.records.some(r=>r.lens==="かず") },
+  { id:'streak7',    icon:'🔥', name:'1週間れんぞく',    cond:'7日れんぞくでたからさがしをした',   check: s => s.streak >= 7 },
+  { id:'twenty',     icon:'💎', name:'20こ発見',         cond:'たからを20こ集めた',               check: s => s.records.length >= 20 },
+  { id:'photo',      icon:'📷', name:'カメラ探検家',     cond:'しゃしんでたからをみつけた',        check: s => s.records.some(r=>r.odai&&r.odai.fromPhoto) },
+  { id:'bookmark5',  icon:'🔖', name:'コレクター',       cond:'おきにいりを5こ集めた',             check: s => s.records.filter(r=>r.bookmarked).length >= 5 },
+  { id:'parent',     icon:'👨‍👧', name:'いっしょに探検',   cond:'親も参加した会話があった',           check: s => s.records.some(r=>r.hadParent) },
+  { id:'fifty',      icon:'🏆', name:'たから50こ！',     cond:'たからを50こ集めた',               check: s => s.records.length >= 50 },
+  { id:'streak30',   icon:'🌟', name:'1ヶ月れんぞく',    cond:'30日れんぞくでたからさがしをした',  check: s => s.streak >= 30 },
+  { id:'custom',     icon:'🏷', name:'タグはかせ',       cond:'じぶんでタグを3つ作った',           check: s => (s.customTags||[]).length >= 3 },
+  { id:'note10',     icon:'📓', name:'きろくノート名人', cond:'ノートを10こ書いた',               check: s => s.records.filter(r=>r.note&&r.note.trim()).length >= 10 },
+  { id:'sameodai3',  icon:'🎯', name:'しつこい探検家',   cond:'同じお題を3回以上探検した',         check: s => { const c={}; s.records.forEach(r=>{ const k=r.odai&&r.odai.name||""; c[k]=(c[k]||0)+1; }); return Object.values(c).some(n=>n>=3); } },
+  { id:'allcat',     icon:'🗂', name:'カテゴリマスター', cond:'5つのカテゴリを制覇した',           check: s => new Set(s.records.map(r=>r.odai&&r.odai.label).filter(Boolean)).size >= 5 },
 ];
 
 const ODAI_ALL = [
@@ -144,10 +169,19 @@ const S = {
   fontSize: 'medium',
   weeklyReport: '',
   reportLoading: false,
-  // 続きセッション用
   prevRecord: null,
-  // フェーズ管理
-  chatPhase: 1,  // 1〜4
+  chatPhase: 1,
+  // v7追加
+  boxFilterTag: null,
+  badgeModal: null,
+  streakBrokenPop: false,
+  streakBrokenCount: 0,
+  weeklyTakara: null,
+  customTags: [],
+  settingsAgeOpen: false,
+  settingsTypeOpen: false,
+  obAgeOpen: false,
+  obTypeOpen: false,
 };
 
 // ── localStorage 永続化 ──
@@ -165,6 +199,8 @@ function persistSave() {
       showOpinion:   S.showOpinion,
       fontSize:      S.fontSize,
       weeklyReport:  S.weeklyReport,
+      customTags:    S.customTags,
+      weeklyTakara:  S.weeklyTakara,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch(e) { console.warn('save failed:', e); }
@@ -191,7 +227,19 @@ function persistLoad() {
       showOpinion:   saved.showOpinion   ?? true,
       fontSize:      saved.fontSize      ?? 'medium',
       weeklyReport:  saved.weeklyReport  ?? '',
+      customTags:    saved.customTags    ?? [],
+      weeklyTakara:  saved.weeklyTakara  ?? null,
     });
+    // ストリーク途切れチェック（起動時）
+    const _today = new Date().toDateString();
+    const _yesterday = new Date(Date.now()-86400000).toDateString();
+    if (S._lastPlayDate && S._lastPlayDate !== _today && S._lastPlayDate !== _yesterday && S.streak > 0) {
+      S.streakBrokenPop = true;
+      S.streakBrokenCount = S.streak;
+      S.streak = 0;
+    }
+    // ウィークリーたから更新（月曜リセット）
+    _refreshWeeklyTakara();
   } catch(e) { console.warn('load failed:', e); }
 }
 
@@ -204,6 +252,40 @@ function opinionMaxChars() {
 
 function applyFontSize() {
   document.body.classList.toggle('fs-large', S.fontSize === 'large');
+}
+
+// ── ウィークリーたから（先週・月曜リセット） ──
+function _refreshWeeklyTakara() {
+  const now = new Date();
+  const day = now.getDay(); // 0=日, 1=月
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((day + 6) % 7));
+  monday.setHours(0,0,0,0);
+  const lastMonday = new Date(monday);
+  lastMonday.setDate(monday.getDate() - 7);
+
+  const lastWeekRecs = S.records.filter(r => {
+    const d = new Date(r.date);
+    return d >= lastMonday && d < monday;
+  });
+  if (lastWeekRecs.length > 0) {
+    const pick = lastWeekRecs[Math.floor(Math.random() * lastWeekRecs.length)];
+    S.weeklyTakara = pick;
+  } else {
+    S.weeklyTakara = null;
+  }
+}
+
+// ── 通算プレイ日数（ユニーク日数） ──
+function calcTotalDays() {
+  const days = new Set(S.records.map(r => new Date(r.date).toDateString()));
+  return days.size;
+}
+
+// ── きのうのたから ──
+function getYesterdayRecord() {
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  return S.records.slice().reverse().find(r => new Date(r.date).toDateString() === yesterday) || null;
 }
 
 // ── フェーズ判定 ──
@@ -1043,6 +1125,43 @@ const App = {
       a.click();
     } catch(err) { console.error('saveSummaryImage error:', err); }
   },
+
+  // ── たからばこ フィルター ──
+  setBoxFilter(tag) {
+    S.boxFilterTag = S.boxFilterTag === tag ? null : tag;
+    render();
+  },
+
+  // ── バッヂモーダル ──
+  openBadge(id) {
+    S.badgeModal = BADGES.find(b=>b.id===id) || null;
+    render();
+  },
+  closeBadge() { S.badgeModal=null; render(); },
+
+  // ── ストリーク途切れポップ ──
+  dismissStreakPop() { S.streakBrokenPop=false; render(); },
+
+  // ── カスタムタグ追加 ──
+  addCustomTag() {
+    const inp = document.getElementById('custom-tag-input');
+    const val = inp?.value?.trim();
+    if (!val) return;
+    if (!S.customTags.includes(val)) {
+      S.customTags.push(val);
+      persistSave();
+    }
+    if (inp) inp.value = '';
+    render();
+  },
+
+  // ── オンボーディング アコーディオン ──
+  toggleObAge()  { S.obAgeOpen  = !S.obAgeOpen;  render(); },
+  toggleObType() { S.obTypeOpen = !S.obTypeOpen; render(); },
+
+  // ── 設定 アコーディオン ──
+  toggleSettingsAge()  { S.settingsAgeOpen  = !S.settingsAgeOpen;  render(); },
+  toggleSettingsType() { S.settingsTypeOpen = !S.settingsTypeOpen; render(); },
 
   applyUpdate() {
     if (App._waitingSW) {
