@@ -834,3 +834,200 @@ body {
   display:flex; align-items:center; justify-content:space-between;
 }
 .hero-streak-label { font-size:var(--fs-xs); color:rgba(255,255,255,0.75); letter-spacing:.1em; }
+
+/* ══════════════════════════════
+   v7 追加スタイル
+   ══════════════════════════════ */
+
+/* ── ホーム：3つ横並びカウント ── */
+.home-stats-row {
+  display:flex; gap:8px; margin-bottom:14px;
+}
+.home-stat-box {
+  flex:1; background:white; border-radius:14px; padding:10px 6px;
+  text-align:center; border:1.5px solid rgba(45,27,0,0.06);
+  box-shadow:0 1px 4px rgba(45,27,0,0.04);
+}
+.home-stat-num {
+  font-family:'Kaisei Decol',serif; font-size:22px; color:var(--amber); line-height:1.1;
+}
+.home-stat-lbl {
+  font-size:9px; color:rgba(45,27,0,0.4); letter-spacing:.08em; margin-top:2px;
+}
+
+/* ── ホーム：きのうのたから ── */
+.yesterday-card {
+  background:linear-gradient(135deg,rgba(232,134,10,0.10),rgba(232,134,10,0.04));
+  border:1.5px solid rgba(232,134,10,0.25); border-radius:16px;
+  padding:12px 14px; margin-bottom:12px; cursor:pointer;
+  transition:transform .15s;
+}
+.yesterday-card:active { transform:scale(0.98); }
+.yesterday-card-label {
+  font-size:var(--fs-xs); letter-spacing:.15em; color:var(--amber);
+  font-weight:700; margin-bottom:8px;
+}
+.yesterday-card-body {
+  display:flex; align-items:center; gap:10px;
+}
+.yesterday-card-emoji { font-size:26px; flex-shrink:0; }
+.yesterday-card-name  { font-family:'Kaisei Decol',serif; font-size:var(--fs-lg); color:var(--deep); }
+.yesterday-card-finding {
+  font-size:var(--fs-xs); color:rgba(45,27,0,0.5); margin-top:3px; line-height:1.5;
+}
+.yesterday-card-cta {
+  font-size:10px; font-weight:700; color:var(--amber);
+  background:rgba(232,134,10,0.1); border-radius:12px;
+  padding:4px 8px; white-space:nowrap; flex-shrink:0;
+}
+
+/* ── ホーム：ウィークリーたから ── */
+.weekly-card {
+  background:linear-gradient(135deg,rgba(155,137,196,0.12),rgba(155,137,196,0.04));
+  border:1.5px solid rgba(155,137,196,0.3); border-radius:16px;
+  padding:12px 14px; margin-bottom:12px; cursor:pointer;
+  transition:transform .15s;
+}
+.weekly-card:active { transform:scale(0.98); }
+.weekly-card-label {
+  font-size:var(--fs-xs); letter-spacing:.15em; color:var(--lavender);
+  font-weight:700; margin-bottom:8px;
+}
+.weekly-card-body {
+  display:flex; align-items:center; gap:10px;
+}
+.weekly-card-emoji { font-size:26px; flex-shrink:0; }
+.weekly-card-name  { font-family:'Kaisei Decol',serif; font-size:var(--fs-lg); color:var(--deep); }
+.weekly-card-sub   { font-size:var(--fs-xs); color:rgba(45,27,0,0.45); margin-top:2px; }
+
+/* ── ストリーク途切れポップ ── */
+.streak-broken-pop {
+  position:fixed; top:0; left:0; right:0; z-index:300;
+  padding:10px 14px;
+  animation:streak-pop-in .4s cubic-bezier(.34,1.4,.64,1), streak-pop-out .5s 3.5s ease-in forwards;
+}
+@keyframes streak-pop-in {
+  from { transform:translateY(-100%); opacity:0; }
+  to   { transform:translateY(0);     opacity:1; }
+}
+@keyframes streak-pop-out {
+  from { transform:translateY(0);     opacity:1; }
+  to   { transform:translateY(-100%); opacity:0; }
+}
+.streak-broken-inner {
+  background:linear-gradient(135deg,#fff3f0,#ffe8e4);
+  border:1.5px solid rgba(231,111,81,0.3); border-radius:16px;
+  padding:12px 14px; display:flex; align-items:center; gap:10px;
+  box-shadow:0 4px 16px rgba(231,111,81,0.2);
+}
+.streak-broken-emoji { font-size:28px; flex-shrink:0; }
+.streak-broken-ttl   { font-size:var(--fs-base); font-weight:700; color:var(--deep); }
+.streak-broken-sub   { font-size:var(--fs-xs); color:rgba(45,27,0,0.5); margin-top:2px; line-height:1.5; }
+.streak-broken-close {
+  margin-left:auto; background:none; border:none; font-size:16px;
+  color:rgba(45,27,0,0.3); cursor:pointer; flex-shrink:0; padding:4px;
+}
+
+/* ── バッヂグリッド（大） ── */
+.badge-grid-large {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px;
+}
+.badge-large {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:10px 4px; border-radius:14px; cursor:pointer;
+  transition:transform .15s;
+}
+.badge-large:active { transform:scale(0.94); }
+.badge-large-on {
+  background:var(--amber-pale); border:1.5px solid rgba(232,134,10,0.2);
+}
+.badge-large-off {
+  background:rgba(45,27,0,0.04); border:1.5px solid rgba(45,27,0,0.07);
+}
+.badge-large-icon {
+  font-size:28px; line-height:1;
+}
+.badge-large-off .badge-large-icon {
+  font-size:22px; color:rgba(45,27,0,0.2);
+}
+.badge-large-name {
+  font-size:9px; text-align:center; line-height:1.35; color:rgba(45,27,0,0.5);
+  font-weight:700;
+}
+.badge-large-on .badge-large-name { color:var(--amber); }
+.badge-modal-status {
+  display:inline-block; padding:6px 16px; border-radius:20px;
+  font-size:var(--fs-sm); font-weight:700; margin-top:4px;
+}
+.badge-modal-status.earned     { background:var(--amber-pale); color:var(--amber); }
+.badge-modal-status.not-earned { background:rgba(45,27,0,0.06); color:rgba(45,27,0,0.4); }
+
+/* ── たからばこ：フィルターバー ── */
+.box-filter-bar {
+  margin-bottom:12px;
+}
+.box-filter-scroll {
+  display:flex; gap:6px; overflow-x:auto; padding-bottom:6px;
+  scrollbar-width:none;
+}
+.box-filter-scroll::-webkit-scrollbar { display:none; }
+.box-filter-chip {
+  flex-shrink:0; padding:5px 12px; border-radius:20px;
+  border:1.5px solid rgba(45,27,0,0.1); background:white;
+  font-size:var(--fs-xs); color:rgba(45,27,0,0.5); cursor:pointer;
+  white-space:nowrap; font-weight:700; transition:all .15s;
+}
+.box-filter-chip.active {
+  background:var(--amber-pale); border-color:var(--amber); color:var(--amber);
+}
+.box-filter-lens { border-color:rgba(231,111,81,0.2); }
+.box-filter-lens.active { background:rgba(231,111,81,0.1); color:var(--coral); border-color:var(--coral); }
+.box-filter-sep { width:1.5px; background:rgba(45,27,0,0.1); flex-shrink:0; margin:0 2px; border-radius:2px; }
+.box-filter-addtag {
+  display:flex; gap:6px; margin-top:8px; align-items:center;
+}
+.box-filter-taginput {
+  flex:1; border:2px solid rgba(45,27,0,0.1); border-radius:20px;
+  padding:6px 12px; font-family:'Zen Maru Gothic',sans-serif; font-size:var(--fs-sm);
+  color:var(--deep); outline:none; background:var(--paper2);
+}
+.box-filter-taginput:focus { border-color:var(--amber); }
+.box-filter-tagbtn {
+  width:30px; height:30px; border-radius:50%; background:var(--amber); border:none;
+  font-size:16px; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+/* ── アイコン行選択（年齢・タイプ） ── */
+.icon-row-select {
+  display:flex; align-items:center; gap:10px;
+  background:var(--paper2); border-radius:12px; padding:10px 12px;
+  cursor:pointer; border:1.5px solid rgba(45,27,0,0.08);
+  margin-bottom:4px;
+}
+.icon-sel-item {
+  display:flex; flex-direction:column; align-items:center; gap:3px; flex:1;
+}
+.icon-sel-badge {
+  width:36px; height:36px; border-radius:50%; background:rgba(45,27,0,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+  transition:all .15s;
+}
+.icon-sel-badge-on   { background:var(--amber-pale); box-shadow:0 0 0 2px var(--amber); }
+.icon-sel-badge-type { background:rgba(10,147,150,0.1); box-shadow:0 0 0 2px var(--teal); }
+.icon-sel-current-lbl {
+  font-size:8px; font-weight:700; color:var(--amber); letter-spacing:.05em;
+  white-space:nowrap;
+}
+.icon-row-chevron {
+  font-size:13px; color:rgba(45,27,0,0.3); margin-left:auto; transition:transform .2s;
+}
+.icon-row-chevron.open { transform:rotate(180deg); }
+.icon-row-detail {
+  padding-top:8px;
+  animation:detail-open .2s ease-out;
+}
+@keyframes detail-open {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
