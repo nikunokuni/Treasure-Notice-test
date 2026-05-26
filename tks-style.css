@@ -893,8 +893,187 @@ body {
 @keyframes detail-open { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
 
 /* ══════════════════════════════
-   v9 追加スタイル
+   v10 追加スタイル
    ══════════════════════════════ */
+
+/* ── ホーム：メインアクションブロック ── */
+.main-block {
+  background: linear-gradient(135deg, rgba(232,134,10,0.12), rgba(232,134,10,0.05));
+  border: 2px solid rgba(232,134,10,0.3);
+  border-radius: 22px;
+  padding: 16px 14px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 20px rgba(232,134,10,0.12);
+}
+.main-block-label {
+  font-family: 'Kaisei Decol', serif;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
+}
+.main-block .main-actions { margin-bottom: 0; }
+
+/* ── ホーム：ランダムミニカード ── */
+.rand-card-mini {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(45,27,0,0.04);
+  border: 1.5px dashed rgba(45,27,0,0.12);
+  border-radius: 12px; padding: 8px 12px;
+  cursor: pointer; margin-bottom: 4px;
+  font-size: var(--fs-xs); color: rgba(45,27,0,0.5);
+}
+.rand-card-mini:active { background: rgba(45,27,0,0.07); }
+.rand-mini-label { flex: 1; font-weight: 700; }
+.rand-mini-reroll {
+  font-size: 10px; color: rgba(45,27,0,0.4);
+  background: white; border: 1px solid rgba(45,27,0,0.1);
+  border-radius: 10px; padding: 3px 8px; cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── ホーム：まえのたから（ミニ横並び） ── */
+.prev-takara-mini-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.prev-takara-mini {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border-radius: 12px; padding: 10px 10px;
+  border: 1.5px solid rgba(45,27,0,0.06);
+  cursor: pointer; transition: transform .12s;
+  min-height: 56px;
+}
+.prev-takara-mini:active { transform: scale(0.97); }
+.prev-mini-emoji { font-size: 22px; flex-shrink: 0; }
+.prev-mini-info { flex: 1; min-width: 0; }
+.prev-mini-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: .1em;
+  color: var(--amber); margin-bottom: 2px;
+}
+.prev-mini-name {
+  font-size: var(--fs-sm); font-weight: 700;
+  color: var(--deep); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.prev-mini-meta { font-size: 9px; color: rgba(45,27,0,0.35); }
+
+/* ── チャット：簡易フェーズバー ── */
+.phase-bar-wrap-simple {
+  padding: 8px 20px 6px; flex-shrink: 0;
+  background: var(--paper);
+  border-bottom: 1px solid rgba(232,134,10,0.08);
+}
+.phase-bar-simple {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0;
+}
+.phase-dot-simple {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(45,27,0,0.12); transition: all .3s;
+  flex-shrink: 0;
+}
+.phase-dot-simple.phase-s-done { background: var(--mint); }
+.phase-dot-simple.phase-s-active {
+  background: var(--amber); width: 12px; height: 12px;
+  box-shadow: 0 0 0 3px rgba(232,134,10,0.15);
+}
+.phase-line-simple {
+  flex: 1; max-width: 40px; height: 2px;
+  background: rgba(45,27,0,0.08);
+}
+
+/* ── たからばこ：ヒートマップ ── */
+.heatmap-card {
+  background: white; border-radius: 14px; padding: 14px;
+  margin-bottom: 14px; border: 1.5px solid rgba(45,27,0,0.06);
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  gap: 3px; margin-bottom: 8px;
+}
+.heat-cell {
+  aspect-ratio: 1; border-radius: 3px;
+}
+.heat-0 { background: rgba(45,27,0,0.06); }
+.heat-1 { background: var(--amber-pale); }
+.heat-2 { background: var(--amber-light); opacity: 0.7; }
+.heat-3 { background: var(--amber); }
+.heat-today { outline: 2px solid var(--amber); outline-offset: 1px; }
+.heatmap-legend {
+  display: flex; align-items: center; gap: 4px;
+  justify-content: flex-end;
+  font-size: 9px; color: rgba(45,27,0,0.35);
+}
+
+/* ── カラーテーマ選択グリッド ── */
+.color-theme-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.color-theme-chip {
+  border-radius: 12px; padding: 10px 4px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  cursor: pointer; transition: transform .15s;
+  border: 2.5px solid transparent; min-height: 56px;
+  justify-content: center;
+}
+.color-theme-chip.selected {
+  border-color: white;
+  box-shadow: 0 0 0 2px rgba(45,27,0,0.3);
+  transform: scale(1.05);
+}
+.color-theme-chip:active { transform: scale(0.96); }
+.color-theme-check {
+  font-size: 14px; font-weight: 900; color: white;
+  line-height: 1; min-height: 18px;
+}
+.color-theme-name {
+  font-size: 9px; font-weight: 700; color: white;
+  letter-spacing: .05em; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* ── おきにいり：バッヂ新規取得モーダル ── */
+.badge-new-overlay { background: rgba(0,0,0,0.6); }
+.badge-new-box {
+  text-align: center; overflow: visible !important;
+  animation: badge-pop-in .5s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes badge-pop-in {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.badge-new-burst {
+  font-size: 36px; animation: burst-spin 1s ease-out;
+  display: block; margin-bottom: 4px;
+}
+@keyframes burst-spin {
+  from { transform: scale(0) rotate(-180deg); }
+  to   { transform: scale(1) rotate(0deg); }
+}
+.badge-new-icon {
+  font-size: 72px; line-height: 1;
+  display: block; margin: 8px 0;
+  animation: badge-icon-bounce .8s .2s cubic-bezier(.34,1.6,.64,1) both;
+}
+@keyframes badge-icon-bounce {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+.badge-new-ttl {
+  font-size: var(--fs-xs); letter-spacing: .2em;
+  color: var(--amber); font-weight: 700; margin-bottom: 6px;
+}
+.badge-new-name {
+  font-family: 'Kaisei Decol', serif;
+  font-size: var(--fs-xl); color: var(--deep);
+  margin-bottom: 6px;
+}
+.badge-new-cond {
+  font-size: var(--fs-xs); color: rgba(45,27,0,0.45);
+  line-height: 1.6;
+}
 
 /* ── ホーム：まえのたから ── */
 .prev-takara-list { display:flex; flex-direction:column; gap:6px; }

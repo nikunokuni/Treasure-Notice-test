@@ -3,7 +3,95 @@
    ═══════════════════════════════ */
 
 // ── 定数 ──
-const PARENT_OPTS = ['パパ','ママ','ともだち','その他'];
+const PARENT_OPTS = ['パパ','ママ','きょうだい','ともだち','一人','その他'];
+
+// ── カラーテーマ（12色相環） ──
+const COLOR_THEMES = [
+  { id:'amber',   name:'あんばー',   emoji:'🟡',
+    amber:'#e8860a', amberLight:'#ffd166', amberPale:'#fff3cd',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#2d1b00',  paper:'#fdf6e3', paper2:'#fef9f0',
+    lavender:'#9b89c4' },
+  { id:'red',     name:'あか',       emoji:'🔴',
+    amber:'#d62828', amberLight:'#f77f7f', amberPale:'#fde8e8',
+    teal:'#457b9d',  tealLight:'#a8dadc',
+    coral:'#e63946', coralLight:'#f4a261',
+    mint:'#2a9d8f',  mintLight:'#a8dadc',
+    deep:'#1d0000',  paper:'#fff5f5', paper2:'#fff0f0',
+    lavender:'#9b89c4' },
+  { id:'orange',  name:'おれんじ',   emoji:'🟠',
+    amber:'#f4631e', amberLight:'#ffb347', amberPale:'#fff0e0',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#2d1100',  paper:'#fff8f2', paper2:'#fff4ec',
+    lavender:'#9b89c4' },
+  { id:'yellow',  name:'きいろ',     emoji:'🟡',
+    amber:'#c9a800', amberLight:'#ffe066', amberPale:'#fffbe0',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#2d2400',  paper:'#fffef0', paper2:'#fffde8',
+    lavender:'#9b89c4' },
+  { id:'lime',    name:'きみどり',   emoji:'🟢',
+    amber:'#6db33f', amberLight:'#b8e07a', amberPale:'#edfade',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#0d2200',  paper:'#f6fef0', paper2:'#f0fce6',
+    lavender:'#9b89c4' },
+  { id:'green',   name:'みどり',     emoji:'🟢',
+    amber:'#2d9e6b', amberLight:'#7fe0b0', amberPale:'#e0f7ee',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#002d1a',  paper:'#f0fdf6', paper2:'#e8fdf0',
+    lavender:'#9b89c4' },
+  { id:'teal',    name:'みずいろ',   emoji:'🔵',
+    amber:'#0a9396', amberLight:'#94d2bd', amberPale:'#e0f4f5',
+    teal:'#2d9e6b',  tealLight:'#7fe0b0',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#457b9d',  mintLight:'#a8dadc',
+    deep:'#002d2d',  paper:'#f0fdfd', paper2:'#e6fafa',
+    lavender:'#9b89c4' },
+  { id:'blue',    name:'あお',       emoji:'🔵',
+    amber:'#1d6fa4', amberLight:'#74b3e8', amberPale:'#e0f0ff',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#001a2d',  paper:'#f0f6ff', paper2:'#e8f2ff',
+    lavender:'#9b89c4' },
+  { id:'indigo',  name:'あいいろ',   emoji:'🟣',
+    amber:'#3d52a0', amberLight:'#8fa3e8', amberPale:'#eaecff',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#0d0a2d',  paper:'#f4f0ff', paper2:'#ede8ff',
+    lavender:'#c4b5f4' },
+  { id:'purple',  name:'むらさき',   emoji:'🟣',
+    amber:'#7b2d8b', amberLight:'#c97edd', amberPale:'#f8e8ff',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#1a002d',  paper:'#fdf0ff', paper2:'#fae8ff',
+    lavender:'#c4b5f4' },
+  { id:'pink',    name:'ぴんく',     emoji:'🩷',
+    amber:'#c2456a', amberLight:'#f0a0bd', amberPale:'#ffe8f0',
+    teal:'#0a9396',  tealLight:'#94d2bd',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#2d001a',  paper:'#fff0f6', paper2:'#ffe8f2',
+    lavender:'#9b89c4' },
+  { id:'rose',    name:'ばら',       emoji:'🌹',
+    amber:'#e0365a', amberLight:'#ff8fa3', amberPale:'#ffe8ed',
+    teal:'#457b9d',  tealLight:'#a8dadc',
+    coral:'#e76f51', coralLight:'#f4a261',
+    mint:'#52b788',  mintLight:'#b7e4c7',
+    deep:'#2d0010',  paper:'#fff5f7', paper2:'#ffecf0',
+    lavender:'#9b89c4' },
+];
 
 const TYPES = [
   { id:'A', icon:'👀', name:'はっけん',
@@ -181,6 +269,12 @@ const S = {
   // ページネーション
   favPage: 0,
   notePage: 0,
+  // テーマ
+  theme: 'amber',
+  obColorOpen: false,
+  // 新規取得バッヂ通知
+  newBadges: [],
+  shownBadgeModal: null,
 };
 
 // ── localStorage 永続化 ──
@@ -199,6 +293,7 @@ function persistSave(){
       weeklyReport:  S.weeklyReport,
       customTags:    S.customTags,
       lastLens:      S.lastLens,
+      theme:         S.theme,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch(e){ console.warn('save failed:',e); }
@@ -226,6 +321,7 @@ function persistLoad(){
       weeklyReport:  saved.weeklyReport  ??'',
       customTags:    saved.customTags    ??[],
       lastLens:      saved.lastLens      ??null,
+      theme:         saved.theme         ??'amber',
     });
     // ストリーク途切れチェック
     const _today=new Date().toDateString();
@@ -244,6 +340,24 @@ const $id=id=>document.getElementById(id);
 function applyFontSize(){
   document.body.classList.remove('fs-small','fs-medium','fs-large');
   document.body.classList.add('fs-'+(S.fontSize||'medium'));
+}
+
+function applyTheme(){
+  const t=COLOR_THEMES.find(c=>c.id===S.theme)||COLOR_THEMES[0];
+  const root=document.documentElement;
+  root.style.setProperty('--amber',       t.amber);
+  root.style.setProperty('--amber-light', t.amberLight);
+  root.style.setProperty('--amber-pale',  t.amberPale);
+  root.style.setProperty('--teal',        t.teal);
+  root.style.setProperty('--teal-light',  t.tealLight);
+  root.style.setProperty('--coral',       t.coral);
+  root.style.setProperty('--coral-light', t.coralLight);
+  root.style.setProperty('--mint',        t.mint);
+  root.style.setProperty('--mint-light',  t.mintLight);
+  root.style.setProperty('--deep',        t.deep);
+  root.style.setProperty('--paper',       t.paper);
+  root.style.setProperty('--paper2',      t.paper2);
+  root.style.setProperty('--lavender',    t.lavender);
 }
 
 function _refreshWeeklyTakara(){
@@ -427,6 +541,8 @@ function summarySystem(){
   const ageLabel=agePrompts.find(a=>a.id===S.user.ageGroup)?.label||'';
   const maxChars=S.user.ageGroup==='young'?60:S.user.ageGroup==='middle'?100:150;
 
+  const maxFindings=S.user.ageGroup==='older'?3:2;
+
   return `あなたは「たからちゃん」です。以下の会話をもとにまとめを作ってください。
 
 お題: ${S.odai?.name}　レンズ: ${S.lens}
@@ -437,12 +553,13 @@ ${conv}
 【重要ルール】
 - findingsは必ず上記の会話の中で実際に出た言葉・気づき・発見のみを使う
 - 会話にない言葉の補完・推測・創作は禁止
-- 会話が浅い場合は1個でよい（無理に3つ作らない）
+- findingsは最大${maxFindings}個まで（${S.user.ageGroup==='older'?'9〜12歳なので3個まで':'3〜8歳なので2個まで'}）
+- 会話が浅い場合は1個でよい
 - 子どもが自分の言葉で言った「答え」があれば、それを最初のfindingにする
 
 【出力形式】JSONのみ（Markdownなし）:
 {
-  "findings": ["子どもが実際に言った言葉を活かした発見（1〜3個）"],
+  "findings": ["子どもが実際に言った言葉を活かした発見（1〜${maxFindings}個）"],
   "opinion": "保護者向けの温かいコメント。${maxChars}文字以内。2〜3段落。段落区切りは\\n。押しつけがましくない。${S.user.ageGroup==='young'?'ひらがな多め。':''}"
 }`;
 }
@@ -598,6 +715,11 @@ const App = {
   switchTab(tab){
     const prev=S.tab;
     S.tab=tab; S.flow='home';
+    // おきにいりタブ開時：新規バッヂがあれば表示
+    if(tab==='fav'&&S.newBadges.length>0){
+      S.shownBadgeModal=S.newBadges[0];
+      S.newBadges=S.newBadges.slice(1);
+    }
     render();
     if(tab==='cal'&&prev!=='cal') setTimeout(triggerCalBurst,100);
   },
@@ -615,12 +737,15 @@ const App = {
       }
       S.user.name=name;
     } else if(S.step===1){
-      // タイプ選択済み
+      // 年齢・タイプ選択済み
     } else if(S.step===2){
       S.user.likes=$id('ob-likes')?.value?.trim()||'';
-      S.user.strengths=$id('ob-str')?.value?.trim()||'';
+    } else if(S.step===3){
+      // 一緒にする人選択済み
     } else {
+      // step===4: カラー選択完了
       S.onboarded=true; S.tab='home'; S.flow='home';
+      applyTheme();
       persistSave(); render(); return;
     }
     S.step++;
@@ -630,6 +755,8 @@ const App = {
   setType(t){ S.user.type=t; render(); },
   setAge(a){ S.user.ageGroup=a; persistSave(); render(); },
   setParent(p){ S.user.parentName=p; render(); },
+  setTheme(id){ S.theme=id; applyTheme(); persistSave(); render(); },
+  toggleObColor(){ S.obColorOpen=!S.obColorOpen; render(); },
 
   // ── AI お題生成 ──
   async _generateAiOdai(){
@@ -832,6 +959,8 @@ const App = {
   _saveRecord(){
     if(S._savedThisSession) return;
     S._savedThisSession=true;
+    // 保存前のバッヂ状態を記録
+    const prevEarned=new Set(BADGES.filter(b=>b.check(S)).map(b=>b.id));
     const entry={
       odai:{...S.odai},
       lens:S.lens,
@@ -840,6 +969,7 @@ const App = {
       bookmarked:false,
       note:'',
       status:'closed',
+      hadParent:S.messages.some(m=>m.role==='parent'),
     };
     S.records.push(entry);
     const today=new Date().toDateString();
@@ -848,6 +978,12 @@ const App = {
       S.streak=S._lastPlayDate===yesterday?S.streak+1:1;
       S._lastPlayDate=today;
     }
+    // 新規取得バッヂを検出
+    BADGES.forEach(b=>{
+      if(!prevEarned.has(b.id)&&b.check(S)){
+        S.newBadges.push(b.id);
+      }
+    });
   },
 
 
@@ -945,7 +1081,6 @@ const App = {
     }
     S.user.name=name;
     S.user.likes=$id('s-likes')?.value?.trim()||'';
-    S.user.strengths=$id('s-str')?.value?.trim()||'';
     persistSave();
     App.switchTab('home');
   },
@@ -1045,7 +1180,7 @@ const App = {
 
   setBoxFilter(tag){ S.boxFilterTag=S.boxFilterTag===tag?null:tag; render(); },
   openBadge(id){ S.badgeModal=BADGES.find(b=>b.id===id)||null; render(); },
-  closeBadge(){ S.badgeModal=null; render(); },
+  closeBadge(){ S.badgeModal=null; S.shownBadgeModal=null; render(); },
   dismissStreakPop(){ S.streakBrokenPop=false; render(); },
 
   addCustomTag(){
@@ -1101,4 +1236,5 @@ setTimeout(()=>{
 // ── 起動 ──
 persistLoad();
 applyFontSize();
+applyTheme();
 render();
