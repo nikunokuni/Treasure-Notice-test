@@ -1151,6 +1151,34 @@ body {
 .cal-month-stat-div { width:1px; height:28px; background:rgba(45,27,0,0.1); }
 .cal-day-num { font-size:11px; }
 
-/* カレンダースタンプを大きく */
-.cal-stamp { font-size:22px; line-height:1; }
-.cal-day.stamped { min-height:48px; }
+/* ── サマリー：次の行動声掛けカード ── */
+.next-action-tip-card {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 1.5px solid rgba(82,183,136,0.35);
+  border-radius: 16px; padding: 14px; margin-bottom: 12px;
+  animation: nat-appear .4s ease-out;
+}
+.next-action-tip-card.loading {
+  background: rgba(45,27,0,0.03);
+  border-color: rgba(45,27,0,0.08);
+}
+@keyframes nat-appear {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.nat-header {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+}
+.nat-icon  { font-size: 18px; }
+.nat-label {
+  font-size: var(--fs-xs); font-weight: 700;
+  letter-spacing: .12em; color: var(--mint);
+}
+.nat-tip {
+  font-size: var(--fs-base); color: var(--deep);
+  line-height: 1.75; font-weight: 700;
+}
+.nat-loading-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--fs-xs); color: rgba(45,27,0,0.4);
+}
