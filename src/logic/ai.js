@@ -7,7 +7,7 @@
 
 /** チャットAPI呼び出し */
 async function callAI(messages, system) {
-  const res = await fetch('/api/chat', {
+  const res = await fetch('api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, system }),
