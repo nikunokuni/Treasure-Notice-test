@@ -778,6 +778,7 @@ body {
   cursor: pointer;
   transition: transform 0.12s;
   overflow: hidden; 
+　position: relative; 
 }
 
 .badge-case-item:active {
@@ -792,6 +793,16 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
+}
+.badge-case-sparkle {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  line-height: 1;
+  pointer-events: none;   /* タップはバッヂ本体に通す */
+  white-space: nowrap;
 }
 
 /* 未獲得はグレーアウト */
