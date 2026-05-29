@@ -1342,3 +1342,35 @@ body {
 .settings-row-icon {
   flex-wrap: wrap;
 }
+/* ── 大人用セクション（シック） ── */
+.settings-section-adult {
+  background: #f8f8f6;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(45,27,0,0.10);
+}
+.settings-ttl-adult {
+  font-size: var(--fs-xs);
+  letter-spacing: .15em;
+  color: rgba(45,27,0,0.40);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.adult-link-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 4px;
+  border-bottom: 1px solid rgba(45,27,0,0.06);
+  cursor: pointer;
+  color: rgba(45,27,0,0.65);
+  font-size: var(--fs-sm);
+}
+.adult-link-row:last-child { border-bottom: none; }
+.adult-link-row:active { opacity: 0.6; }
+.adult-link-arrow {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: rgba(45,27,0,0.25);
+}
