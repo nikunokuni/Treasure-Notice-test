@@ -618,6 +618,7 @@ const App = {
 
   sendFeedback() {
     const FORM_URL = 'https://x.gd/Jp9px';
+     S.sentFeedback = true; persistSave();
     window.open(FORM_URL, '_blank', 'noopener,noreferrer');
   },
 
