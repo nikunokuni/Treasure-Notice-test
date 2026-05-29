@@ -763,12 +763,12 @@ body {
 .badge-grid-large {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 4px;
 }
 
 .badge-case-item {
   aspect-ratio: 1;
-  border-radius: 16px;
+  border-radius: 50%;
   background: rgba(255,255,255,0.6);
   border: 2px solid rgba(45,27,0,0.08);
   display: flex;
@@ -785,13 +785,13 @@ body {
 }
 
 .badge-case-icon {
-  font-size: 28px;
+  font-size: 34px;
   line-height: 1;
 }
 
 /* 未獲得はグレーアウト */
 .badge-rarity-off .badge-case-icon {
-  font-size: 22px;
+  font-size: 26px;
   color: rgba(45,27,0,0.2);
 }
 .badge-large {
