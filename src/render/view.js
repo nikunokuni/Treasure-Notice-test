@@ -774,14 +774,12 @@ const badgeModalHtml = badgeModalData ? (() => {
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
         <div class="badge-grid-large">
-        ${badgeResults.map(b => {
+       ${badgeResults.map(b => {
   const rarity   = b.earned ? (b.rarity || 'normal') : 'off';
   const maxLevel = b.def.levels.length;
   const curLevel = b.def.levels.filter(lv => lv.check(S)).length;
-  const levelDots = maxLevel > 1
-    ? `<div class="badge-level-dots">${b.def.levels.map((_, i) =>
-        `<span class="badge-level-dot ${i < curLevel ? 'filled' : ''}"></span>`
-      ).join('')}</div>`
+  const levelDots = maxLevel > 1 && curLevel > 0
+    ? `<div class="badge-case-sparkle">${'✨'.repeat(curLevel)}</div>`
     : '';
   return `
     <div class="badge-case-item badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
