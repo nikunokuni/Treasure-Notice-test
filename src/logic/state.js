@@ -107,6 +107,11 @@ function persistLoad() {
       customTags:    saved.customTags    ?? [],
       lastLens:      saved.lastLens      ?? null,
       theme:         saved.theme         ?? 'amber',
+      xPostCount:        saved.xPostCount        ?? 0,
+      sentFeedback:      saved.sentFeedback       ?? false,
+      changedColor:      saved.changedColor       ?? false,
+      changedType:       saved.changedType        ?? false,
+      addedToHomeScreen: saved.addedToHomeScreen  ?? false,
     });
 
     // ストリーク途切れチェック
