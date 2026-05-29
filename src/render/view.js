@@ -752,11 +752,22 @@ function renderFav() {
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
         <div class="badge-grid-large">
-          ${badgeResults.map(b => `
-            <div class="badge-large ${b.earned ? 'badge-large-on' : 'badge-large-off'}" onclick="App.openBadge('${b.id}')">
-              <div class="badge-large-icon">${b.earned ? b.icon : '○'}</div>
-              <div class="badge-large-name">${esc(b.name)}</div>
-            </div>`).join('')}
+         ${badgeResults.map(b => {
+  const rarity  = b.earned ? (b.rarity || 'normal') : 'off';
+  const maxLevel = b.def.levels.length;
+  const curLevel = b.def.levels.filter(lv => lv.check(S)).length;
+  const levelDots = maxLevel > 1
+    ? `<div class="badge-level-dots">${b.def.levels.map((_, i) =>
+        `<span class="badge-level-dot ${i < curLevel ? 'filled' : ''}"></span>`
+      ).join('')}</div>`
+    : '';
+  return `
+    <div class="badge-large badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
+      <div class="badge-large-icon">${b.earned ? b.icon : '○'}</div>
+      <div class="badge-large-name">${esc(b.name)}</div>
+      ${levelDots}
+    </div>`;
+}).join('')}
         </div>
       </div>
 
