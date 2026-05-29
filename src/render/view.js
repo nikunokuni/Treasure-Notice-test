@@ -855,12 +855,21 @@ function renderTakaraCard(r, showFavBtn) {
 function renderSettings() {
   const u  = S.user;
   const fs = S.fontSize || 'medium';
+
+  const adultLinksHtml = ADULT_LINKS.map(l => `
+    <div class="adult-link-row" onclick="App.openExternalLink('${l.id}')">
+      <span>${l.emoji}</span>
+      <span>${l.label}</span>
+      <span class="adult-link-arrow">›</span>
+    </div>`).join('');
+
   return `
     <div class="content">
-      <div class="settings-section">
-        <div class="settings-ttl">こどもの情報</div>
 
-        <!-- よびかた ＋ すきなもの を横並び -->
+      <!-- ▼ 子ども用 セクション群 -->
+      <div class="settings-section">
+        <div class="settings-ttl">こどものじょうほう</div>
+
         <div class="settings-row-2col">
           <div class="settings-field settings-field-half">
             <div class="settings-field-label">よびかた</div>
@@ -873,7 +882,6 @@ function renderSettings() {
           </div>
         </div>
 
-        <!-- ねんれい ＋ まなびのタイプ を横並び（アイコン行のみ） -->
         <div class="settings-row-2col settings-row-icon">
           <div class="settings-field settings-field-half">
             <div class="settings-field-label">ねんれい</div>
@@ -884,8 +892,8 @@ function renderSettings() {
             ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
           </div>
         </div>
-
       </div>
+
       <div class="settings-section">
         <div class="settings-ttl">いっしょにするひと</div>
         <div class="settings-field">
@@ -893,6 +901,7 @@ function renderSettings() {
           <div class="parent-chips">${renderParentChips(u.parentName)}</div>
         </div>
       </div>
+
       <div class="settings-section">
         <div class="settings-ttl">🎨 アプリのいろ</div>
         <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
@@ -908,6 +917,7 @@ function renderSettings() {
             </div>`).join('')}
         </div>
       </div>
+
       <div class="settings-section">
         <div class="settings-ttl">表示設定</div>
         <div class="settings-field">
@@ -919,8 +929,11 @@ function renderSettings() {
           </div>
         </div>
       </div>
-      <div class="settings-section">
-        <div class="settings-ttl">ウィークリーレポート</div>
+
+      <!-- ▼ 大人用 セクション群（シック） -->
+      <div class="settings-section-adult">
+        <div class="settings-ttl-adult">保護者向け</div>
+
         <div style="font-size:11px;color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
           今週の学びをAIがまとめるよ（${u.parentName}向け）
         </div>
@@ -936,19 +949,26 @@ function renderSettings() {
             ${S.reportLoading ? '<span class="spinner"></span> せいせいちゅう…' : '📊 レポートをつくる'}
           </button>`}
       </div>
-      <div class="settings-section">
-        <div class="settings-ttl">データ管理</div>
+
+      <div class="settings-section-adult">
+        <div class="settings-ttl-adult">データ管理</div>
         <div style="display:flex;gap:8px;margin-bottom:8px">
           <button class="btn-secondary" style="flex:1;padding:9px;font-size:var(--fs-sm)" onclick="App.exportCSV()">📤 エクスポート</button>
           <button class="btn-secondary" style="flex:1;padding:9px;font-size:var(--fs-sm)" onclick="App.triggerImport()">📥 インポート</button>
         </div>
         <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="App.importCSV(event)">
       </div>
-      <div class="settings-section">
-        <div class="settings-ttl">意見・要望をおくる</div>
+
+      <div class="settings-section-adult">
+        <div class="settings-ttl-adult">意見・要望</div>
         <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);margin-bottom:10px;line-height:1.6">アプリをよりよくするために、きいてね！</div>
         <button class="btn-primary" style="margin-bottom:0" onclick="App.sendFeedback()">📨 フォームをひらく</button>
       </div>
-      <button class="btn-primary" onclick="App.saveSettings()">ほぞんする ✓</button>
+
+      <div class="settings-section-adult">
+        <div class="settings-ttl-adult">その他</div>
+        ${adultLinksHtml}
+      </div>
+
     </div>`;
 }
