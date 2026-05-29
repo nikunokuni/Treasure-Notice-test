@@ -777,7 +777,6 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: transform 0.12s;
-  overflow: hidden; 
   position: relative; 
 }
 
