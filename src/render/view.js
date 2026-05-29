@@ -779,7 +779,7 @@ const badgeModalHtml = badgeModalData ? (() => {
   const maxLevel = b.def.levels.length;
   const curLevel = b.def.levels.filter(lv => lv.check(S)).length;
   const sparkle = maxLevel > 1 && curLevel > 0
-    ? `<div class="badge-case-sparkle">${'✨'.repeat(curLevel)}</div>`
+    ? `<div class="badge-case-sparkle">${'✨'.repeat(curLevel-1)}</div>`
     : '';
   return `
     <div class="badge-case-item badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
