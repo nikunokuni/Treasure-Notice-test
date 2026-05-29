@@ -224,7 +224,7 @@ const App = {
   setType(t) { S.user.type = t; render(); },
   setAge(a)  { S.user.ageGroup = a; persistSave(); render(); },
   setParent(p) { S.user.parentName = p; render(); },
-  setTheme(id) { S.theme = id; applyTheme(); persistSave(); render(); },
+  setTheme(id) { S.theme = id; S.changedColor = true; applyTheme(); persistSave(); render(); },
   toggleObColor() { S.obColorOpen = !S.obColorOpen; render(); },
 
   // ── AI お題生成 ──
