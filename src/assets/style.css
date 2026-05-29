@@ -1154,3 +1154,127 @@ body {
 /* カレンダースタンプを大きく */
 .cal-stamp { font-size:22px; line-height:1; }
 .cal-day.stamped { min-height:48px; }
+/* ══════════════════════════════════
+   あしたやってみよう！カード
+   ══════════════════════════════════ */
+.tomorrow-card {
+  background: linear-gradient(135deg, #e8f8ef 0%, #d0f0de 100%);
+  border: 1.5px solid #52b788;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+.tomorrow-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 6px;
+}
+.tomorrow-text {
+  font-size: var(--fs-md);
+  color: #1b4332;
+  line-height: 1.7;
+}
+.tomorrow-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: rgba(27, 67, 50, 0.6);
+}
+
+/* ══════════════════════════════════
+   バッジ進化・レアリティ
+   ══════════════════════════════════ */
+
+/* レアリティ：normal（通常） */
+.badge-rarity-normal.badge-large-on,
+.badge-rarity-normal .badge-large-icon {
+  /* 既存スタイルをそのまま継承 */
+}
+
+/* レアリティ：rare（キラキラ） */
+.badge-rarity-rare {
+  background: linear-gradient(135deg, #fff9e0 0%, #ffe066 60%, #fff9e0 100%) !important;
+  border: 2px solid #c9a800 !important;
+  animation: badge-rare-shine 2.4s ease-in-out infinite;
+}
+@keyframes badge-rare-shine {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,0,0); }
+  50%       { box-shadow: 0 0 12px 4px rgba(201,168,0,0.35); }
+}
+
+/* レアリティ：epic（派手な光エフェクト） */
+.badge-rarity-epic {
+  background: linear-gradient(135deg, #f0e6ff 0%, #d4a5ff 40%, #f9e6ff 70%, #d4a5ff 100%) !important;
+  background-size: 200% 200% !important;
+  border: 2px solid #9b59b6 !important;
+  animation: badge-epic-pulse 1.8s ease-in-out infinite;
+}
+@keyframes badge-epic-pulse {
+  0%   { background-position: 0% 50%;   box-shadow: 0 0 8px 2px rgba(155,89,182,0.3); }
+  50%  { background-position: 100% 50%; box-shadow: 0 0 20px 6px rgba(155,89,182,0.5); }
+  100% { background-position: 0% 50%;   box-shadow: 0 0 8px 2px rgba(155,89,182,0.3); }
+}
+
+/* レアリティ：off（未取得） */
+.badge-rarity-off {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+/* バッジモーダルのアイコン（大きく表示） */
+.badge-modal-icon {
+  font-size: 52px;
+  margin: 8px auto;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  transition: all 0.3s;
+}
+
+/* レベルドット（進化の段階表示） */
+.badge-level-dots {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 3px;
+}
+.badge-level-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(45,27,0,0.15);
+}
+.badge-level-dot.filled {
+  background: var(--amber);
+}
+.badge-rarity-rare .badge-level-dot.filled {
+  background: #c9a800;
+}
+.badge-rarity-epic .badge-level-dot.filled {
+  background: #9b59b6;
+}
+
+/* 次のレベル案内 */
+.badge-next-level {
+  font-size: var(--fs-xs);
+  color: rgba(45,27,0,0.5);
+  background: var(--amber-pale);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+.badge-next-max {
+  color: #7b2d8b;
+  background: #f8e8ff;
+}
+
+/* 新バッジ取得モーダル（epicは派手に） */
+.badge-new-overlay.badge-new-epic {
+  background: rgba(155,89,182,0.18);
+}
