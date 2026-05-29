@@ -638,6 +638,7 @@ const App = {
     const findings = (S.summaryItems || []).join('、');
     const text     = `「${name}」のたから：${findings} #たからさがし`;
     const url      = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    S.xPostCount = (S.xPostCount || 0) + 1; persistSave();
     window.open(url, '_blank', 'noopener,noreferrer');
   },
 
