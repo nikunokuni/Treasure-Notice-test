@@ -669,7 +669,10 @@ const App = {
   },
 
   setBoxFilter(tag)  { S.boxFilterTag = S.boxFilterTag === tag ? null : tag; render(); },
-  openBadge(id)      { S.badgeModal = BADGES.find(b => b.id === id) || null; render(); },
+  openBadge(id) {const found = BADGE_DEFS.find(d => d.id === id);
+  S.badgeModal = found ? { id, def: found } : null;
+  render();
+},
   closeBadge()       { S.badgeModal = null; S.shownBadgeModal = null; render(); },
   dismissStreakPop() { S.streakBrokenPop = false; render(); },
 
