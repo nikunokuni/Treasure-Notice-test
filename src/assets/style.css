@@ -1278,3 +1278,19 @@ body {
 .badge-new-overlay.badge-new-epic {
   background: rgba(155,89,182,0.18);
 }
+/* せってい：こどもの情報 2列レイアウト */
+.settings-row-2col {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.settings-field-half {
+  flex: 1;
+  min-width: 0; /* テキストがはみ出ないように */
+}
+
+/* アイコン行の横並び：選択肢が展開したら1列に切り替える */
+.settings-row-icon {
+  flex-wrap: wrap;
+}
