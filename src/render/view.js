@@ -774,8 +774,8 @@ const badgeModalHtml = badgeModalData ? (() => {
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
         <div class="badge-grid-large">
-         ${badgeResults.map(b => {
-  const rarity  = b.earned ? (b.rarity || 'normal') : 'off';
+        ${badgeResults.map(b => {
+  const rarity   = b.earned ? (b.rarity || 'normal') : 'off';
   const maxLevel = b.def.levels.length;
   const curLevel = b.def.levels.filter(lv => lv.check(S)).length;
   const levelDots = maxLevel > 1
@@ -784,9 +784,8 @@ const badgeModalHtml = badgeModalData ? (() => {
       ).join('')}</div>`
     : '';
   return `
-    <div class="badge-large badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
-      <div class="badge-large-icon">${b.earned ? b.icon : '○'}</div>
-      <div class="badge-large-name">${esc(b.name)}</div>
+    <div class="badge-case-item badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
+      <div class="badge-case-icon">${b.earned ? b.icon : '○'}</div>
       ${levelDots}
     </div>`;
 }).join('')}
