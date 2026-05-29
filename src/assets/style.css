@@ -759,7 +759,41 @@ body {
   border:1.5px solid rgba(45,27,0,0.06);
 }
 .badge-section-ttl { font-size:var(--fs-sm); letter-spacing:.1em; color:rgba(45,27,0,0.5); margin-bottom:10px; font-weight:700; }
-.badge-grid-large { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+/* ── バッヂケース ── */
+.badge-grid-large {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.badge-case-item {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.6);
+  border: 2px solid rgba(45,27,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.badge-case-item:active {
+  transform: scale(0.93);
+}
+
+.badge-case-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* 未獲得はグレーアウト */
+.badge-rarity-off .badge-case-icon {
+  font-size: 22px;
+  color: rgba(45,27,0,0.2);
+}
 .badge-large {
   display:flex; flex-direction:column; align-items:center; gap:5px;
   padding:12px 4px; border-radius:14px; cursor:pointer; transition:transform .15s;
