@@ -103,9 +103,9 @@ const TYPES = [
 ];
 
 const AGE_PROMPTS = [
-  { id:'young',  label:'3〜5さい',  icon:'🐣', desc:'ひらがなメイン・みじかいぶん・ごかんちゅうしん' },
-  { id:'middle', label:'6〜8さい',  icon:'🌱', desc:'すこしふくざつなといかけもたのしめる' },
-  { id:'older',  label:'9〜12さい', icon:'🌳', desc:'ろんりてきなしこう・ふかいこうさつもできる' },
+  { id:'young',  label:'3〜5さい',  icon:'🐣', desc:'ひらがな・みじかいぶん' },
+  { id:'middle', label:'6〜8さい',  icon:'🌱', desc:'すこしふくざつなといかけ' },
+  { id:'older',  label:'9〜12さい', icon:'🌳', desc:'ふかくかんがえてみる' },
 ];
 
 // ── バッヂ定義（20個・進化型） ──
