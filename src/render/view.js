@@ -778,13 +778,13 @@ const badgeModalHtml = badgeModalData ? (() => {
   const rarity   = b.earned ? (b.rarity || 'normal') : 'off';
   const maxLevel = b.def.levels.length;
   const curLevel = b.def.levels.filter(lv => lv.check(S)).length;
-  const levelDots = maxLevel > 1 && curLevel > 0
+  const sparkle = maxLevel > 1 && curLevel > 0
     ? `<div class="badge-case-sparkle">${'✨'.repeat(curLevel)}</div>`
     : '';
   return `
     <div class="badge-case-item badge-rarity-${rarity}" onclick="App.openBadge('${b.id}')">
       <div class="badge-case-icon">${b.earned ? b.icon : '○'}</div>
-      ${levelDots}
+      ${sparkle}
     </div>`;
 }).join('')}
         </div>
