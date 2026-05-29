@@ -796,13 +796,12 @@ body {
 }
 .badge-case-sparkle {
   position: absolute;
-  top: -4px;
-  left: 50%;
+  top: -10px;       
+  left: 70%;          
   transform: translateX(-50%);
-  font-size: 10px;
+  font-size: 28px;     
   line-height: 1;
-  pointer-events: none;   /* タップはバッヂ本体に通す */
-  white-space: nowrap;
+  pointer-events: none;
 }
 
 /* 未獲得はグレーアウト */
