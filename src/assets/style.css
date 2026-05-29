@@ -778,7 +778,7 @@ body {
   cursor: pointer;
   transition: transform 0.12s;
   overflow: hidden; 
-　position: relative; 
+  position: relative; 
 }
 
 .badge-case-item:active {
