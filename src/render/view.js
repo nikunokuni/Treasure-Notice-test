@@ -862,23 +862,32 @@ function renderSettings() {
     <div class="content">
       <div class="settings-section">
         <div class="settings-ttl">こどもの情報</div>
-        <div class="settings-field">
-          <div class="settings-field-label">よびかた</div>
-          <input class="form-input" id="s-name" value="${esc(u.name)}" placeholder="ニックネーム">
-          <div class="form-error" id="s-name-err">なまえをいれてください</div>
+
+        <!-- よびかた ＋ すきなもの を横並び -->
+        <div class="settings-row-2col">
+          <div class="settings-field settings-field-half">
+            <div class="settings-field-label">よびかた</div>
+            <input class="form-input" id="s-name" value="${esc(u.name)}" placeholder="ニックネーム">
+            <div class="form-error" id="s-name-err">なまえをいれてください</div>
+          </div>
+          <div class="settings-field settings-field-half">
+            <div class="settings-field-label">すきなもの</div>
+            <input class="form-input" id="s-likes" value="${esc(u.likes)}" placeholder="ポケモン・サッカーなど">
+          </div>
         </div>
-        <div class="settings-field">
-          <div class="settings-field-label">ねんれい</div>
-          ${renderAgeIconRow(u.ageGroup, "App.toggleSettingsAge()", S.settingsAgeOpen)}
+
+        <!-- ねんれい ＋ まなびのタイプ を横並び（アイコン行のみ） -->
+        <div class="settings-row-2col settings-row-icon">
+          <div class="settings-field settings-field-half">
+            <div class="settings-field-label">ねんれい</div>
+            ${renderAgeIconRow(u.ageGroup, "App.toggleSettingsAge()", S.settingsAgeOpen)}
+          </div>
+          <div class="settings-field settings-field-half">
+            <div class="settings-field-label">まなびのタイプ</div>
+            ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
+          </div>
         </div>
-        <div class="settings-field">
-          <div class="settings-field-label">まなびのタイプ</div>
-          ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
-        </div>
-        <div class="settings-field">
-          <div class="settings-field-label">すきなもの</div>
-          <input class="form-input" id="s-likes" value="${esc(u.likes)}" placeholder="ポケモン・サッカーなど">
-        </div>
+
       </div>
       <div class="settings-section">
         <div class="settings-ttl">いっしょにするひと</div>
