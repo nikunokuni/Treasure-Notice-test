@@ -734,18 +734,40 @@ function renderFav() {
     </div>` : '';
 
   // 通常バッヂモーダル
-  const badgeModalHtml = S.badgeModal ? `
+  const badgeModalData = S.badgeModal
+  ? (() => {
+      const def   = S.badgeModal.def || BADGE_DEFS.find(d => d.id === S.badgeModal.id);
+      if (!def) return null;
+      const cur   = _getCurrentLevel(def, S);
+      const next  = _getNextLevel(def, S);
+      const isEarned = def.levels[0].check(S);
+      return { def, cur, next, isEarned };
+    })()
+  : null;
+
+const badgeModalHtml = badgeModalData ? (() => {
+  const { def, cur, next, isEarned } = badgeModalData;
+  const nextHtml = next
+    ? `<div class="badge-next-level">
+         つぎのステージ：${next.icon} <strong>${esc(next.name)}</strong>（${next.count}かい）
+       </div>`
+    : isEarned
+      ? `<div class="badge-next-level badge-next-max">🏆 さいこうレベルたっせい！</div>`
+      : '';
+  return `
     <div class="modal-overlay" onclick="App.closeBadge()">
       <div class="modal-box" onclick="event.stopPropagation()" style="text-align:center">
         <button class="modal-close" onclick="App.closeBadge()">✕</button>
-        <div style="font-size:52px;margin:8px 0">${S.badgeModal.icon}</div>
-        <div style="font-family:'Kaisei Decol',serif;font-size:var(--fs-xl);color:var(--deep);margin-bottom:6px">${esc(S.badgeModal.name)}</div>
-        <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);line-height:1.7;margin-bottom:8px">${esc(S.badgeModal.cond)}</div>
-        <div class="badge-modal-status ${badgeResults.find(b => b.id === S.badgeModal.id)?.earned ? 'earned' : 'not-earned'}">
-          ${badgeResults.find(b => b.id === S.badgeModal.id)?.earned ? '✅ かくとくずみ！' : '🔒 まだかくとくしていないよ'}
+        <div class="badge-modal-icon badge-rarity-${isEarned ? cur.rarity : 'off'}">${isEarned ? cur.icon : '○'}</div>
+        <div style="font-family:'Kaisei Decol',serif;font-size:var(--fs-xl);color:var(--deep);margin-bottom:6px">${esc(cur.name)}</div>
+        <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);line-height:1.7;margin-bottom:8px">${esc(cur.cond)}</div>
+        <div class="badge-modal-status ${isEarned ? 'earned' : 'not-earned'}">
+          ${isEarned ? '✅ かくとくずみ！' : '🔒 まだかくとくしていないよ'}
         </div>
+        ${nextHtml}
       </div>
-    </div>` : '';
+    </div>`;
+})() : '';
 
   return `
     <div class="content">
