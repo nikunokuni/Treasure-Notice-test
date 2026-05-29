@@ -345,3 +345,9 @@ const LENSES = [
     kidDesc:'きみはどう おもった？ すき？きらい？なんで？',
     cls:'lens-じぶん' },
 ];
+// ── 大人用：外部リンク定義 ──
+const ADULT_LINKS = [
+  { id:'terms',    label:'利用規約',             emoji:'📄', url:'' },
+  { id:'privacy',  label:'プライバシーポリシー', emoji:'🔒', url:'' },
+  { id:'about',    label:'たからさがしとは',     emoji:'🔍', url:'' },
+];
