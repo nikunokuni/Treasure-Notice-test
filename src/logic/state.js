@@ -72,6 +72,11 @@ function persistSave() {
       customTags:    S.customTags,
       lastLens:      S.lastLens,
       theme:         S.theme,
+      xPostCount:       S.xPostCount       ?? 0,
+      sentFeedback:     S.sentFeedback      ?? false,
+      changedColor:     S.changedColor      ?? false,
+      changedType:      S.changedType       ?? false,
+      addedToHomeScreen:S.addedToHomeScreen ?? false,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch(e) { console.warn('save failed:', e); }
