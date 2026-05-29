@@ -795,10 +795,10 @@ body {
 }
 .badge-case-sparkle {
   position: absolute;
-  top: -10px;       
-  left: 70%;          
+  top: 20%;       
+  left: 80%;          
   transform: translateX(-50%);
-  font-size: 28px;     
+  font-size: 40px;     
   line-height: 1;
   pointer-events: none;
 }
