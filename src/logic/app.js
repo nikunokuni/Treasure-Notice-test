@@ -640,7 +640,14 @@ const App = {
     };
     reader.readAsText(file, 'UTF-8');
   },
-
+  openExternalLink(id) {
+    const link = ADULT_LINKS.find(l => l.id === id);
+    if (!link || !link.url) {
+      alert('このページはまだじゅんびちゅうです');
+      return;
+    }
+    window.open(link.url, '_blank', 'noopener,noreferrer');
+  },
   sendFeedback() {
     const FORM_URL = 'https://x.gd/Jp9px';
      S.sentFeedback = true; persistSave();
