@@ -827,6 +827,7 @@ const badgeModalHtml = badgeModalData ? (() => {
 /* ══════════════════════════
    たからカード（共通パーツ）
    ══════════════════════════ */
+// ── 修正後 ──
 function renderTakaraCard(r, showFavBtn) {
   const lens     = LENSES.find(l => l.id === r.lens);
   const colors   = ['#e8860a','#0a9396','#e76f51','#52b788','#9b89c4','#ffd166'];
@@ -849,8 +850,13 @@ function renderTakaraCard(r, showFavBtn) {
       ${r.note ? `<div class="takara-note">📓 ${esc(r.note)}</div>` : ''}
       <div class="takara-item-date">${fmtDate(r.date)}</div>
       ${showFavBtn ? `
-        <button class="takara-fav-btn ${r.bookmarked ? 'active' : ''}"
-                onclick="event.stopPropagation();App.toggleRecordFav(${idx})">🔖</button>` : ''}
+        <div class="takara-action-row">
+          <button class="takara-fav-btn ${r.bookmarked ? 'active' : ''}"
+                  data-idx="${idx}"
+                  onclick="event.stopPropagation();App.toggleRecordFav(${idx})">🔖</button>
+          <button class="takara-delete-btn"
+                  onclick="event.stopPropagation();App.deleteRecord(${idx})">🗑️</button>
+        </div>` : ''}
     </div>`;
 }
 
