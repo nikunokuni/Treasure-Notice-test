@@ -787,16 +787,19 @@ const App = {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x    = Math.round(event.clientX - rect.left - 20);  // 中心補正
+    const x    = Math.round(event.clientX - rect.left - 20);
     const y    = Math.round(event.clientY - rect.top  - 20);
 
+    const p = S.notebookPlacing;
     S.notebookEditing.items.push({
-      type:  S.notebookPlacing.type,
-      id:    S.notebookPlacing.id,
-      emoji: S.notebookPlacing.emoji,
-      label: S.notebookPlacing.label,
-      x:     Math.max(0, x),
-      y:     Math.max(0, y),
+      type:       p.type,
+      id:         p.id,
+      emoji:      p.emoji,
+      label:      p.label,
+      stickerSrc: p.stickerSrc  || null,
+      record:     p.record      || null,
+      x:          Math.max(0, x),
+      y:          Math.max(0, y),
     });
     S.notebookPlacing = null;
     render();
