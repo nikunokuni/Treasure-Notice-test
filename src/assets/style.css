@@ -1700,3 +1700,26 @@ body {
 .nb-delete-btn:active {
   background: #fdecea;
 }
+/* ══════════════════════════
+   てちょうサムネ（おきにいりタブ）
+   ══════════════════════════ */
+.nb-thumb-wrap {
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.nb-thumb-date-label {
+  font-size: 11px;
+  color: var(--c-sub);
+  margin-bottom: 4px;
+  padding-left: 2px;
+}
+
+/* 読み取り専用キャンバス：クリック・タップを無効化 */
+.nb-canvas--readonly {
+  pointer-events: none;
+  transform: scale(0.55);
+  transform-origin: top left;
+  width: 182%;   /* scale(0.55)の逆数 ≒ 100/55*100% */
+  margin-bottom: calc((var(--nb-canvas-height, 340px) * 0.55) - var(--nb-canvas-height, 340px));
+}
