@@ -1086,6 +1086,18 @@ function renderSettings() {
           </div>`).join('')}
       </div>
     </div>
+    <div class="settings-section">
+      <div class="settings-ttl">📌 カードのふせん</div>
+      <div class="sticky-color-grid">
+        ${STICKY_COLORS.map(c => `
+          <button
+            class="sticky-color-btn ${S.stickyColor === c.id ? 'selected' : ''}"
+            onclick="App.setStickyColor('${c.id}', '${c.value}')"
+            style="background:${c.value}">
+            ${c.label}
+          </button>`).join('')}
+      </div>
+    </div>
 
     <div class="settings-section">
       <div class="settings-ttl">表示設定</div>
