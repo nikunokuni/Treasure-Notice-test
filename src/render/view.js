@@ -231,29 +231,31 @@ function renderHome() {
     ${brokenPop}
     <div class="content">
 
-      <!-- 統計ストリップ -->
-      <div class="home-stats-strip">
-        <div class="home-stat-chip">
-          <span class="hsc-icon">🔥</span>
-          <span class="hsc-num">${S.streak}</span>
-          <span class="hsc-lbl">れんぞく</span>
-        </div>
-        <div class="hsc-divider"></div>
-        <div class="home-stat-chip">
-          <span class="hsc-icon">📅</span>
-          <span class="hsc-num">${totalDays}</span>
-          <span class="hsc-lbl">つうさん日</span>
-        </div>
-        <div class="hsc-divider"></div>
-        <div class="home-stat-chip">
-          <span class="hsc-icon">📦</span>
-          <span class="hsc-num">${totalTakara}</span>
-          <span class="hsc-lbl">たから</span>
-        </div>
-        <div class="hsc-divider"></div>
-        <div class="home-stat-chip hsc-dots">${weekDots}</div>
-      </div>
-      <div class="home-streak-msg">${streakMsg}</div>
+     <!-- 統計ストリップ（上段：3列） -->
+<div class="home-stats-strip">
+  <div class="home-stat-chip">
+    <span class="hsc-icon">🔥</span>
+    <span class="hsc-num">${S.streak}</span>
+    <span class="hsc-lbl">れんぞく</span>
+  </div>
+  <div class="hsc-divider"></div>
+  <div class="home-stat-chip">
+    <span class="hsc-icon">📅</span>
+    <span class="hsc-num">${totalDays}</span>
+    <span class="hsc-lbl">つうさん日</span>
+  </div>
+  <div class="hsc-divider"></div>
+  <div class="home-stat-chip">
+    <span class="hsc-icon">📦</span>
+    <span class="hsc-num">${totalTakara}</span>
+    <span class="hsc-lbl">たから</span>
+  </div>
+</div>
+<!-- 下段：週ドット＋メッセージ -->
+<div class="home-week-row">
+  <div class="home-week-dots">${weekDots}</div>
+  <div class="home-streak-msg-inline">${streakMsg}</div>
+</div>
 
       <!-- タイプ/年齢バッジ -->
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:14px">
