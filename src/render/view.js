@@ -887,7 +887,32 @@ function renderNotebookEditor() {
        <button class="nb-delete-btn" onclick="App.deleteNotebook()">🗑️ てちょうをさくじょする</button>
     </div>`;
 }
+/* ── ふせん内コンテンツ：たから型 ── */
+function _renderFavStickerInner(r) {
+  const lens     = LENSES.find(l => l.id === r.lens);
+  const lensHtml = lens ? `<span class="nsc-lens">${lens.icon} ${esc(lens.name)}</span>` : '';
+  const findings = (r.findings || []).slice(0, 3);
+  return `
+    <div class="nsc-header">
+      <span class="nsc-emoji">${esc(r.odai.emoji)}</span>
+      <span class="nsc-name">${esc(r.odai.name)}</span>
+      ${lensHtml}
+    </div>
+    <ul class="nsc-findings">
+      ${findings.map(f => `<li>${esc(f)}</li>`).join('')}
+    </ul>
+    <div class="nsc-date">${fmtDate(r.date)}</div>`;
+}
 
+/* ── ふせん内コンテンツ：ノート型（フラッシュカード風） ── */
+function _renderNoteStickerInner(r) {
+  return `
+    <div class="nsc-flash">
+      <div class="nsc-flash-emoji">${esc(r.odai.emoji)}</div>
+      <div class="nsc-flash-name">${esc(r.odai.name)}</div>
+      ${r.note ? `<div class="nsc-flash-kana">${esc(r.note.slice(0, 10))}</div>` : ''}
+    </div>`;
+}
 function renderNotebookCanvas(nb, theme) {
   const items = (nb.items || []).map((item, i) => {
     const top     = Math.round(item.y);
