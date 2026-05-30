@@ -777,6 +777,7 @@ const badgeModalHtml = badgeModalData ? (() => {
   const notebookSectionHtml = renderNotebookSection();
   return `
     <div class="content">
+    ${notebookSectionHtml}
       <div class="badge-section-top">
         <div class="badge-section-ttl">🏅 かくとくしたバッヂ</div>
         <div class="badge-grid-large">
