@@ -369,3 +369,14 @@ const STICKERS = [
   { id:'st13',emoji:'🌺' }, { id:'st14',emoji:'🍭' }, { id:'st15',emoji:'🎈' },
   { id:'st16',emoji:'🐝' }, { id:'st17',emoji:'🌻' }, { id:'st18',emoji:'🍄' },
 ];
+// =============================================
+// 付箋カラー選択肢（設定画面で使用）
+// =============================================
+export const STICKY_COLORS = [
+  { id: 'yellow', label: 'きいろ 🌟',  value: '#FFF9C4' },
+  { id: 'green',  label: 'みどり 🌿',  value: '#C8E6C9' },
+  { id: 'orange', label: 'オレンジ 🍊', value: '#FFE0B2' },
+  { id: 'pink',   label: 'ピンク 🌸',  value: '#F8BBD9' },
+  { id: 'purple', label: 'むらさき 🔮', value: '#D1C4E9' },
+  { id: 'blue',   label: 'みずいろ 💙', value: '#B3E5FC' },
+];
