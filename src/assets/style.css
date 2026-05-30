@@ -1494,3 +1494,74 @@ body {
 .week-bar-label-today {
   color: var(--amber);
 }
+/* ══════════════════════════
+   てちょうゲーム
+   ══════════════════════════ */
+
+/* ── 一覧セクション ── */
+.nb-section        { margin-bottom: 20px; }
+.nb-section-ttl    { font-family:'Kaisei Decol',serif; font-size:var(--fs-lg); color:var(--deep); margin-bottom:10px; }
+.nb-create-btn     { width:100%; margin-bottom:0; }
+.nb-empty          { font-size:var(--fs-sm); color:rgba(45,27,0,0.4); text-align:center; padding:14px 0; line-height:1.8; }
+
+.nb-thumb-row      { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+.nb-thumb          { width:calc(50% - 5px); min-height:80px; border-radius:12px; border:2px solid rgba(45,27,0,0.1);
+                     padding:10px; display:flex; align-items:center; gap:10px; cursor:pointer;
+                     box-shadow:0 2px 6px rgba(0,0,0,0.06); transition:transform .15s; }
+.nb-thumb:active   { transform:scale(0.97); }
+.nb-thumb-emoji    { font-size:28px; }
+.nb-thumb-info     { display:flex; flex-direction:column; gap:2px; }
+.nb-thumb-date     { font-size:var(--fs-xs); color:rgba(45,27,0,0.45); }
+.nb-thumb-count    { font-size:var(--fs-xs); color:var(--amber); font-weight:700; }
+
+/* ── 編集画面 ── */
+.nb-editor-wrap    { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+.nb-editor-header  { display:flex; align-items:center; justify-content:space-between;
+                     padding:10px 14px; border-bottom:1px solid rgba(45,27,0,0.08); flex-shrink:0; }
+.nb-editor-title   { font-size:var(--fs-sm); font-weight:700; color:var(--deep); }
+.nb-save-btn       { background:var(--amber); color:#fff; border:none; border-radius:20px;
+                     padding:6px 14px; font-size:var(--fs-sm); font-weight:700; cursor:pointer; }
+
+/* ── 配置待ちバナー ── */
+.nb-placing-banner { display:flex; align-items:center; gap:8px; padding:8px 14px;
+                     background:var(--amber-pale); border-bottom:1px solid var(--amber-light);
+                     flex-shrink:0; }
+.nb-placing-emoji  { font-size:22px; }
+.nb-placing-msg    { font-size:var(--fs-xs); color:var(--deep); flex:1; line-height:1.4; }
+.nb-placing-cancel { background:none; border:1px solid var(--coral); color:var(--coral);
+                     border-radius:12px; padding:3px 10px; font-size:var(--fs-xs); cursor:pointer; }
+
+/* ── キャンバス ── */
+.nb-canvas         { flex:1; position:relative; margin:10px; border-radius:16px;
+                     border:2px dashed rgba(45,27,0,0.15); overflow:hidden; min-height:240px;
+                     cursor:crosshair; }
+.nb-canvas-hint    { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+                     font-size:var(--fs-xs); color:rgba(45,27,0,0.3); text-align:center; line-height:1.8;
+                     pointer-events:none; }
+
+/* ── 配置済みアイテム ── */
+.nb-placed-item    { position:absolute; display:flex; flex-direction:column; align-items:center;
+                     cursor:pointer; user-select:none; }
+.nb-placed-emoji   { font-size:28px; line-height:1; }
+.nb-placed-label   { font-size:9px; color:var(--deep); max-width:60px; text-align:center;
+                     word-break:break-all; line-height:1.3; }
+.nb-placed-remove  { font-size:9px; color:var(--coral); opacity:0; transition:opacity .2s; }
+.nb-placed-item:hover .nb-placed-remove { opacity:1; }
+
+/* ── トレイ ── */
+.nb-tray           { flex-shrink:0; border-top:1px solid rgba(45,27,0,0.08); }
+.nb-tray-tabs      { display:flex; border-bottom:1px solid rgba(45,27,0,0.08); }
+.nb-tray-tab       { flex:1; text-align:center; padding:8px 2px; font-size:16px; cursor:pointer;
+                     color:rgba(45,27,0,0.35); transition:color .15s; border-bottom:2px solid transparent; }
+.nb-tray-tab.active        { color:var(--amber); border-bottom-color:var(--amber); }
+.nb-tray-tab-name          { display:block; font-size:9px; margin-top:2px; }
+.nb-tray-items             { display:flex; flex-wrap:nowrap; overflow-x:auto; gap:8px; padding:10px 12px;
+                             min-height:80px; -webkit-overflow-scrolling:touch; }
+.nb-tray-item              { flex-shrink:0; width:60px; display:flex; flex-direction:column; align-items:center;
+                             gap:3px; padding:6px 4px; border-radius:10px; cursor:pointer;
+                             background:var(--paper2); border:2px solid transparent; transition:border-color .15s; }
+.nb-tray-item.selecting    { border-color:var(--amber); background:var(--amber-pale); }
+.nb-tray-emoji             { font-size:24px; line-height:1; }
+.nb-tray-name              { font-size:9px; color:var(--deep); text-align:center; word-break:break-all; line-height:1.3; }
+.nb-tray-note-preview      { font-size:8px; color:rgba(45,27,0,0.4); text-align:center; }
+.nb-tray-empty             { font-size:var(--fs-xs); color:rgba(45,27,0,0.35); padding:16px; text-align:center; }
