@@ -773,7 +773,8 @@ const badgeModalHtml = badgeModalData ? (() => {
       </div>
     </div>`;
 })() : '';
-
+// ── 手帳セクション用HTML ──
+  const notebookSectionHtml = renderNotebookSection();
   return `
     <div class="content">
       <div class="badge-section-top">
