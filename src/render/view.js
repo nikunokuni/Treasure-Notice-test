@@ -197,7 +197,7 @@ function renderHome() {
   }).join('');
 
   const streakMsg = S.streak === 0        ? 'きょうからはじめよう！'
-    : S.streak < 3 ? `${S.streak}にちれんぞく！このちょうしで！`
+    : S.streak < 3 ? `${S.streak}にちれんぞく！このちょうし！`
     : S.streak < 7 ? `すごい！${S.streak}にちれんぞく中🎉`
     : `${S.streak}にち！もうヒーローだ⭐`;
 
