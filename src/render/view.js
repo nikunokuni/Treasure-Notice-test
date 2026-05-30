@@ -1063,7 +1063,7 @@ function renderNotebookTray() {
       // ふせん画像選択UI
       itemsHtml = renderStickerPicker('note');
     }
-  
+  }
 
   return `
     <div class="nb-tray">
