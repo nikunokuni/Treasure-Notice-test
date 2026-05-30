@@ -98,6 +98,14 @@ function render() {
     return;
   }
 
+  // 手帳編集中は専用画面を表示
+  if (S.notebookEditing) {
+    tw.style.display = 'none';
+    root.innerHTML   = renderNotebookEditor();
+    bindEvents();
+    return;
+  }
+
   const inFlow = ['lens','chat','summary'].includes(S.flow);
   if (inFlow) {
     tw.style.display = 'none';
@@ -717,6 +725,126 @@ const App = {
   applyUpdate() {
     if (App._waitingSW) { App._waitingSW.postMessage('skipWaiting'); }
     else { window.location.reload(); }
+  },
+   // ══════════════════════
+  // 手帳ゲーム
+  // ══════════════════════
+
+  /** 新しい手帳の作成を開始（テーマ選択 → 編集画面へ） */
+  startNewNotebook() {
+    const owned = S.ownedPageThemes || ['plain'];
+    if (owned.length === 0) return;
+
+    // 所持テーマが1つならそのまま、複数なら先頭を選択（将来的に選択UIに拡張可能）
+    const themeId = owned[0];
+    S.notebookEditing = {
+      id:        'nb_' + Date.now(),
+      themeId:   themeId,
+      createdAt: new Date().toISOString(),
+      items:     [],
+    };
+    S.notebookTray    = 'badge';
+    S.notebookPlacing = null;
+    render();
+  },
+
+  /** 既存手帳を開いて編集 */
+  openNotebook(idx) {
+    const nb = (S.notebooks || [])[idx];
+    if (!nb) return;
+    // ディープコピーして編集（キャンセル時に元に戻せるよう）
+    S.notebookEditing = JSON.parse(JSON.stringify(nb));
+    S.notebookEditing._originalIdx = idx;
+    S.notebookTray    = 'badge';
+    S.notebookPlacing = null;
+    render();
+  },
+
+  /** トレイのタブ切替 */
+  switchNotebookTray(tray) {
+    S.notebookTray    = tray;
+    S.notebookPlacing = null;
+    render();
+  },
+
+  /** アイテム選択 → 配置待ち状態にする */
+  selectNotebookItem(type, id, emoji, label) {
+    // 同じアイテムをもう一度タップしたらキャンセル
+    if (_isPlacing(type, id)) {
+      S.notebookPlacing = null;
+    } else {
+      S.notebookPlacing = { type, id, emoji, label };
+    }
+    render();
+  },
+
+  /** キャンバスをタップ → 配置実行 */
+  placeItem(event) {
+    if (!S.notebookPlacing || !S.notebookEditing) return;
+
+    const canvas = document.getElementById('nb-canvas');
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x    = Math.round(event.clientX - rect.left - 20);  // 中心補正
+    const y    = Math.round(event.clientY - rect.top  - 20);
+
+    S.notebookEditing.items.push({
+      type:  S.notebookPlacing.type,
+      id:    S.notebookPlacing.id,
+      emoji: S.notebookPlacing.emoji,
+      label: S.notebookPlacing.label,
+      x:     Math.max(0, x),
+      y:     Math.max(0, y),
+    });
+    S.notebookPlacing = null;
+    render();
+  },
+
+  /** 配置済みアイテムを削除 */
+  removePlacedItem(idx) {
+    if (!S.notebookEditing) return;
+    S.notebookEditing.items.splice(idx, 1);
+    render();
+  },
+
+  /** 配置キャンセル */
+  cancelPlacing() {
+    S.notebookPlacing = null;
+    render();
+  },
+
+  /** 手帳を保存して一覧に戻る */
+  saveNotebook() {
+    if (!S.notebookEditing) return;
+    const nb = S.notebookEditing;
+
+    if (!S.notebooks) S.notebooks = [];
+
+    const origIdx = nb._originalIdx;
+    delete nb._originalIdx;  // 保存前に内部プロパティを除去
+
+    if (origIdx !== undefined) {
+      // 既存手帳を上書き
+      S.notebooks[origIdx] = nb;
+    } else {
+      // 新規追加
+      S.notebooks.push(nb);
+    }
+
+    S.notebookEditing = null;
+    S.notebookPlacing = null;
+    persistSave();
+    S.tab = 'fav';
+    render();
+  },
+
+  /** 手帳編集をキャンセルして一覧に戻る */
+  cancelNotebook() {
+    S.notebookEditing = null;
+    S.notebookPlacing = null;
+    S.tab = 'fav';
+    render();
   },
   _waitingSW: null,
 };
