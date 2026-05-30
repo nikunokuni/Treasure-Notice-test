@@ -915,7 +915,28 @@ function renderNotebookCanvas(nb, theme) {
         : ''}
     </div>`;
 }
-
+// ──────────────────────────────────
+// 追加：読み取り専用キャンバス（おきにいりタブのサムネ用）
+// ──────────────────────────────────
+function renderNotebookCanvasReadonly(nb, theme) {
+  const items = (nb.items || []).map(item => {
+    const top  = Math.round(item.y);
+    const left = Math.round(item.x);
+    return `
+      <div class="nb-placed-item" style="top:${top}px;left:${left}px">
+        <span class="nb-placed-emoji">${esc(item.emoji)}</span>
+        ${item.label ? `<div class="nb-placed-label">${esc(item.label)}</div>` : ''}
+      </div>`;
+  }).join('');
+  const hint = (nb.items || []).length === 0
+    ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
+    : '';
+  return `
+    <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
+      ${items}
+      ${hint}
+    </div>`;
+}
 function renderNotebookTray() {
   const tray   = S.notebookTray || 'badge';
   const tabs   = [
