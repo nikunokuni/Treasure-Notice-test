@@ -890,13 +890,18 @@ function renderNotebookEditor() {
 
 function renderNotebookCanvas(nb, theme) {
   const items = (nb.items || []).map((item, i) => {
-    const top  = Math.round(item.y);
-    const left = Math.round(item.x);
+    const top      = Math.round(item.y);
+    const left     = Math.round(item.x);
+    const isBadge  = item.type === 'badge';
+    const labelHtml = (!isBadge && item.label)
+      ? `<div class="nb-placed-label">${esc(item.label)}</div>`
+      : '';
     return `
-      <div class="nb-placed-item" style="top:${top}px;left:${left}px"
+      <div class="nb-placed-item ${isBadge ? 'nb-placed-item--badge' : ''}"
+           style="top:${top}px;left:${left}px"
            onclick="event.stopPropagation();App.removePlacedItem(${i})">
         <span class="nb-placed-emoji">${esc(item.emoji)}</span>
-        ${item.label ? `<div class="nb-placed-label">${esc(item.label)}</div>` : ''}
+        ${labelHtml}
         <div class="nb-placed-remove">✕</div>
       </div>`;
   }).join('');
