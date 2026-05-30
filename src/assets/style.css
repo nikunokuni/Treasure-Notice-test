@@ -1407,3 +1407,59 @@ body {
   font-size: var(--fs-xs);
   color: rgba(45,27,0,0.25);
 }
+/* ── 日別たから棒グラフ ── */
+.week-bar-card {
+  background: white;
+  border-radius: 14px;
+  padding: 14px 10px 10px;
+  margin-bottom: 14px;
+  border: 1.5px solid rgba(45,27,0,0.06);
+}
+.week-bar-grid {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 80px;
+  gap: 4px;
+}
+.week-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+.week-bar-count {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--amber);
+  height: 14px;
+  display: flex;
+  align-items: center;
+}
+.week-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 2px;
+}
+.week-bar-fill {
+  width: 100%;
+  background: var(--amber-light);
+  border-radius: 4px 4px 0 0;
+  min-height: 0;
+  transition: height .4s;
+}
+.week-bar-fill.week-bar-today {
+  background: var(--amber);
+}
+.week-bar-label {
+  font-size: 9px;
+  color: rgba(45,27,0,0.4);
+  margin-top: 4px;
+  font-weight: 700;
+}
+.week-bar-label-today {
+  color: var(--amber);
+}
