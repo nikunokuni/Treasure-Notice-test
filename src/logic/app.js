@@ -839,6 +839,27 @@ const App = {
     S.tab = 'fav';
     render();
   },
+   deleteNotebook() {
+  const ok = confirm('このてちょうをさくじょしますか？\nさくじょすると、もとにもどせません。');
+  if (!ok) return;
+  try {
+    const nb = S.notebookEditing;
+    if (!nb) return;
+    if (!S.notebooks) S.notebooks = [];
+    const origIdx = nb._originalIdx;
+    if (origIdx !== undefined) {
+      S.notebooks.splice(origIdx, 1);  // 既存手帳を配列から削除
+    }
+    S.notebookEditing = null;
+    S.notebookPlacing = null;
+    persistSave();
+    S.tab = 'fav';
+    render();
+  } catch (e) {
+    console.error('deleteNotebook失敗:', e);
+    alert('さくじょに失敗しました。もう一度お試しください。');
+  }
+},
 
   /** 手帳編集をキャンセルして一覧に戻る */
   cancelNotebook() {
