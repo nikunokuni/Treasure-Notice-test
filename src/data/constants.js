@@ -351,3 +351,21 @@ const ADULT_LINKS = [
   { id:'privacy',  label:'プライバシーポリシー', emoji:'🔒', url:'' },
   { id:'about',    label:'たからさがしとは',     emoji:'🔍', url:'' },
 ];
+// ── 手帳ページテーマ（報酬で解放） ──
+const NOTEBOOK_THEMES = [
+  { id:'plain',  name:'シンプル',  bg:'#fffef7', pattern:'none',        emoji:'📄' },
+  { id:'pink',   name:'ピンク',    bg:'#fff0f5', pattern:'polka-pink',  emoji:'🌸' },
+  { id:'blue',   name:'そら',      bg:'#f0f6ff', pattern:'polka-blue',  emoji:'☁️' },
+  { id:'nature', name:'しぜん',    bg:'#f0fdf6', pattern:'polka-green', emoji:'🌿' },
+  { id:'star',   name:'ほし',      bg:'#fffbe0', pattern:'polka-star',  emoji:'⭐' },
+];
+
+// ── シール素材（絵文字ベース） ──
+const STICKERS = [
+  { id:'st1', emoji:'⭐' }, { id:'st2', emoji:'🌟' }, { id:'st3', emoji:'✨' },
+  { id:'st4', emoji:'🌸' }, { id:'st5', emoji:'🌈' }, { id:'st6', emoji:'🎀' },
+  { id:'st7', emoji:'🍀' }, { id:'st8', emoji:'🌙' }, { id:'st9', emoji:'☀️' },
+  { id:'st10',emoji:'❤️' }, { id:'st11',emoji:'🎵' }, { id:'st12',emoji:'🦋' },
+  { id:'st13',emoji:'🌺' }, { id:'st14',emoji:'🍭' }, { id:'st15',emoji:'🎈' },
+  { id:'st16',emoji:'🐝' }, { id:'st17',emoji:'🌻' }, { id:'st18',emoji:'🍄' },
+];
