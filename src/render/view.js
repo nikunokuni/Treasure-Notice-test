@@ -901,14 +901,11 @@ function renderNotebookCanvas(nb, theme) {
       </div>`;
   }).join('');
 
-  return `
-    <div class="nb-canvas" id="nb-canvas"
+ return `
+    <div class="nb-canvas nb-canvas--grid" id="nb-canvas"
          style="background:${theme.bg}"
          onclick="App.placeItem(event)">
       ${items}
-      ${(nb.items || []).length === 0
-        ? `<div class="nb-canvas-hint">したのアイコンをえらんで<br>ここをタップしてはろう！</div>`
-        : ''}
     </div>`;
 }
 // ──────────────────────────────────
