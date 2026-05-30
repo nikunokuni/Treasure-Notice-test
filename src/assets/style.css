@@ -293,7 +293,7 @@ body {
   box-shadow:0 4px 16px rgba(232,134,10,0.18);
 }
 .main-free {
-  background:linear-gradient(135deg,var(--amber),var(--coral-light));
+  background:linear-gradient(135deg,#5aab7a,#3d8f6a);
 }
 .main-action-label {
   font-size:var(--fs-sm); color:rgba(255,255,255,0.85);
