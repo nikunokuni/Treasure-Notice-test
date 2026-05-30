@@ -849,3 +849,27 @@ const App = {
   },
   _waitingSW: null,
 };
+// ===== てちょう ページ上限 =====
+
+/** 獲得済みバッヂのポイント合計を返す */
+function calcBadgePoints() {
+  const earned = S.data.earnedBadges ?? [];  // 例: ['badge_map', 'badge_book', ...]
+  return earned.reduce((sum, badgeId) => {
+    const badge = BADGES.find(b => b.id === badgeId);
+    return sum + (badge?.level ?? 1);
+  }, 0);
+}
+
+/** てちょうの最大ページ数を返す（課金分も加算） */
+function calcNotebookLimit() {
+  const base = 1;                                      // 初期は1枚
+  const fromBadge = Math.floor(calcBadgePoints() / 15); // 15ptごとに+1
+  const fromPurchase = S.data.extraNotebookPages ?? 0;  // 課金分
+  return base + fromBadge + fromPurchase;
+}
+
+/** てちょうに空きがあるか（ボタン表示判定に使う） */
+function hasNotebookSlot() {
+  const used = S.data.notebooks?.length ?? 0;
+  return used < calcNotebookLimit();
+}
