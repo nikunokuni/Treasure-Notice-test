@@ -733,10 +733,10 @@ body {
 
 /* フィルターバー */
 .box-filter-bar { margin-bottom:12px; }
-.box-filter-scroll {
-  display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none;
+/* 修正後（overflow削除 → flex-wrap:wrap に変更） */
+.box-filter-wrap {
+  display:flex; gap:6px; flex-wrap:wrap;
 }
-.box-filter-scroll::-webkit-scrollbar { display:none; }
 .box-filter-chip {
   flex-shrink:0; padding:8px 14px; border-radius:20px;
   border:1.5px solid rgba(45,27,0,0.1); background:white;
