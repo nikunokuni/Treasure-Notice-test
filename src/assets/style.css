@@ -1342,6 +1342,32 @@ body {
 .settings-row-icon {
   flex-wrap: wrap;
 }
+/* ── 設定サブタブ ── */
+.settings-subtabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.settings-subtab {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 22px;
+  border: 2px solid rgba(45,27,0,0.12);
+  background: white;
+  font-size: var(--fs-sm);
+  color: rgba(45,27,0,0.45);
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: .05em;
+  transition: background .15s, color .15s;
+}
+.settings-subtab.active {
+  background: var(--amber);
+  color: white;
+  border-color: var(--amber);
+}
+
 /* ── 大人用セクション（シック） ── */
 .settings-section-adult {
   background: #f8f8f6;
@@ -1355,7 +1381,6 @@ body {
   letter-spacing: .15em;
   color: rgba(45,27,0,0.40);
   margin-bottom: 14px;
-  text-transform: uppercase;
 }
 .adult-link-row {
   display: flex;
