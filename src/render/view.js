@@ -890,9 +890,29 @@ function renderNotebookEditor() {
 
 function renderNotebookCanvas(nb, theme) {
   const items = (nb.items || []).map((item, i) => {
-    const top      = Math.round(item.y);
-    const left     = Math.round(item.x);
-    const isBadge  = item.type === 'badge';
+    const top     = Math.round(item.y);
+    const left    = Math.round(item.x);
+    const isBadge = item.type === 'badge';
+
+    // ふせん付きアイテム（たから/ノート）
+    if (item.stickerSrc && item.record) {
+      const r       = item.record;
+      const isFav   = item.type === 'fav-sticker';
+      const innerHtml = isFav
+        ? _renderFavStickerInner(r)
+        : _renderNoteStickerInner(r);
+      return `
+        <div class="nb-placed-item nb-placed-item--sticker"
+             style="top:${top}px;left:${left}px"
+             onclick="event.stopPropagation();App.removePlacedItem(${i})">
+          <div class="nb-sticker-card" style="background-image:url('${esc(item.stickerSrc)}')">
+            ${innerHtml}
+          </div>
+          <div class="nb-placed-remove">✕</div>
+        </div>`;
+    }
+
+    // 通常アイテム（バッヂ・シール・既存たから/ノート）
     const labelHtml = (!isBadge && item.label)
       ? `<div class="nb-placed-label">${esc(item.label)}</div>`
       : '';
