@@ -1684,3 +1684,19 @@ body {
   border-radius: 12px;
   margin: 8px 0;
 }
+/* てちょう削除ボタン */
+.nb-delete-btn {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 8px 16px 24px;
+  padding: 12px;
+  background: none;
+  border: 1px solid #e57373;
+  border-radius: 8px;
+  color: #e57373;
+  font-size: 14px;
+  cursor: pointer;
+}
+.nb-delete-btn:active {
+  background: #fdecea;
+}
