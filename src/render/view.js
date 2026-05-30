@@ -935,6 +935,25 @@ function renderNotebookCanvasReadonly(nb, theme) {
     ${hint}
   </div>`;
 }
+/* ── ふせん選択UI（たから/ノート共通） ── */
+function renderStickerPicker(trayType) {
+  const stickers = NOTEBOOK_STICKERS;
+  if (stickers.length === 0) {
+    return `<div class="nb-tray-empty">ふせんがまだないよ</div>`;
+  }
+  return `
+    <div class="nb-sticker-picker-wrap">
+      <div class="nb-sticker-picker-label">どのふせんにする？</div>
+      <div class="nb-sticker-picker-scroll">
+        ${stickers.map(st => `
+          <div class="nb-sticker-pick-item ${S.notebookStickerSelected === st.id ? 'selected' : ''}"
+               onclick="App.pickSticker('${st.id}','${trayType}')">
+            <img class="nb-sticker-pick-img" src="${esc(st.src)}" alt="${esc(st.name)}">
+            <div class="nb-sticker-pick-name">${esc(st.name)}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
 function renderNotebookTray() {
   const tray   = S.notebookTray || 'badge';
   const tabs   = [
