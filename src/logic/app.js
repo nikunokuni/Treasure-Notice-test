@@ -878,6 +878,7 @@ function calcBadgePoints() {
   return BADGES.reduce((sum, b) => {
     if (!b.levels) return sum;
     const earned = b.levels.filter(lv => lv.check(S));
+         console.warn(b.id, '→ earned:', earned.length, '/ S.records:', S.records?.length); // ← 追加
     if (earned.length === 0) return sum;
     const top = earned[earned.length - 1];
     return sum + (rarityScore[top.rarity] ?? 1);
