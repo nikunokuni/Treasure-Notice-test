@@ -242,7 +242,7 @@ function renderHome() {
   <div class="home-stat-chip">
     <span class="hsc-icon">📅</span>
     <span class="hsc-num">${totalDays}</span>
-    <span class="hsc-lbl">つうさん日</span>
+    <span class="hsc-lbl">つうさん</span>
   </div>
   <div class="hsc-divider"></div>
   <div class="home-stat-chip">
