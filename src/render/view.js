@@ -855,7 +855,7 @@ function renderNotebookSection() {
        </button>`
     : `<p class="notebook-limit-msg">
          📖 てちょうは今 ${used}／${limit} さつ<br>
-         バッヂを あと ${15 - (calcBadgePoints() % 15) || 15} こ あつめると もう1さつ ふえるよ！
+         バッヂを あと ${15 - (calcBadgePoints() % 15) || 15} こ あつめると もう1ページ ふえるよ！
        </p>`;
   return `
     <div class="nb-section">
