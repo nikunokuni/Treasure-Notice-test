@@ -886,6 +886,7 @@ function calcBadgePoints() {
 
 /** てちょうの最大ページ数を返す */
 function calcNotebookLimit() {
+   console.warn('BADGES:', BADGES); // ← ここを追加
   const points = calcBadgePoints();
   console.warn('badge points:', points); // ← 点数確認
   console.warn('S:', S);           // ← 追加
