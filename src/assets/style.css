@@ -1673,3 +1673,14 @@ body {
 .sticky-color-btn:active {
   transform: scale(0.97);
 }
+/* てちょう上限メッセージ */
+.notebook-limit-msg {
+  text-align: center;
+  color: var(--color-text-muted, #999);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  margin: 8px 0;
+}
