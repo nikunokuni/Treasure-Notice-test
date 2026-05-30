@@ -892,7 +892,7 @@ function renderNotebookCanvas(nb, theme) {
     const left = Math.round(item.x);
     return `
       <div class="nb-placed-item" style="top:${top}px;left:${left}px"
-           onclick="App.removePlacedItem(${i})">
+           onclick="event.stopPropagation();App.removePlacedItem(${i})">
         <span class="nb-placed-emoji">${esc(item.emoji)}</span>
         ${item.label ? `<div class="nb-placed-label">${esc(item.label)}</div>` : ''}
         <div class="nb-placed-remove">✕</div>
