@@ -1059,6 +1059,10 @@ function renderNotebookTray() {
               <div class="nb-tray-name">${esc(r.odai.name)}</div>
               <div class="nb-tray-note-preview">${esc(r.note.slice(0, 15))}</div>
           </div>`).join('');
+  } else {
+      // ふせん画像選択UI
+      itemsHtml = renderStickerPicker('note');
+    }
   }
 
   return `
