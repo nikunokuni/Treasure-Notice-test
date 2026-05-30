@@ -853,8 +853,9 @@ function renderTakaraCard(r, showFavBtn) {
    せってい
    ══════════════════════════ */
 function renderSettings() {
-  const u  = S.user;
-  const fs = S.fontSize || 'medium';
+  const u   = S.user;
+  const fs  = S.fontSize || 'medium';
+  const tab = S.settingsTab || 'kid';   // 'kid' or 'adult'
 
   const adultLinksHtml = ADULT_LINKS.map(l => `
     <div class="adult-link-row" onclick="App.openExternalLink('${l.id}')">
@@ -863,112 +864,119 @@ function renderSettings() {
       <span class="adult-link-arrow">›</span>
     </div>`).join('');
 
+  const kidHtml = `
+    <div class="settings-section">
+      <div class="settings-ttl">こどものじょうほう</div>
+      <div class="settings-row-2col">
+        <div class="settings-field settings-field-half">
+          <div class="settings-field-label">よびかた</div>
+          <input class="form-input" id="s-name" value="${esc(u.name)}" placeholder="ニックネーム">
+          <div class="form-error" id="s-name-err">なまえをいれてください</div>
+        </div>
+        <div class="settings-field settings-field-half">
+          <div class="settings-field-label">すきなもの</div>
+          <input class="form-input" id="s-likes" value="${esc(u.likes)}" placeholder="ポケモン・サッカーなど">
+        </div>
+      </div>
+      <div class="settings-row-2col settings-row-icon">
+        <div class="settings-field settings-field-half">
+          <div class="settings-field-label">ねんれい</div>
+          ${renderAgeIconRow(u.ageGroup, "App.toggleSettingsAge()", S.settingsAgeOpen)}
+        </div>
+        <div class="settings-field settings-field-half">
+          <div class="settings-field-label">まなびのタイプ</div>
+          ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-ttl">いっしょにするひと</div>
+      <div class="settings-field">
+        <div class="settings-field-label">よびかた</div>
+        <div class="parent-chips">${renderParentChips(u.parentName)}</div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-ttl">🎨 アプリのいろ</div>
+      <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
+        パパ・ママといっしょにえらんでね
+      </div>
+      <div class="color-theme-grid">
+        ${COLOR_THEMES.map(t => `
+          <div class="color-theme-chip ${S.theme === t.id ? 'selected' : ''}"
+               onclick="App.setTheme('${t.id}')"
+               style="background:${t.amber}">
+            <span class="color-theme-check">${S.theme === t.id ? '✓' : ''}</span>
+            <span class="color-theme-name">${t.name}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-ttl">表示設定</div>
+      <div class="settings-field">
+        <div class="settings-field-label">文字サイズ</div>
+        <div class="font-size-chips">
+          <div class="font-size-chip ${fs === 'small'  ? 'sel' : ''}" onclick="App.setFontSize('small')">ちいさい</div>
+          <div class="font-size-chip ${fs === 'medium' ? 'sel' : ''}" onclick="App.setFontSize('medium')">ふつう</div>
+          <div class="font-size-chip ${fs === 'large'  ? 'sel' : ''}" onclick="App.setFontSize('large')">おおきい</div>
+        </div>
+      </div>
+    </div>`;
+
+  const adultHtml = `
+    <div class="settings-section-adult">
+      <div class="settings-ttl-adult">ウィークリーレポート</div>
+      <div style="font-size:11px;color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
+        今週の学びをAIがまとめるよ（${u.parentName}向け）
+      </div>
+      ${S.weeklyReport ? `
+        <div class="report-card">
+          <div class="report-label">📊 ウィークリーレポート</div>
+          <div class="report-body">${aiText(S.weeklyReport)}</div>
+        </div>
+        <button class="btn-secondary" onclick="App.generateReport()">
+          ${S.reportLoading ? '<span class="spinner"></span>' : '🔄 もう一度生成'}
+        </button>` : `
+        <button class="btn-primary" onclick="App.generateReport()">
+          ${S.reportLoading ? '<span class="spinner"></span> せいせいちゅう…' : '📊 レポートをつくる'}
+        </button>`}
+    </div>
+
+    <div class="settings-section-adult">
+      <div class="settings-ttl-adult">データ管理</div>
+      <div class="adult-link-row" onclick="App.exportCSV()">
+        <span>📤</span><span>データをエクスポート</span>
+        <span class="adult-link-arrow">›</span>
+      </div>
+      <div class="adult-link-row" onclick="App.triggerImport()">
+        <span>📥</span><span>データをインポート</span>
+        <span class="adult-link-arrow">›</span>
+      </div>
+      <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="App.importCSV(event)">
+    </div>
+
+    <div class="settings-section-adult">
+      <div class="settings-ttl-adult">意見・要望</div>
+      <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);margin-bottom:10px;line-height:1.6">
+        アプリをよりよくするために、きいてね！
+      </div>
+      <button class="btn-primary" style="margin-bottom:0" onclick="App.sendFeedback()">📨 フォームをひらく</button>
+    </div>
+
+    <div class="settings-section-adult">
+      <div class="settings-ttl-adult">その他</div>
+      ${adultLinksHtml}
+    </div>`;
+
   return `
     <div class="content">
-
-      <!-- ▼ 子ども用 セクション群 -->
-      <div class="settings-section">
-        <div class="settings-ttl">こどものじょうほう</div>
-
-        <div class="settings-row-2col">
-          <div class="settings-field settings-field-half">
-            <div class="settings-field-label">よびかた</div>
-            <input class="form-input" id="s-name" value="${esc(u.name)}" placeholder="ニックネーム">
-            <div class="form-error" id="s-name-err">なまえをいれてください</div>
-          </div>
-          <div class="settings-field settings-field-half">
-            <div class="settings-field-label">すきなもの</div>
-            <input class="form-input" id="s-likes" value="${esc(u.likes)}" placeholder="ポケモン・サッカーなど">
-          </div>
-        </div>
-
-        <div class="settings-row-2col settings-row-icon">
-          <div class="settings-field settings-field-half">
-            <div class="settings-field-label">ねんれい</div>
-            ${renderAgeIconRow(u.ageGroup, "App.toggleSettingsAge()", S.settingsAgeOpen)}
-          </div>
-          <div class="settings-field settings-field-half">
-            <div class="settings-field-label">まなびのタイプ</div>
-            ${renderTypeIconRow(u.type, "App.toggleSettingsType()", S.settingsTypeOpen)}
-          </div>
-        </div>
+      <div class="settings-subtabs">
+        <div class="settings-subtab ${tab === 'kid'   ? 'active' : ''}" onclick="App.switchSettingsTab('kid')">こどもよう</div>
+        <div class="settings-subtab ${tab === 'adult' ? 'active' : ''}" onclick="App.switchSettingsTab('adult')">おとなよう</div>
       </div>
-
-      <div class="settings-section">
-        <div class="settings-ttl">いっしょにするひと</div>
-        <div class="settings-field">
-          <div class="settings-field-label">よびかた</div>
-          <div class="parent-chips">${renderParentChips(u.parentName)}</div>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-ttl">🎨 アプリのいろ</div>
-        <div style="font-size:var(--fs-xs);color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
-          パパ・ママといっしょにえらんでね
-        </div>
-        <div class="color-theme-grid">
-          ${COLOR_THEMES.map(t => `
-            <div class="color-theme-chip ${S.theme === t.id ? 'selected' : ''}"
-                 onclick="App.setTheme('${t.id}')"
-                 style="background:${t.amber}">
-              <span class="color-theme-check">${S.theme === t.id ? '✓' : ''}</span>
-              <span class="color-theme-name">${t.name}</span>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-ttl">表示設定</div>
-        <div class="settings-field">
-          <div class="settings-field-label">文字サイズ</div>
-          <div class="font-size-chips">
-            <div class="font-size-chip ${fs === 'small'  ? 'sel' : ''}" onclick="App.setFontSize('small')">ちいさい</div>
-            <div class="font-size-chip ${fs === 'medium' ? 'sel' : ''}" onclick="App.setFontSize('medium')">ふつう</div>
-            <div class="font-size-chip ${fs === 'large'  ? 'sel' : ''}" onclick="App.setFontSize('large')">おおきい</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ▼ 大人用 セクション群（シック） -->
-      <div class="settings-section-adult">
-        <div class="settings-ttl-adult">保護者向け</div>
-
-        <div style="font-size:11px;color:rgba(45,27,0,0.45);margin-bottom:10px;line-height:1.6">
-          今週の学びをAIがまとめるよ（${u.parentName}向け）
-        </div>
-        ${S.weeklyReport ? `
-          <div class="report-card">
-            <div class="report-label">📊 ウィークリーレポート</div>
-            <div class="report-body">${aiText(S.weeklyReport)}</div>
-          </div>
-          <button class="btn-secondary" onclick="App.generateReport()">
-            ${S.reportLoading ? '<span class="spinner"></span>' : '🔄 もう一度生成'}
-          </button>` : `
-          <button class="btn-primary" onclick="App.generateReport()">
-            ${S.reportLoading ? '<span class="spinner"></span> せいせいちゅう…' : '📊 レポートをつくる'}
-          </button>`}
-      </div>
-
-      <div class="settings-section-adult">
-        <div class="settings-ttl-adult">データ管理</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <button class="btn-secondary" style="flex:1;padding:9px;font-size:var(--fs-sm)" onclick="App.exportCSV()">📤 エクスポート</button>
-          <button class="btn-secondary" style="flex:1;padding:9px;font-size:var(--fs-sm)" onclick="App.triggerImport()">📥 インポート</button>
-        </div>
-        <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="App.importCSV(event)">
-      </div>
-
-      <div class="settings-section-adult">
-        <div class="settings-ttl-adult">意見・要望</div>
-        <div style="font-size:var(--fs-sm);color:rgba(45,27,0,0.5);margin-bottom:10px;line-height:1.6">アプリをよりよくするために、きいてね！</div>
-        <button class="btn-primary" style="margin-bottom:0" onclick="App.sendFeedback()">📨 フォームをひらく</button>
-      </div>
-
-      <div class="settings-section-adult">
-        <div class="settings-ttl-adult">その他</div>
-        ${adultLinksHtml}
-      </div>
-
+      ${tab === 'kid' ? kidHtml : adultHtml}
     </div>`;
 }
