@@ -875,6 +875,7 @@ const App = {
 /** 獲得済みバッヂのレベル合計を返す */
 function calcBadgePoints() {
   const rarityScore = { normal: 1, rare: 2, epic: 3 };
+   console.warn('BADGES:', BADGES.length, BADGES);
   return BADGES.reduce((sum, b) => {
     if (!b.levels) return sum;
     const earned = b.levels.filter(lv => lv.check(S));
