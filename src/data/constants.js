@@ -372,7 +372,7 @@ const STICKERS = [
 // =============================================
 // 付箋カラー選択肢（設定画面で使用）
 // =============================================
-export const STICKY_COLORS = [
+const STICKY_COLORS = [
   { id: 'yellow', label: 'きいろ 🌟',  value: '#FFF9C4' },
   { id: 'green',  label: 'みどり 🌿',  value: '#C8E6C9' },
   { id: 'orange', label: 'オレンジ 🍊', value: '#FFE0B2' },
