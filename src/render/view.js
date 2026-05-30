@@ -1028,7 +1028,7 @@ function renderNotebookPlacingBanner() {
   return `
     <div class="nb-placing-banner">
       <span class="nb-placing-emoji">${S.notebookPlacing.emoji}</span>
-      <span class="nb-placing-msg">てちょうのおきたいところをタップしてね！</span>
+      <span class="nb-placing-msg">おきたいところをタップしてね！</span>
       <button class="nb-placing-cancel" onclick="App.cancelPlacing()">とりけし</button>
     </div>`;
 }
