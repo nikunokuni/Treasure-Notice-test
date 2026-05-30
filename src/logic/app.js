@@ -507,6 +507,14 @@ const App = {
       }
     }
   },
+   deleteRecord(idx) {
+    if (!S.records[idx]) return;
+    const name = S.records[idx].odai?.name || 'このたから';
+    if (!confirm(`「${name}」をさくじょしますか？`)) return;
+    S.records.splice(idx, 1);
+    persistSave();
+    render();
+  },
 
   setRecordStatusByIdx(idx, status) {
     if (S.records[idx]) { S.records[idx].status = status; persistSave(); render(); }
