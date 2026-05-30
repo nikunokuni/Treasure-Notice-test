@@ -244,7 +244,7 @@ const BADGES = BADGE_DEFS.map(def => {
     get icon() { return _getCurrentLevel(def, S).icon;  },
     get name() { return _getCurrentLevel(def, S).name;  },
     get cond() { return _getCurrentLevel(def, S).cond;  },
-    get rarity() { return _getCurrentLevel(def, S).rarity; },
+    get level() { return _getCurrentLevel(def, S).level; },
     // check は「1つ目のlevelを達成=バッジ所持」として扱う
     check: baseCheck,
     // 進化判定用（view.jsから呼ぶ）
