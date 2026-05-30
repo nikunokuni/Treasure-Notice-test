@@ -380,3 +380,9 @@ const STICKY_COLORS = [
   { id: 'purple', label: 'むらさき 🔮', value: '#D1C4E9' },
   { id: 'blue',   label: 'みずいろ 💙', value: '#B3E5FC' },
 ];
+// ── 手帳ふせん画像（stickersフォルダのPNGを定義） ──
+// ふせんを増やしたいときはここに追加するだけ
+const NOTEBOOK_STICKERS = [
+  { id: 'rocket', name: 'ロケット', src: 'src/assets/stickers/rochet.png' },
+  // 例: { id: 'star', name: 'ほし', src: 'src/assets/stickers/star.png' },
+];
