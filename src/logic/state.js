@@ -83,6 +83,8 @@ function persistSave() {
       changedColor:     S.changedColor      ?? false,
       changedType:      S.changedType       ?? false,
       addedToHomeScreen:S.addedToHomeScreen ?? false,
+      ownedPageThemes: S.ownedPageThemes ?? ['plain'],
+      notebooks:       S.notebooks       ?? [],
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch(e) { console.warn('save failed:', e); }
