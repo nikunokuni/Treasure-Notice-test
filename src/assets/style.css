@@ -139,6 +139,55 @@ body {
   height:2px; flex-shrink:0;
   background:linear-gradient(90deg,rgba(232,134,10,0.2),rgba(232,134,10,0.08),rgba(232,134,10,0.2));
 }
+/* =============================================
+   タブバー：付箋デザイン
+   ============================================= */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 8px 0;
+  background: transparent;
+  align-items: flex-end;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 8px 4px 10px;
+  border-radius: 6px 6px 0 0;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-kids);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 2px -2px 4px rgba(0,0,0,0.10);
+  /* 付箋の「ちょっとだけ斜め」感 */
+  transform: rotate(-1deg) translateY(3px);
+}
+/* タブごとに色を変える */
+.tab-item:nth-child(1) { background: var(--sticky-home);     color: #555; }
+.tab-item:nth-child(2) { background: var(--sticky-calendar); color: #555; }
+.tab-item:nth-child(3) { background: var(--sticky-box);      color: #555; }
+.tab-item:nth-child(4) { background: var(--sticky-reward);   color: #555; }
+.tab-item:nth-child(5) { background: var(--sticky-setting);  color: #555; }
+/* アクティブタブ：少し大きく、斜めなし */
+.tab-item.active {
+  transform: rotate(0deg) translateY(0px);
+  box-shadow: 3px -3px 8px rgba(0,0,0,0.15);
+  z-index: 2;
+  font-size: 0.8rem;
+}
+/* 右下がちょっとめくれる（::after で疑似影） */
+.tab-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  background: linear-gradient(225deg, rgba(0,0,0,0.12) 50%, transparent 50%);
+  border-radius: 0 0 6px 0;
+}
 
 /* ══════════════════════════════
    チャットヘッダー
