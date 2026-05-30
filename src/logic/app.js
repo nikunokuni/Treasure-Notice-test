@@ -874,13 +874,13 @@ const App = {
 
 /** 獲得済みバッヂのレベル合計を返す */
 function calcBadgePoints() {
-  const rarityScore = { normal: 1, rare: 2, epic: 3 };  
+  const rarityScore = { normal: 1, rare: 2, epic: 3 };
   return BADGES.reduce((sum, b) => {
-    // そのバッジで達成済みの最高レベルを取得
+    if (!b.levels) return sum;
     const earned = b.levels.filter(lv => lv.check(S));
     if (earned.length === 0) return sum;
-    const topRarity = earned[earned.length - 1].rarity;
-    return sum + (rarityScore[topRarity] ?? 1);
+    const top = earned[earned.length - 1];
+    return sum + (rarityScore[top.rarity] ?? 1);
   }, 0);
 }
 
