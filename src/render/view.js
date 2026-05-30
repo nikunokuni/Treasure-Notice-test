@@ -928,8 +928,7 @@ function renderNotebookCanvasReadonly(nb, theme) {
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
   return `
-  <div class="nb-canvas nb-canvas--readonly"
-       style="background:${theme.bg}; min-height:160px; cursor:default;">
+  <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
     ${items}
     ${hint}
   </div>`;
