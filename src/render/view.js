@@ -966,26 +966,34 @@ function renderNotebookTray() {
            onclick="App.selectNotebookItem('sticker','${s.id}','${s.emoji}','')">
         <div class="nb-tray-emoji">${s.emoji}</div>
       </div>`).join('');
-  } else if (tray === 'fav') {
-    const favs = S.records.filter(r => r.bookmarked);
-    itemsHtml = favs.length === 0
-      ? `<div class="nb-tray-empty">おきにいりがまだないよ</div>`
-      : favs.map((r, i) => `
-          <div class="nb-tray-item ${_isPlacing('fav', String(i)) ? 'selecting' : ''}"
-               onclick="App.selectNotebookItem('fav','${i}','${r.odai.emoji}','${esc(r.odai.name)}')">
-            <div class="nb-tray-emoji">${r.odai.emoji}</div>
-            <div class="nb-tray-name">${esc(r.odai.name)}</div>
-          </div>`).join('');
+ } else if (tray === 'fav') {
+    // ── ふせん選択中なら、たから一覧を表示 ──
+    if (S.notebookStickerPick === 'fav') {
+      const favs = S.records.filter(r => r.bookmarked);
+      itemsHtml = favs.length === 0
+        ? `<div class="nb-tray-empty">おきにいりがまだないよ</div>`
+        : favs.map((r, i) => `
+            <div class="nb-tray-item ${_isPlacing('fav', String(i)) ? 'selecting' : ''}"
+                 onclick="App.selectFavWithSticker(${i})">
+              <div class="nb-tray-emoji">${r.odai.emoji}</div>
+              <div class="nb-tray-name">${esc(r.odai.name)}</div>
+            </div>`).join('');
+    } else {
+      // ふせん画像選択UI
+      itemsHtml = renderStickerPicker('fav');
+    }
   } else if (tray === 'note') {
-    const notes = S.records.filter(r => r.note && r.note.trim());
-    itemsHtml = notes.length === 0
-      ? `<div class="nb-tray-empty">ノートがまだないよ</div>`
-      : notes.map((r, i) => `
-          <div class="nb-tray-item nb-tray-item-note ${_isPlacing('note', String(i)) ? 'selecting' : ''}"
-               onclick="App.selectNotebookItem('note','${i}','📓','${esc(r.odai.name)}：${esc(r.note.slice(0, 12))}…')">
-            <div class="nb-tray-emoji">📓</div>
-            <div class="nb-tray-name">${esc(r.odai.name)}</div>
-            <div class="nb-tray-note-preview">${esc(r.note.slice(0, 15))}</div>
+    // ── ふせん選択中なら、ノート一覧を表示 ──
+    if (S.notebookStickerPick === 'note') {
+      const notes = S.records.filter(r => r.note && r.note.trim());
+      itemsHtml = notes.length === 0
+        ? `<div class="nb-tray-empty">ノートがまだないよ</div>`
+        : notes.map((r, i) => `
+            <div class="nb-tray-item nb-tray-item-note ${_isPlacing('note', String(i)) ? 'selecting' : ''}"
+                 onclick="App.selectNoteWithSticker(${i})">
+              <div class="nb-tray-emoji">📓</div>
+              <div class="nb-tray-name">${esc(r.odai.name)}</div>
+              <div class="nb-tray-note-preview">${esc(r.note.slice(0, 15))}</div>
           </div>`).join('');
   }
 
