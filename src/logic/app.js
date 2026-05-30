@@ -868,6 +868,50 @@ const App = {
     S.tab = 'fav';
     render();
   },
+   /** ふせん画像を選択 → 次のステップへ（内容一覧を表示） */
+  pickSticker(stickerId, trayType) {
+    S.notebookStickerSelected = stickerId;
+    S.notebookStickerPick     = trayType;  // 'fav' or 'note'
+    render();
+  },
+
+  /** たから内容を選んでキャンバスに配置待ち状態へ */
+  selectFavWithSticker(favIdx) {
+    const stickerId = S.notebookStickerSelected;
+    const sticker   = NOTEBOOK_STICKERS.find(s => s.id === stickerId);
+    const record    = S.records.filter(r => r.bookmarked)[favIdx];
+    if (!sticker || !record) return;
+    S.notebookPlacing = {
+      type:       'fav-sticker',
+      id:         `fav_${favIdx}_${stickerId}`,
+      emoji:      record.odai.emoji,
+      label:      record.odai.name,
+      stickerSrc: sticker.src,
+      record:     record,
+    };
+    S.notebookStickerPick     = null;
+    S.notebookStickerSelected = null;
+    render();
+  },
+
+  /** ノート内容を選んでキャンバスに配置待ち状態へ */
+  selectNoteWithSticker(noteIdx) {
+    const stickerId = S.notebookStickerSelected;
+    const sticker   = NOTEBOOK_STICKERS.find(s => s.id === stickerId);
+    const record    = S.records.filter(r => r.note && r.note.trim())[noteIdx];
+    if (!sticker || !record) return;
+    S.notebookPlacing = {
+      type:       'note-sticker',
+      id:         `note_${noteIdx}_${stickerId}`,
+      emoji:      record.odai.emoji,
+      label:      record.odai.name,
+      stickerSrc: sticker.src,
+      record:     record,
+    };
+    S.notebookStickerPick     = null;
+    S.notebookStickerSelected = null;
+    render();
+  },
   _waitingSW: null,
 };
 // ===== てちょう ページ上限 =====
