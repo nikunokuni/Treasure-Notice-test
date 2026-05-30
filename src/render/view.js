@@ -848,10 +848,18 @@ function renderNotebookSection() {
       }).join('');
 
   const canCreate = owned.length > 0;
-  const createBtn = canCreate
-    ? `<button class="btn-primary nb-create-btn" onclick="App.startNewNotebook()">＋ あたらしいてちょうをつくる</button>`
-    : `<div class="nb-empty">てちょうのページをてにいれよう！</div>`;
+ const limit = App.calcNotebookLimit();      // ← ②で作った関数
+const used  = S.data.notebooks?.length ?? 0;
+const canAdd = App.hasNotebookSlot();       // ← ②で作った関数
 
+const newBtn = canAdd
+  ? `<button class="btn-new-notebook" onclick="App.createNotebook()">
+       ＋ あたらしいてちょうをつくる
+     </button>`
+  : `<p class="notebook-limit-msg">
+       📖 てちょうは今 ${used}/${limit} さつ使っています<br>
+       バッヂを ${15 - (App.calcBadgePoints() % 15)} こあつめると もう1さつ増えるよ！
+     </p>`;
   return `
     <div class="nb-section">
       <div class="nb-section-ttl">📔 てちょう</div>
