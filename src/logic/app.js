@@ -874,7 +874,14 @@ const App = {
 
 /** 獲得済みバッヂのレベル合計を返す */
 function calcBadgePoints() {
-  return BADGES.filter(b => b.check(S)).reduce((sum, b) => sum + (b.level ?? 1), 0);
+  const rarityScore = { normal: 1, rare: 2, epic: 3 };  // ← rarityごとの点数（お好みで調整可）
+  return BADGES.reduce((sum, b) => {
+    // そのバッジで達成済みの最高レベルを取得
+    const earned = b.levels.filter(lv => lv.check(S));
+    if (earned.length === 0) return sum;
+    const topRarity = earned[earned.length - 1].rarity;
+    return sum + (rarityScore[topRarity] ?? 1);
+  }, 0);
 }
 
 /** てちょうの最大ページ数を返す */
