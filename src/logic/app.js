@@ -890,7 +890,7 @@ function calcNotebookLimit() {
   console.warn('badge points:', points); // ← 点数確認
   console.warn('S:', S);           // ← 追加
   console.warn('S.records:', S?.records); // ← 追加
-  console.warn(b.id, 'earned:', earned.length); // ← 追加
+  
   const base        = 1;
   const fromBadge   = Math.floor(points / 15);
   console.warn('fromBadge:', fromBadge); // ← 何冊増えるか確認
