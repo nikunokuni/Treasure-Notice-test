@@ -997,7 +997,6 @@ function _isPlacing(type, id) {
 /* ══════════════════════════
    たからカード（共通パーツ）
    ══════════════════════════ */
-// ── 修正後 ──
 function renderTakaraCard(r, showFavBtn) {
   const lens     = LENSES.find(l => l.id === r.lens);
   const colors   = ['#e8860a','#0a9396','#e76f51','#52b788','#9b89c4','#ffd166'];
