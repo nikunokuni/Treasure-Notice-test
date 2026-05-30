@@ -830,19 +830,19 @@ function renderNotebookSection() {
   const books = S.notebooks || [];
 
   const bookListHtml = books.length === 0
-    ? `<div class="nb-empty">まだてちょうがないよ<br>つくってみよう！</div>`
-    : books.map((nb, i) => {
-        const theme = NOTEBOOK_THEMES.find(t => t.id === nb.themeId) || NOTEBOOK_THEMES[0];
-        const itemCount = (nb.items || []).length;
-        return `
-          <div class="nb-thumb" onclick="App.openNotebook(${i})" style="background:${theme.bg}">
-            <div class="nb-thumb-emoji">${theme.emoji}</div>
-            <div class="nb-thumb-info">
-              <div class="nb-thumb-date">${fmtDate(nb.createdAt)}</div>
-              <div class="nb-thumb-count">${itemCount}こ</div>
-            </div>
-          </div>`;
-      }).join('');
+  ? `<div class="nb-empty">まだてちょうがないよ<br>つくってみよう！</div>`
+  : books.map((nb, i) => {
+      const theme = NOTEBOOK_THEMES.find(t => t.id === nb.themeId) || NOTEBOOK_THEMES[0];
+      const itemCount = (nb.items || []).length;
+      return `
+        <div class="nb-thumb" onclick="App.openNotebook(${i})" style="background:${theme.bg}">
+          <div class="nb-thumb-emoji">${theme.emoji}</div>
+          <div class="nb-thumb-info">
+            <div class="nb-thumb-date">${fmtDate(nb.createdAt)}</div>
+            <div class="nb-thumb-count">${itemCount}こ</div>
+          </div>
+        </div>`;
+    }).join('');
 
   const canCreate = owned.length > 0;
   const limit  = calcNotebookLimit();
