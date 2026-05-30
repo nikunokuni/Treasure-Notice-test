@@ -864,7 +864,7 @@ function renderNotebookSection() {
     <div class="nb-section">
       <div class="nb-section-ttl">📔 てちょう</div>
       <div class="nb-thumb-row">${bookListHtml}</div>
-      ${createBtn}
+      ${newBtn}
     </div>
     <div class="note-section-divider"><span>🏅 かくとくしたバッヂ</span></div>`;
 }
