@@ -494,11 +494,17 @@ const App = {
     render();
     setTimeout(triggerFindingAnim, 50);
   },
-
+   
   toggleRecordFav(idx) {
     if (S.records[idx]) {
       S.records[idx].bookmarked = !S.records[idx].bookmarked;
-      persistSave(); render();
+      persistSave();
+      const btn = document.querySelector(`.takara-fav-btn[data-idx="${idx}"]`);
+      if (btn) {
+        btn.classList.toggle('active', S.records[idx].bookmarked);
+      } else {
+        render();
+      }
     }
   },
 
