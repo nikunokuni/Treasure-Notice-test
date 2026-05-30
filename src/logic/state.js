@@ -57,6 +57,8 @@ const S = {
   notebookEditing: null,        // 編集中の手帳オブジェクト（null = 非編集中）
   notebookTray: 'badge',        // トレイの選択タブ ('badge'|'sticker'|'fav'|'note')
   notebookPlacing: null,        // 配置待ちアイテム { type, id, emoji, label }
+  notebookStickerPick: null,    // ふせん選択中のトレイ種別 ('fav'|'note'|null)
+  notebookStickerSelected: null,// 選択中のふせん画像ID
   shownBadgeModal: null,
 };
 
