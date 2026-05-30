@@ -625,6 +625,9 @@ function renderDayModal() {
 /* ══════════════════════════
    たからばこ
    ══════════════════════════ */
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📦 view.js の renderBox() を丸ごとこれに差し替え
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function renderBox() {
   const recs      = S.records.slice().reverse();
   const lensCount = {};
@@ -633,27 +636,35 @@ function renderBox() {
   const maxCount   = Math.max(1, ...Object.values(lensCount));
   const lensColors = { ことば:'var(--coral)', かず:'var(--teal)', かがく:'var(--mint)', しゃかい:'var(--amber)', じぶん:'#ffd166' };
 
-  // ヒートマップ（過去90日）
-  const heatData = {};
+  // ── 日別たから棒グラフ（過去7日、今日が右端）──
+  const dailyData = {};
   S.records.forEach(r => {
     const key = new Date(r.date).toDateString();
-    heatData[key] = (heatData[key] || 0) + 1;
+    dailyData[key] = (dailyData[key] || 0) + 1;
   });
-  const heatDays  = 90;
-  const todayD    = new Date();
-  const heatCells = [];
-  for (let i = heatDays - 1; i >= 0; i--) {
-    const d   = new Date(todayD); d.setDate(todayD.getDate() - i);
-    const key = d.toDateString();
-    const count     = heatData[key] || 0;
-    const intensity = count === 0 ? 0 : count === 1 ? 1 : count <= 3 ? 2 : 3;
-    heatCells.push({ key, count, intensity, isToday: i === 0 });
+  const today = new Date();
+  const weekDays = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key   = d.toDateString();
+    const count = dailyData[key] || 0;
+    const dayLabel = ['日','月','火','水','木','金','土'][d.getDay()];
+    weekDays.push({ key, count, dayLabel, isToday: i === 0 });
   }
-  const heatHtml = heatCells.map(c => `
-    <div class="heat-cell heat-${c.intensity} ${c.isToday ? 'heat-today' : ''}"
-         title="${c.count}こ"></div>`).join('');
+  const maxDaily = Math.max(1, ...weekDays.map(d => d.count));
 
-  // レンズフィルター
+  const weekBarHtml = weekDays.map(d => `
+    <div class="week-bar-col">
+      <div class="week-bar-count">${d.count > 0 ? d.count : ''}</div>
+      <div class="week-bar-wrap">
+        <div class="week-bar-fill ${d.isToday ? 'week-bar-today' : ''}"
+             style="height:${Math.round(d.count / maxDaily * 100)}%"></div>
+      </div>
+      <div class="week-bar-label ${d.isToday ? 'week-bar-label-today' : ''}">${d.dayLabel}</div>
+    </div>`).join('');
+
+  // ── フィルターバー（折り返し表示）──
   const lensTagIds   = LENSES.map(l => l.id);
   let   filteredRecs = recs;
   if (S.boxFilterTag && lensTagIds.includes(S.boxFilterTag)) {
@@ -662,7 +673,7 @@ function renderBox() {
 
   const filterBar = `
     <div class="box-filter-bar">
-      <div class="box-filter-scroll">
+      <div class="box-filter-wrap">
         <div class="box-filter-chip ${!S.boxFilterTag ? 'active' : ''}" onclick="App.setBoxFilter(null)">すべて</div>
         ${LENSES.map(l => `
           <div class="box-filter-chip box-filter-lens ${S.boxFilterTag === l.id ? 'active' : ''}" onclick="App.setBoxFilter('${l.id}')">${l.icon} ${esc(l.name)}</div>`).join('')}
@@ -672,17 +683,9 @@ function renderBox() {
   return `
     <div class="content">
       ${S.records.length > 0 ? `
-        <div class="section-ttl">たんけんのあしあと（90にち）</div>
-        <div class="heatmap-card">
-          <div class="heatmap-grid">${heatHtml}</div>
-          <div class="heatmap-legend">
-            <span>すくない</span>
-            <div class="heat-cell heat-0" style="width:12px;height:12px"></div>
-            <div class="heat-cell heat-1" style="width:12px;height:12px"></div>
-            <div class="heat-cell heat-2" style="width:12px;height:12px"></div>
-            <div class="heat-cell heat-3" style="width:12px;height:12px"></div>
-            <span>おおい</span>
-          </div>
+        <div class="section-ttl">にちべつのたから（1しゅうかん）</div>
+        <div class="week-bar-card">
+          <div class="week-bar-grid">${weekBarHtml}</div>
         </div>
         <div class="section-ttl" style="margin-top:14px">レンズべつのはっけん</div>
         <div class="lens-compare-grid">
