@@ -1038,14 +1038,38 @@ body {
    v10 追加スタイル
    ══════════════════════════════ */
 
-/* ── ホーム：メインアクションブロック ── */
+/* ── メインアクションブロック：付箋デザイン ── */
 .main-block {
-  background: linear-gradient(135deg, rgba(232,134,10,0.12), rgba(232,134,10,0.05));
-  border: 2px solid rgba(232,134,10,0.3);
-  border-radius: 22px;
-  padding: 16px 14px 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 20px rgba(232,134,10,0.12);
+  position: relative;
+  background: var(--sticky-main-bg);
+  border-radius: 10px 10px 10px 2px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow:
+    3px 3px 8px rgba(0,0,0,0.10),
+    6px 6px 16px rgba(0,0,0,0.05);
+  overflow: visible;
+}
+/* 右下めくれ：白い三角（表面） */
+.main-block::before {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 24px; height: 24px;
+  background: linear-gradient(225deg, #e8e0cc 50%, transparent 50%);
+  border-radius: 0 0 10px 0;
+  z-index: 1;
+}
+/* 右下めくれ：影（奥行き感） */
+.main-block::after {
+  content: '';
+  position: absolute;
+  bottom: 3px; right: 3px;
+  width: 20px; height: 20px;
+  background: rgba(0,0,0,0.10);
+  transform: rotate(45deg) translate(4px, 4px);
+  z-index: 0;
+  border-radius: 2px;
 }
 .main-block-label {
   font-family: 'Kaisei Decol', serif;
