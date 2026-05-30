@@ -120,6 +120,8 @@ function persistLoad() {
       changedColor:      saved.changedColor       ?? false,
       changedType:       saved.changedType        ?? false,
       addedToHomeScreen: saved.addedToHomeScreen  ?? false,
+      ownedPageThemes: saved.ownedPageThemes ?? ['plain'],
+      notebooks:       saved.notebooks       ?? [],
     });
 
     // ストリーク途切れチェック
