@@ -825,6 +825,166 @@ const badgeModalHtml = badgeModalData ? (() => {
     ${newBadgeModalHtml}
     ${badgeModalHtml}`;
 }
+/* ══════════════════════════
+   てちょう：一覧セクション（おきにいりタブ内）
+   ══════════════════════════ */
+function renderNotebookSection() {
+  const owned = S.ownedPageThemes || ['plain'];
+  const books = S.notebooks || [];
+
+  const bookListHtml = books.length === 0
+    ? `<div class="nb-empty">まだてちょうがないよ<br>つくってみよう！</div>`
+    : books.map((nb, i) => {
+        const theme = NOTEBOOK_THEMES.find(t => t.id === nb.themeId) || NOTEBOOK_THEMES[0];
+        const itemCount = (nb.items || []).length;
+        return `
+          <div class="nb-thumb" onclick="App.openNotebook(${i})" style="background:${theme.bg}">
+            <div class="nb-thumb-emoji">${theme.emoji}</div>
+            <div class="nb-thumb-info">
+              <div class="nb-thumb-date">${fmtDate(nb.createdAt)}</div>
+              <div class="nb-thumb-count">${itemCount}こ</div>
+            </div>
+          </div>`;
+      }).join('');
+
+  const canCreate = owned.length > 0;
+  const createBtn = canCreate
+    ? `<button class="btn-primary nb-create-btn" onclick="App.startNewNotebook()">＋ あたらしいてちょうをつくる</button>`
+    : `<div class="nb-empty">てちょうのページをてにいれよう！</div>`;
+
+  return `
+    <div class="nb-section">
+      <div class="nb-section-ttl">📔 てちょう</div>
+      <div class="nb-thumb-row">${bookListHtml}</div>
+      ${createBtn}
+    </div>
+    <div class="note-section-divider"><span>🏅 かくとくしたバッヂ</span></div>`;
+}
+
+/* ══════════════════════════
+   てちょう：編集画面
+   ══════════════════════════ */
+function renderNotebookEditor() {
+  const nb    = S.notebookEditing;
+  if (!nb) return '';
+  const theme = NOTEBOOK_THEMES.find(t => t.id === nb.themeId) || NOTEBOOK_THEMES[0];
+
+  const canvasHtml  = renderNotebookCanvas(nb, theme);
+  const trayHtml    = renderNotebookTray();
+  const placingHtml = renderNotebookPlacingBanner();
+
+  return `
+    <div class="nb-editor-wrap">
+      <div class="nb-editor-header">
+        <button class="back-btn" onclick="App.cancelNotebook()">◀ もどる</button>
+        <span class="nb-editor-title">${theme.emoji} てちょうをかざろう</span>
+        <button class="nb-save-btn" onclick="App.saveNotebook()">かんせい！</button>
+      </div>
+      ${placingHtml}
+      ${canvasHtml}
+      ${trayHtml}
+    </div>`;
+}
+
+function renderNotebookCanvas(nb, theme) {
+  const items = (nb.items || []).map((item, i) => {
+    const top  = Math.round(item.y);
+    const left = Math.round(item.x);
+    return `
+      <div class="nb-placed-item" style="top:${top}px;left:${left}px"
+           onclick="App.removePlacedItem(${i})">
+        <span class="nb-placed-emoji">${esc(item.emoji)}</span>
+        ${item.label ? `<div class="nb-placed-label">${esc(item.label)}</div>` : ''}
+        <div class="nb-placed-remove">✕</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="nb-canvas" id="nb-canvas"
+         style="background:${theme.bg}"
+         onclick="App.placeItem(event)">
+      ${items}
+      ${(nb.items || []).length === 0
+        ? `<div class="nb-canvas-hint">したのアイコンをえらんで<br>ここをタップしてはろう！</div>`
+        : ''}
+    </div>`;
+}
+
+function renderNotebookTray() {
+  const tray   = S.notebookTray || 'badge';
+  const tabs   = [
+    { id:'badge',   label:'🏅', name:'バッヂ'   },
+    { id:'sticker', label:'🎨', name:'シール'   },
+    { id:'fav',     label:'⭐', name:'たから'   },
+    { id:'note',    label:'📓', name:'ノート'   },
+  ];
+  const tabsHtml = tabs.map(t => `
+    <div class="nb-tray-tab ${tray === t.id ? 'active' : ''}"
+         onclick="App.switchNotebookTray('${t.id}')">
+      ${t.label}<span class="nb-tray-tab-name">${t.name}</span>
+    </div>`).join('');
+
+  let itemsHtml = '';
+  if (tray === 'badge') {
+    const earned = BADGES.filter(b => b.check(S));
+    itemsHtml = earned.length === 0
+      ? `<div class="nb-tray-empty">まだバッヂがないよ</div>`
+      : earned.map(b => `
+          <div class="nb-tray-item ${_isPlacing('badge', b.id) ? 'selecting' : ''}"
+               onclick="App.selectNotebookItem('badge','${b.id}','${b.icon}','${esc(b.name)}')">
+            <div class="nb-tray-emoji">${b.icon}</div>
+            <div class="nb-tray-name">${esc(b.name)}</div>
+          </div>`).join('');
+  } else if (tray === 'sticker') {
+    itemsHtml = STICKERS.map(s => `
+      <div class="nb-tray-item ${_isPlacing('sticker', s.id) ? 'selecting' : ''}"
+           onclick="App.selectNotebookItem('sticker','${s.id}','${s.emoji}','')">
+        <div class="nb-tray-emoji">${s.emoji}</div>
+      </div>`).join('');
+  } else if (tray === 'fav') {
+    const favs = S.records.filter(r => r.bookmarked);
+    itemsHtml = favs.length === 0
+      ? `<div class="nb-tray-empty">おきにいりがまだないよ</div>`
+      : favs.map((r, i) => `
+          <div class="nb-tray-item ${_isPlacing('fav', String(i)) ? 'selecting' : ''}"
+               onclick="App.selectNotebookItem('fav','${i}','${r.odai.emoji}','${esc(r.odai.name)}')">
+            <div class="nb-tray-emoji">${r.odai.emoji}</div>
+            <div class="nb-tray-name">${esc(r.odai.name)}</div>
+          </div>`).join('');
+  } else if (tray === 'note') {
+    const notes = S.records.filter(r => r.note && r.note.trim());
+    itemsHtml = notes.length === 0
+      ? `<div class="nb-tray-empty">ノートがまだないよ</div>`
+      : notes.map((r, i) => `
+          <div class="nb-tray-item nb-tray-item-note ${_isPlacing('note', String(i)) ? 'selecting' : ''}"
+               onclick="App.selectNotebookItem('note','${i}','📓','${esc(r.odai.name)}：${esc(r.note.slice(0, 12))}…')">
+            <div class="nb-tray-emoji">📓</div>
+            <div class="nb-tray-name">${esc(r.odai.name)}</div>
+            <div class="nb-tray-note-preview">${esc(r.note.slice(0, 15))}</div>
+          </div>`).join('');
+  }
+
+  return `
+    <div class="nb-tray">
+      <div class="nb-tray-tabs">${tabsHtml}</div>
+      <div class="nb-tray-items">${itemsHtml}</div>
+    </div>`;
+}
+
+function renderNotebookPlacingBanner() {
+  if (!S.notebookPlacing) return '';
+  return `
+    <div class="nb-placing-banner">
+      <span class="nb-placing-emoji">${S.notebookPlacing.emoji}</span>
+      <span class="nb-placing-msg">てちょうのおきたいところをタップしてね！</span>
+      <button class="nb-placing-cancel" onclick="App.cancelPlacing()">とりけし</button>
+    </div>`;
+}
+
+// 配置待ち判定ヘルパー（view内専用）
+function _isPlacing(type, id) {
+  return S.notebookPlacing?.type === type && S.notebookPlacing?.id === String(id);
+}
 
 /* ══════════════════════════
    たからカード（共通パーツ）
