@@ -846,9 +846,9 @@ function renderNotebookSection() {
   const canAdd = hasNotebookSlot();
 
   const newBtn = canAdd
-    ? `<button class="btn-new-notebook" onclick="App.startNewNotebook()">
-         ＋ あたらしいてちょうをつくる
-       </button>`
+    ?`<button class="nb-create-btn" onclick="App.startNewNotebook()">
+   ＋ あたらしいてちょうをつくる
+ </button>`
     : `<p class="notebook-limit-msg">
          📖 てちょうは今 ${used}／${limit} さつ<br>
          バッヂを あと ${15 - (calcBadgePoints() % 15) || 15} こ あつめると もう1ページ ふえるよ！
@@ -928,10 +928,11 @@ function renderNotebookCanvasReadonly(nb, theme) {
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
   return `
-    <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
-      ${items}
-      ${hint}
-    </div>`;
+  <div class="nb-canvas nb-canvas--readonly"
+       style="background:${theme.bg}; min-height:160px; cursor:default;">
+    ${items}
+    ${hint}
+  </div>`;
 }
 function renderNotebookTray() {
   const tray   = S.notebookTray || 'badge';
