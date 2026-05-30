@@ -51,6 +51,12 @@ const S = {
   theme: 'amber',
   obColorOpen: false,
   newBadges: [],
+   // ── 手帳ゲーム ──
+  ownedPageThemes: ['plain'],   // 所持している手帳テーマID一覧
+  notebooks: [],                // 作成済み手帳リスト
+  notebookEditing: null,        // 編集中の手帳オブジェクト（null = 非編集中）
+  notebookTray: 'badge',        // トレイの選択タブ ('badge'|'sticker'|'fav'|'note')
+  notebookPlacing: null,        // 配置待ちアイテム { type, id, emoji, label }
   shownBadgeModal: null,
 };
 
