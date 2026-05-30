@@ -886,8 +886,11 @@ function calcBadgePoints() {
 
 /** てちょうの最大ページ数を返す */
 function calcNotebookLimit() {
+  const points = calcBadgePoints();
+  console.warn('badge points:', points); // ← 点数確認
   const base        = 1;
-  const fromBadge   = Math.floor(calcBadgePoints() / 15);
+  const fromBadge   = Math.floor(points / 15);
+  console.warn('fromBadge:', fromBadge); // ← 何冊増えるか確認
   const fromPurchase = S.extraNotebookPages ?? 0;
   return base + fromBadge + fromPurchase;
 }
