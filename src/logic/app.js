@@ -691,7 +691,7 @@ const App = {
     if (inp) inp.value = '';
     render();
   },
-
+  switchSettingsTab(tab) { S.settingsTab = tab; render(); },
   toggleObAge()        { S.obAgeOpen        = !S.obAgeOpen;        render(); },
   toggleObType()       { S.obTypeOpen       = !S.obTypeOpen;       render(); },
   toggleSettingsAge()  { S.settingsAgeOpen  = !S.settingsAgeOpen;  render(); },
