@@ -1614,7 +1614,14 @@ body {
 .nb-canvas         { flex:1; position:relative; margin:10px; border-radius:16px;
                      border:2px dashed rgba(45,27,0,0.15); overflow:hidden; min-height:240px;
                      cursor:crosshair; }
-.nb-canvas--readonly { pointer-events:none; cursor:default; }
+.nb-canvas--readonly {
+  pointer-events: none;
+  cursor: default;
+  flex: none;
+  height: 160px;
+  min-height: unset;
+  overflow: hidden;
+}
 .nb-canvas-hint    { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
                      font-size:var(--fs-xs); color:rgba(45,27,0,0.3); text-align:center; line-height:1.8;
                      pointer-events:none; }
