@@ -872,13 +872,11 @@ const App = {
 };
 // ===== てちょう ページ上限 =====
 
-/** 獲得済みバッヂのレベル合計を返す */
 function calcBadgePoints() {
   const rarityScore = { normal: 1, rare: 2, epic: 3 };
   return BADGES.reduce((sum, b) => {
-    if (!b.levels) return sum;
-    const earned = b.levels.filter(lv => lv.check(S));
-         console.warn(b.id, '→ earned:', earned.length, '/ S.records:', S.records?.length); // ← 追加
+    if (!b.def?.levels) return sum;          // ← levels は b.def の中にある
+    const earned = b.def.levels.filter(lv => lv.check(S));
     if (earned.length === 0) return sum;
     const top = earned[earned.length - 1];
     return sum + (rarityScore[top.rarity] ?? 1);
@@ -887,15 +885,9 @@ function calcBadgePoints() {
 
 /** てちょうの最大ページ数を返す */
 function calcNotebookLimit() {
-   console.warn('BADGES:', BADGES); // ← ここを追加
-  const points = calcBadgePoints();
-  console.warn('badge points:', points); // ← 点数確認
-  console.warn('S:', S);           // ← 追加
-  console.warn('S.records:', S?.records); // ← 追加
-  
+  const points = calcBadgePoints();  
   const base        = 1;
   const fromBadge   = Math.floor(points / 15);
-  console.warn('fromBadge:', fromBadge); // ← 何冊増えるか確認
   const fromPurchase = S.extraNotebookPages ?? 0;
   return base + fromBadge + fromPurchase;
 }
