@@ -233,6 +233,7 @@ const App = {
   setAge(a)  { S.user.ageGroup = a; persistSave(); render(); },
   setParent(p) { S.user.parentName = p; render(); },
   setTheme(id) { S.theme = id; S.changedColor = true; applyTheme(); persistSave(); render(); },
+  setStickyColor(id, value) { S.stickyColor = id; document.documentElement.style.setProperty('--sticky-main-bg', value); persistSave(); render(); },
   toggleObColor() { S.obColorOpen = !S.obColorOpen; render(); },
 
   // ── AI お題生成 ──
