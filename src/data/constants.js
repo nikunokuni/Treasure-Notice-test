@@ -115,109 +115,109 @@ const BADGE_DEFS = [
 
   // ── 回数系（進化型：たからさがし全体） ──
   { id:'takarasagashi', levels:[
-    { count:1,  icon:'🗺️',  name:'はじめてのたからさがし', cond:'たからさがしを1かいやった',    level:1, check: s=>s.records.length>=1  },
-    { count:10, icon:'🗺️✨', name:'たからさがし10かい！',   cond:'たからさがしを10かいやった',   level:2,   check: s=>s.records.length>=10 },
-    { count:50, icon:'🏆',  name:'たからさがし50かい！',   cond:'たからさがしを50かいやった',   level:3,   check: s=>s.records.length>=50 },
+    { count:1,  icon:'🗺️',  name:'はじめてのたからさがし', cond:'たからさがしを1かいやった',    rarity:'normal', check: s=>s.records.length>=1  },
+    { count:10, icon:'🗺️✨', name:'たからさがし10かい！',   cond:'たからさがしを10かいやった',   rarity:'rare',   check: s=>s.records.length>=10 },
+    { count:50, icon:'🏆',  name:'たからさがし50かい！',   cond:'たからさがしを50かいやった',   rarity:'epic',   check: s=>s.records.length>=50 },
   ]},
 
   // ── カテゴリ別（進化型） ──
   { id:'kotoba', levels:[
-    { count:1,  icon:'📖',   name:'ことばたんけんか',    cond:'ことばレンズで1かいたんけんした',  level:1', check: s=>s.records.filter(r=>r.lens==='ことば').length>=1  },
-    { count:10, icon:'📖✨', name:'ことば10かい！',      cond:'ことばレンズで10かいたんけんした', level:2,   check: s=>s.records.filter(r=>r.lens==='ことば').length>=10 },
-    { count:50, icon:'📚',  name:'ことばのたつじん！',   cond:'ことばレンズで50かいたんけんした', level:3,   check: s=>s.records.filter(r=>r.lens==='ことば').length>=50 },
+    { count:1,  icon:'📖',   name:'ことばたんけんか',    cond:'ことばレンズで1かいたんけんした',  rarity:'normal', check: s=>s.records.filter(r=>r.lens==='ことば').length>=1  },
+    { count:10, icon:'📖✨', name:'ことば10かい！',      cond:'ことばレンズで10かいたんけんした', rarity:'rare',   check: s=>s.records.filter(r=>r.lens==='ことば').length>=10 },
+    { count:50, icon:'📚',  name:'ことばのたつじん！',   cond:'ことばレンズで50かいたんけんした', rarity:'epic',   check: s=>s.records.filter(r=>r.lens==='ことば').length>=50 },
   ]},
   { id:'kazu', levels:[
-    { count:1,  icon:'🔢',   name:'かずたんけんか',      cond:'かずレンズで1かいたんけんした',   level:1, check: s=>s.records.filter(r=>r.lens==='かず').length>=1  },
-    { count:10, icon:'🔢✨', name:'かず10かい！',        cond:'かずレンズで10かいたんけんした',  level:2,   check: s=>s.records.filter(r=>r.lens==='かず').length>=10 },
-    { count:50, icon:'🧮',  name:'かずのたつじん！',     cond:'かずレンズで50かいたんけんした',  level:3,   check: s=>s.records.filter(r=>r.lens==='かず').length>=50 },
+    { count:1,  icon:'🔢',   name:'かずたんけんか',      cond:'かずレンズで1かいたんけんした',   rarity:'normal', check: s=>s.records.filter(r=>r.lens==='かず').length>=1  },
+    { count:10, icon:'🔢✨', name:'かず10かい！',        cond:'かずレンズで10かいたんけんした',  rarity:'rare',   check: s=>s.records.filter(r=>r.lens==='かず').length>=10 },
+    { count:50, icon:'🧮',  name:'かずのたつじん！',     cond:'かずレンズで50かいたんけんした',  rarity:'epic',   check: s=>s.records.filter(r=>r.lens==='かず').length>=50 },
   ]},
   { id:'kagaku', levels:[
-    { count:1,  icon:'🔬',   name:'かがくたんけんか',    cond:'かがくレンズで1かいたんけんした', level:1, check: s=>s.records.filter(r=>r.lens==='かがく').length>=1  },
-    { count:10, icon:'🔬✨', name:'かがく10かい！',      cond:'かがくレンズで10かいたんけんした',level:2,   check: s=>s.records.filter(r=>r.lens==='かがく').length>=10 },
-    { count:50, icon:'⚗️',  name:'かがくのたつじん！',   cond:'かがくレンズで50かいたんけんした',level:3,   check: s=>s.records.filter(r=>r.lens==='かがく').length>=50 },
+    { count:1,  icon:'🔬',   name:'かがくたんけんか',    cond:'かがくレンズで1かいたんけんした', rarity:'normal', check: s=>s.records.filter(r=>r.lens==='かがく').length>=1  },
+    { count:10, icon:'🔬✨', name:'かがく10かい！',      cond:'かがくレンズで10かいたんけんした',rarity:'rare',   check: s=>s.records.filter(r=>r.lens==='かがく').length>=10 },
+    { count:50, icon:'⚗️',  name:'かがくのたつじん！',   cond:'かがくレンズで50かいたんけんした',rarity:'epic',   check: s=>s.records.filter(r=>r.lens==='かがく').length>=50 },
   ]},
   { id:'shakai', levels:[
-    { count:1,  icon:'🗺',   name:'しゃかいたんけんか',  cond:'しゃかいレンズで1かいたんけんした',level:1, check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=1  },
-    { count:10, icon:'🗺✨', name:'しゃかい10かい！',    cond:'しゃかいレンズで10かいたんけんした',level:2,  check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=10 },
-    { count:50, icon:'🌍',  name:'しゃかいのたつじん！', cond:'しゃかいレンズで50かいたんけんした',level:3,  check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=50 },
+    { count:1,  icon:'🗺',   name:'しゃかいたんけんか',  cond:'しゃかいレンズで1かいたんけんした',rarity:'normal', check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=1  },
+    { count:10, icon:'🗺✨', name:'しゃかい10かい！',    cond:'しゃかいレンズで10かいたんけんした',rarity:'rare',  check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=10 },
+    { count:50, icon:'🌍',  name:'しゃかいのたつじん！', cond:'しゃかいレンズで50かいたんけんした',rarity:'epic',  check: s=>s.records.filter(r=>r.lens==='しゃかい').length>=50 },
   ]},
   { id:'jibun', levels:[
-    { count:1,  icon:'💛',   name:'じぶんたんけんか',    cond:'じぶんレンズで1かいたんけんした', level:1, check: s=>s.records.filter(r=>r.lens==='じぶん').length>=1  },
-    { count:10, icon:'💛✨', name:'じぶん10かい！',      cond:'じぶんレンズで10かいたんけんした',level:2,   check: s=>s.records.filter(r=>r.lens==='じぶん').length>=10 },
-    { count:50, icon:'🌟',  name:'じぶんのたつじん！',   cond:'じぶんレンズで50かいたんけんした',level:3,   check: s=>s.records.filter(r=>r.lens==='じぶん').length>=50 },
+    { count:1,  icon:'💛',   name:'じぶんたんけんか',    cond:'じぶんレンズで1かいたんけんした', rarity:'normal', check: s=>s.records.filter(r=>r.lens==='じぶん').length>=1  },
+    { count:10, icon:'💛✨', name:'じぶん10かい！',      cond:'じぶんレンズで10かいたんけんした',rarity:'rare',   check: s=>s.records.filter(r=>r.lens==='じぶん').length>=10 },
+    { count:50, icon:'🌟',  name:'じぶんのたつじん！',   cond:'じぶんレンズで50かいたんけんした',rarity:'epic',   check: s=>s.records.filter(r=>r.lens==='じぶん').length>=50 },
   ]},
 
   // ── 通算日数（進化型） ──
   { id:'totaldays', levels:[
-    { count:1,  icon:'📅',   name:'はじめてのたんけんび', cond:'1にちたんけんした',    level:1, check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=1;  } },
-    { count:7,  icon:'📅✨', name:'7にちたんけんした！',  cond:'7にちたんけんした',    level:2,   check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=7;  } },
-    { count:30, icon:'🗓️',  name:'30にちたんけんした！', cond:'30にちたんけんした',  level:3,   check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=30; } },
+    { count:1,  icon:'📅',   name:'はじめてのたんけんび', cond:'1にちたんけんした',    rarity:'normal', check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=1;  } },
+    { count:7,  icon:'📅✨', name:'7にちたんけんした！',  cond:'7にちたんけんした',    rarity:'rare',   check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=7;  } },
+    { count:30, icon:'🗓️',  name:'30にちたんけんした！', cond:'30にちたんけんした',   rarity:'epic',   check: s=>{ const d=new Set(s.records.map(r=>new Date(r.date).toDateString())); return d.size>=30; } },
   ]},
 
   // ── おきにいり（進化型） ──
   { id:'bookmark', levels:[
-    { count:1,  icon:'🔖',   name:'はじめてのおきにいり', cond:'おきにいりを1こあつめた',   level:1, check: s=>s.records.filter(r=>r.bookmarked).length>=1  },
-    { count:10, icon:'🔖✨', name:'おきにいり10こ！',    cond:'おきにいりを10こあつめた',  level:2,   check: s=>s.records.filter(r=>r.bookmarked).length>=10 },
-    { count:50, icon:'💎',  name:'おきにいり50こ！',    cond:'おきにいりを50こあつめた',  level:3,   check: s=>s.records.filter(r=>r.bookmarked).length>=50 },
+    { count:1,  icon:'🔖',   name:'はじめてのおきにいり', cond:'おきにいりを1こあつめた',   rarity:'normal', check: s=>s.records.filter(r=>r.bookmarked).length>=1  },
+    { count:10, icon:'🔖✨', name:'おきにいり10こ！',    cond:'おきにいりを10こあつめた',  rarity:'rare',   check: s=>s.records.filter(r=>r.bookmarked).length>=10 },
+    { count:50, icon:'💎',  name:'おきにいり50こ！',    cond:'おきにいりを50こあつめた',  rarity:'epic',   check: s=>s.records.filter(r=>r.bookmarked).length>=50 },
   ]},
 
   // ── ノート（進化型） ──
   { id:'note', levels:[
-    { count:1,  icon:'📓',   name:'はじめてのノート',     cond:'ノートを1こかいた',    level:1, check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=1  },
-    { count:10, icon:'📓✨', name:'ノート10こ！',         cond:'ノートを10こかいた',   level:2,   check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=10 },
-    { count:50, icon:'📔',  name:'ノートのたつじん！',    cond:'ノートを50こかいた',   level:3,   check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=50 },
+    { count:1,  icon:'📓',   name:'はじめてのノート',     cond:'ノートを1こかいた',    rarity:'normal', check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=1  },
+    { count:10, icon:'📓✨', name:'ノート10こ！',         cond:'ノートを10こかいた',   rarity:'rare',   check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=10 },
+    { count:50, icon:'📔',  name:'ノートのたつじん！',    cond:'ノートを50こかいた',   rarity:'epic',   check: s=>s.records.filter(r=>r.note&&r.note.trim()).length>=50 },
   ]},
 
   // ── X投稿（進化型） ──
   { id:'xpost', levels:[
-    { count:1,  icon:'𝕏',    name:'はじめてのとうこう',   cond:'Xにとうこうした',      level:1, check: s=>(s.xPostCount||0)>=1  },
-    { count:10, icon:'𝕏✨',  name:'とうこう10かい！',     cond:'Xに10かいとうこうした', level:2,   check: s=>(s.xPostCount||0)>=10 },
-    { count:50, icon:'📣',  name:'とうこう50かい！',     cond:'Xに50かいとうこうした', level:3,   check: s=>(s.xPostCount||0)>=50 },
+    { count:1,  icon:'𝕏',    name:'はじめてのとうこう',   cond:'Xにとうこうした',      rarity:'normal', check: s=>(s.xPostCount||0)>=1  },
+    { count:10, icon:'𝕏✨',  name:'とうこう10かい！',     cond:'Xに10かいとうこうした', rarity:'rare',   check: s=>(s.xPostCount||0)>=10 },
+    { count:50, icon:'📣',  name:'とうこう50かい！',     cond:'Xに50かいとうこうした', rarity:'epic',   check: s=>(s.xPostCount||0)>=50 },
   ]},
 
   // ── 写真でお題（進化型） ──
   { id:'photo', levels:[
-    { count:1,  icon:'📷',   name:'カメラたんけんか',     cond:'しゃしんでたからをみつけた',      level:1, check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=1  },
-    { count:10, icon:'📷✨', name:'カメラ10かい！',       cond:'しゃしんで10かいたからをみつけた', level:2,   check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=10 },
-    { count:50, icon:'🎥',  name:'カメラのたつじん！',   cond:'しゃしんで50かいたからをみつけた', level:3,   check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=50 },
+    { count:1,  icon:'📷',   name:'カメラたんけんか',     cond:'しゃしんでたからをみつけた',      rarity:'normal', check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=1  },
+    { count:10, icon:'📷✨', name:'カメラ10かい！',       cond:'しゃしんで10かいたからをみつけた', rarity:'rare',   check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=10 },
+    { count:50, icon:'🎥',  name:'カメラのたつじん！',   cond:'しゃしんで50かいたからをみつけた', rarity:'epic',   check: s=>s.records.filter(r=>r.odai&&r.odai.fromPhoto).length>=50 },
   ]},
 
   // ── 同じお題を違うレンズで（進化型） ──
   { id:'multilens', levels:[
-    { count:2,  icon:'🌈',   name:'2つのレンズでたんけん',cond:'おなじおだいをちがうレンズで2かいたんけんした',level:1, check: s=>_checkMultiLens(s,2) },
-    { count:5,  icon:'🌈✨', name:'5つのレンズでたんけん',cond:'おなじおだいをちがうレンズで5かいたんけんした',level:2,   check: s=>_checkMultiLens(s,5) },
+    { count:2,  icon:'🌈',   name:'2つのレンズでたんけん',cond:'おなじおだいをちがうレンズで2かいたんけんした',rarity:'normal', check: s=>_checkMultiLens(s,2) },
+    { count:5,  icon:'🌈✨', name:'5つのレンズでたんけん',cond:'おなじおだいをちがうレンズで5かいたんけんした',rarity:'epic',   check: s=>_checkMultiLens(s,5) },
   ]},
 
   // ── 連続日数（進化型） ──
   { id:'streak', levels:[
-    { count:1,  icon:'🔥',   name:'はじめてのれんぞく',   cond:'1にちれんぞくでたからさがしをした',  level:1, check: s=>s.streak>=1  },
-    { count:7,  icon:'🔥✨', name:'1しゅうかんれんぞく！', cond:'7にちれんぞくでたからさがしをした', level:2,   check: s=>s.streak>=7  },
-    { count:30, icon:'🌟',  name:'1かげつれんぞく！',    cond:'30にちれんぞくでたからさがしをした', level:3,   check: s=>s.streak>=30 },
+    { count:1,  icon:'🔥',   name:'はじめてのれんぞく',   cond:'1にちれんぞくでたからさがしをした',  rarity:'normal', check: s=>s.streak>=1  },
+    { count:7,  icon:'🔥✨', name:'1しゅうかんれんぞく！', cond:'7にちれんぞくでたからさがしをした',  rarity:'rare',   check: s=>s.streak>=7  },
+    { count:30, icon:'🌟',  name:'1かげつれんぞく！',    cond:'30にちれんぞくでたからさがしをした', rarity:'epic',   check: s=>s.streak>=30 },
   ]},
 
   // ── 1回完了系（シンプル・levelsが1つ） ──
   { id:'homescreen', levels:[
-    { count:1, icon:'📱',  name:'ホームについか',       cond:'ホーム画面についかした',      level:1, check: s=>!!(s.addedToHomeScreen) },
+    { count:1, icon:'📱',  name:'ホームについか',       cond:'ホーム画面についかした',       rarity:'normal', check: s=>!!(s.addedToHomeScreen) },
   ]},
   { id:'changedcolor', levels:[
-    { count:1, icon:'🎨',  name:'いろをかえた',         cond:'アプリのいろをかえた',         level:1, check: s=>!!(s.changedColor) },
+    { count:1, icon:'🎨',  name:'いろをかえた',         cond:'アプリのいろをかえた',         rarity:'normal', check: s=>!!(s.changedColor) },
   ]},
   { id:'changedtype', levels:[
-    { count:1, icon:'🔄',  name:'タイプをかえた',       cond:'まなびタイプをかえた',         level:1, check: s=>!!(s.changedType) },
+    { count:1, icon:'🔄',  name:'タイプをかえた',       cond:'まなびタイプをかえた',         rarity:'normal', check: s=>!!(s.changedType) },
   ]},
   { id:'weeklyreport', levels:[
-    { count:1, icon:'📊',  name:'レポートをつくった',   cond:'ウィークリーレポートをつくった',level:1, check: s=>!!(s.weeklyReport&&s.weeklyReport.trim()) },
+    { count:1, icon:'📊',  name:'レポートをつくった',   cond:'ウィークリーレポートをつくった', rarity:'normal', check: s=>!!(s.weeklyReport&&s.weeklyReport.trim()) },
   ]},
   { id:'feedback', levels:[
-    { count:1, icon:'📨',  name:'アンケートにこたえた', cond:'アンケートにこたえた',          level:1, check: s=>!!(s.sentFeedback) },
+    { count:1, icon:'📨',  name:'アンケートにこたえた', cond:'アンケートにこたえた',          rarity:'normal', check: s=>!!(s.sentFeedback) },
   ]},
 
   // ── 未定2枠（将来用のプレースホルダー） ──
   { id:'secret1', levels:[
-    { count:1, icon:'❓',  name:'？？？',              cond:'ひみつのじょうけん',            level:1, check: _=>false },
+    { count:1, icon:'❓',  name:'？？？',              cond:'ひみつのじょうけん',            rarity:'normal', check: _=>false },
   ]},
   { id:'secret2', levels:[
-    { count:1, icon:'❓',  name:'？？？',              cond:'ひみつのじょうけん',            level:1, check: _=>false },
+    { count:1, icon:'❓',  name:'？？？',              cond:'ひみつのじょうけん',            rarity:'normal', check: _=>false },
   ]},
 ];
 
@@ -244,7 +244,7 @@ const BADGES = BADGE_DEFS.map(def => {
     get icon() { return _getCurrentLevel(def, S).icon;  },
     get name() { return _getCurrentLevel(def, S).name;  },
     get cond() { return _getCurrentLevel(def, S).cond;  },
-    get level() { return _getCurrentLevel(def, S).level; },
+    get rarity() { return _getCurrentLevel(def, S).rarity; },
     // check は「1つ目のlevelを達成=バッジ所持」として扱う
     check: baseCheck,
     // 進化判定用（view.jsから呼ぶ）
