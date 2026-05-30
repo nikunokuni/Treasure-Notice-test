@@ -625,9 +625,6 @@ function renderDayModal() {
 /* ══════════════════════════
    たからばこ
    ══════════════════════════ */
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📦 view.js の renderBox() を丸ごとこれに差し替え
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function renderBox() {
   const recs      = S.records.slice().reverse();
   const lensCount = {};
@@ -710,7 +707,7 @@ function renderBox() {
 }
 
 /* ══════════════════════════
-   おきにいり（ノート統合）
+   おきにいり
    ══════════════════════════ */
 function renderFav() {
   const PAGE      = 20;
@@ -891,6 +888,7 @@ function renderNotebookEditor() {
       ${placingHtml}
       ${canvasHtml}
       ${trayHtml}
+       <button class="nb-delete-btn" onclick="App.deleteNotebook()">🗑️ てちょうをさくじょする</button>
     </div>`;
 }
 
