@@ -975,10 +975,10 @@ function renderNotebookCanvasReadonly(nb, theme) {
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
   return `
-  <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
-    ${items}
-    ${hint}
-  </div>`;
+    <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
+      ${items}
+      ${hint}
+    </div>`;
 }
 /* ── ふせん選択UI（たから/ノート共通） ── */
 function renderStickerPicker(trayType) {
