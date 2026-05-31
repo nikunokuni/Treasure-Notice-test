@@ -1265,4 +1265,3 @@ function renderSettings() {
       ${tab === 'kid' ? kidHtml : adultHtml}
     </div>`;
 }
-}
