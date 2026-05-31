@@ -975,19 +975,15 @@ function renderNotebookCanvasReadonly(nb, theme) {
   const hint = (nb.items || []).length === 0
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
-/* ──── 変更後 ──── */
 // nb-thumb-rowはgap:10px・2列。contentのpadding16px×2 + gap10px を除いた幅÷2
 const contentW = Math.min(window.innerWidth, 430);
 const thumbW   = Math.floor((contentW - 32 - 10) / 2); // padding左右16px×2=32, gap10px
 const scale    = (thumbW / 320).toFixed(3);
 const negH     = (260 * scale - 260).toFixed(1);   // scale縮小後の余白補正
 const negW     = (320 * scale - 320).toFixed(1);
+const inlineStyle = `background:${theme.bg};transform:scale(${scale});margin-bottom:${negH}px;margin-right:${negW}px`;
 return `
-  <div class="nb-canvas nb-canvas--readonly"
-       style="background:${theme.bg};
-              transform:scale(${scale});
-              margin-bottom:${negH}px;
-              margin-right:${negW}px">
+  <div class="nb-canvas nb-canvas--readonly" style="${inlineStyle}">
     ${items}
     ${hint}
   </div>`;
