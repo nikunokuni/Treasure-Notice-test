@@ -840,7 +840,7 @@ function renderNotebookSection() {
       ${renderNotebookCanvasReadonly(nb, theme)}
     </div>
   </div>`;
-
+    }).join('');
   const canCreate = owned.length > 0;
   const limit  = calcNotebookLimit();
   const used   = (S.notebooks || []).length;
