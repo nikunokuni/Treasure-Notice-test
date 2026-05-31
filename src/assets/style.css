@@ -1055,9 +1055,9 @@ body {
   transition: transform .15s;
   border-radius: 14px;
   width: 100%;
-  aspect-ratio: 320 / 260;
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .nb-thumb-wrap:active { transform: scale(0.97); }
 .nb-thumb-date-label {
@@ -1108,13 +1108,14 @@ body {
   cursor: default;
   border: none;
   margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 320px;
   height: 260px;
   transform-origin: top left;
   transform: scale(0.5);
+  margin-bottom: calc(260px * 0.5 - 260px);
+  margin-right:  calc(320px * 0.5 - 320px);
+  border-radius: 12px;
 }
 
 .nb-canvas-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: var(--fs-xs); color: rgba(45,27,0,0.3); text-align: center; line-height: 1.8; pointer-events: none; }
