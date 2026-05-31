@@ -974,12 +974,13 @@ function renderNotebookCanvasReadonly(nb, theme) {
   const hint = (nb.items || []).length === 0
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
- return `
-  <div class="nb-thumb-canvas-outer">
-    <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg}">
-      ${items}
-      ${hint}
-    </div>
+ // nb-thumb-row は gap:10px で 2列。画面幅から親幅を推定してscaleを計算
+const thumbW = Math.floor((Math.min(window.innerWidth, 400) - 20 - 10) / 2); // 左右padding20px + gap10px
+const scale  = (thumbW / 320).toFixed(3);
+return `
+  <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg};transform:scale(${scale})">
+    ${items}
+    ${hint}
   </div>`;
 }
 /* ── ふせん選択UI（たから/ノート共通） ── */
