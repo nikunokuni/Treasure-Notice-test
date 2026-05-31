@@ -1053,8 +1053,11 @@ body {
 .nb-thumb-wrap {
   cursor: pointer;
   transition: transform .15s;
-  overflow: hidden;
   border-radius: 14px;
+  width: 100%;
+  aspect-ratio: 320 / 260;
+  position: relative;
+  overflow: hidden;
 }
 .nb-thumb-wrap:active { transform: scale(0.97); }
 .nb-thumb-date-label {
@@ -1100,26 +1103,18 @@ body {
 }
 
 /* ── キャンバス（サムネ・読み取り専用） ── */
-/* 実際のキャンバス幅320pxを想定してscaleで縮小 */
 .nb-canvas--readonly {
-  --nb-real-w: 320px;
-  --nb-scale: 0.45;
-
-  flex: none;
   pointer-events: none;
   cursor: default;
   border: none;
   margin: 0;
-
-  /* 実サイズで描画してscaleで縮小 */
-  width: var(--nb-real-w);
-  min-height: 260px;
-  transform: scale(var(--nb-scale));
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 260px;
   transform-origin: top left;
-
-  /* scale後の見た目の高さ・幅に合わせてスペースを詰める */
-  margin-bottom: calc(260px * var(--nb-scale) - 260px);
-  margin-right:  calc(var(--nb-real-w) * var(--nb-scale) - var(--nb-real-w));
+  transform: scale(0.5);
 }
 
 .nb-canvas-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: var(--fs-xs); color: rgba(45,27,0,0.3); text-align: center; line-height: 1.8; pointer-events: none; }
