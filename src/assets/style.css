@@ -1050,19 +1050,30 @@ body {
 /* サムネ列（おきにいりタブ） */
 .nb-thumb-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
 
+/* ══════════════════════════
+   てちょうサムネ（おきにいりタブ）
+   ══════════════════════════ */
 .nb-thumb-wrap {
-  width: calc(50% - 5px);
   cursor: pointer;
-  transition: transform .15s;
+  margin-bottom: 16px;
 }
-.nb-thumb-wrap:active { transform: scale(0.97); }
 
 .nb-thumb-date-label {
-  font-size: var(--fs-xs);
-  color: rgba(45,27,0,0.45);
+  font-size: 11px;
+  color: var(--c-sub);
   margin-bottom: 4px;
   padding-left: 2px;
 }
+
+/* 読み取り専用キャンバス：クリック・タップを無効化 */
+.nb-canvas--readonly {
+  pointer-events: none;
+  transform: scale(0.55);
+  transform-origin: top left;
+  width: 182%;   /* scale(0.55)の逆数 ≒ 100/55*100% */
+  margin-bottom: calc((var(--nb-canvas-height, 340px) * 0.55) - var(--nb-canvas-height, 340px));
+}
+.nb-thumb-wrap:active { transform: scale(0.97); }
 
 /* ── 新規作成ボタン ── */
 .nb-create-btn { width: 100%; margin-bottom: 0; }
