@@ -833,12 +833,13 @@ function renderNotebookSection() {
   ? `<div class="nb-empty">まだてちょうがないよ<br>つくってみよう！</div>`
   : books.map((nb, i) => {
       const theme = NOTEBOOK_THEMES.find(t => t.id === nb.themeId) || NOTEBOOK_THEMES[0];
-      return `
-        <div class="nb-thumb-wrap" onclick="App.openNotebook(${i})">
-          <div class="nb-thumb-date-label">${fmtDate(nb.createdAt)}</div>
-          ${renderNotebookCanvasReadonly(nb, theme)}
-        </div>`;
-    }).join('');
+     return `
+  <div class="nb-thumb-wrap" onclick="App.openNotebook(${i})">
+    <div class="nb-thumb-date-label">${fmtDate(nb.createdAt)}</div>
+    <div class="nb-thumb-canvas-clip">
+      ${renderNotebookCanvasReadonly(nb, theme)}
+    </div>
+  </div>`;
 
   const canCreate = owned.length > 0;
   const limit  = calcNotebookLimit();
@@ -974,11 +975,19 @@ function renderNotebookCanvasReadonly(nb, theme) {
   const hint = (nb.items || []).length === 0
     ? `<div class="nb-canvas-hint">まだなにもないよ</div>`
     : '';
- // nb-thumb-row は gap:10px で 2列。画面幅から親幅を推定してscaleを計算
-const thumbW = Math.floor((Math.min(window.innerWidth, 400) - 20 - 10) / 2); // 左右padding20px + gap10px
-const scale  = (thumbW / 320).toFixed(3);
+/* ──── 変更後 ──── */
+// nb-thumb-rowはgap:10px・2列。contentのpadding16px×2 + gap10px を除いた幅÷2
+const contentW = Math.min(window.innerWidth, 430);
+const thumbW   = Math.floor((contentW - 32 - 10) / 2); // padding左右16px×2=32, gap10px
+const scale    = (thumbW / 320).toFixed(3);
+const negH     = (260 * scale - 260).toFixed(1);   // scale縮小後の余白補正
+const negW     = (320 * scale - 320).toFixed(1);
 return `
-  <div class="nb-canvas nb-canvas--readonly" style="background:${theme.bg};transform:scale(${scale})">
+  <div class="nb-canvas nb-canvas--readonly"
+       style="background:${theme.bg};
+              transform:scale(${scale});
+              margin-bottom:${negH}px;
+              margin-right:${negW}px">
     ${items}
     ${hint}
   </div>`;
