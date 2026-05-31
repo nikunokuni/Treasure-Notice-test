@@ -1048,15 +1048,15 @@ body {
 .nb-empty       { font-size: var(--fs-sm); color: rgba(45,27,0,0.4); text-align: center; padding: 14px 0; line-height: 1.8; }
 
 /* サムネ列（おきにいりタブ） */
-.nb-thumb-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.nb-thumb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 
 .nb-thumb-wrap {
-  width: calc(50% - 5px);
   cursor: pointer;
   transition: transform .15s;
+  overflow: hidden;
+  border-radius: 14px;
 }
 .nb-thumb-wrap:active { transform: scale(0.97); }
-
 .nb-thumb-date-label {
   font-size: var(--fs-xs);
   color: rgba(45,27,0,0.45);
@@ -1100,13 +1100,26 @@ body {
 }
 
 /* ── キャンバス（サムネ・読み取り専用） ── */
+/* 実際のキャンバス幅320pxを想定してscaleで縮小 */
 .nb-canvas--readonly {
+  --nb-real-w: 320px;
+  --nb-scale: 0.45;
+
   flex: none;
-  height: 160px;
-  min-height: unset;
-  overflow: hidden;
   pointer-events: none;
   cursor: default;
+  border: none;
+  margin: 0;
+
+  /* 実サイズで描画してscaleで縮小 */
+  width: var(--nb-real-w);
+  min-height: 260px;
+  transform: scale(var(--nb-scale));
+  transform-origin: top left;
+
+  /* scale後の見た目の高さ・幅に合わせてスペースを詰める */
+  margin-bottom: calc(260px * var(--nb-scale) - 260px);
+  margin-right:  calc(var(--nb-real-w) * var(--nb-scale) - var(--nb-real-w));
 }
 
 .nb-canvas-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: var(--fs-xs); color: rgba(45,27,0,0.3); text-align: center; line-height: 1.8; pointer-events: none; }
