@@ -1083,8 +1083,8 @@ function renderNotebookCanvas(nb, theme) {
         <div class="nb-placed-item nb-placed-item--sticker"
              style="top:${top}px;left:${left}px"
              onclick="event.stopPropagation();App.removePlacedItem(${i})">
-          <div class="nb-sticker-card" style="background-image:url('${esc(item.stickerSrc)}')">
-            ${innerHtml}
+         <div class="nb-sticker-card" style="background-image:url('${esc(item.stickerSrc)}')">
+            <div class="nb-sticker-card-inner">${innerHtml}</div>
           </div>
           <div class="nb-placed-remove">✕</div>
         </div>`;
