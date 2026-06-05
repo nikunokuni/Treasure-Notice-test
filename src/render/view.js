@@ -297,21 +297,21 @@ function _renderHomeStats() {
   return `
     <div class="home-stats-strip">
       <div class="home-stat-chip">
+  　    <span class="hsc-lbl">れんぞく</span>
         <span class="hsc-icon">🔥</span>
-        <span class="hsc-num">${S.streak}</span>
-        <span class="hsc-lbl">れんぞく</span>
+        <span class="hsc-num">${S.streak}+"にち"</span>  
       </div>
       <div class="hsc-divider"></div>
       <div class="home-stat-chip">
-        <span class="hsc-icon">📅</span>
-        <span class="hsc-num">${totalDays}</span>
         <span class="hsc-lbl">つうさん</span>
+        <span class="hsc-icon">📅</span>
+        <span class="hsc-num">${totalDays}+"にち"</span>
       </div>
       <div class="hsc-divider"></div>
       <div class="home-stat-chip">
-        <span class="hsc-icon">📦</span>
-        <span class="hsc-num">${totalTakara}</span>
         <span class="hsc-lbl">たから</span>
+        <span class="hsc-icon">📦</span>
+        <span class="hsc-num">${totalTakara}+"こ"</span>
       </div>
     </div>
     <div class="home-week-row">
