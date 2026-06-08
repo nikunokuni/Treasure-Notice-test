@@ -34,3 +34,14 @@ persistLoad();
 applyFontSize();
 applyTheme();
 render();
+
+// ── ホーム画面に追加されたことを検出 ──
+// バッヂは1度取得すると永続するため、未取得のときだけ判定する。
+// Android/Chrome系: appinstalled イベント。iOS Safari: appinstalled が無いため
+// display-mode: standalone / navigator.standalone で起動時に判定する。
+if (!S.addedToHomeScreen) {
+  window.addEventListener('appinstalled', () => App.markAddedToHomeScreen());
+  if (window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    App.markAddedToHomeScreen();
+  }
+}

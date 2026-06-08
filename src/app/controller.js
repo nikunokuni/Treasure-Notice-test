@@ -62,6 +62,13 @@ Object.assign(App, {
   setAge(a)        { S.user.ageGroup   = a; persistSave(); render(); },
   setParent(p)     { S.user.parentName = p;     render(); },
   setTheme(id)     { S.theme = id; S.changedColor = true; applyTheme(); persistSave(); render(); },
+  /** ホーム画面に追加されたことを記録（PWAインストール検出から呼ばれる） */
+  markAddedToHomeScreen() {
+    if (S.addedToHomeScreen) return;
+    S.addedToHomeScreen = true;
+    persistSave();
+    render();
+  },
   setStickyColor(id, value) {
     S.stickyColor = id;
     document.documentElement.style.setProperty('--sticky-main-bg', value);
