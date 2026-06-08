@@ -39,20 +39,52 @@
 <!--
   ★ script 読み込み順序（依存関係の順）
 
-  1. constants.js  … 定数（LENSES, BADGES 等）→ 全ファイルから参照
-  2. common.js     … ユーティリティ（esc, fmtDate, $id 等）→ view/app から参照
-  3. state.js      … S オブジェクト + persistSave/persistLoad → app/main から参照
-  4. ai.js         … callAI, プロンプト生成 → app から参照
-  5. view.js       … render関数群 → app/main から参照
-  6. app.js        … App オブジェクト, render(), bindEvents() → main から参照
-  7. main.js       … 起動シーケンス（最後に実行）
+  依存の流れ：データ → コア(状態/ユーティリティ) → AI → ビュー(描画) → アプリ(制御) → 起動
+  ・グローバル関数/定数を script 間で共有する構成（モジュールバンドラ無し）
+  ・後段ほど前段に依存するため、この順序を崩さないこと
+  ・main.js は必ず最後（起動時に render() を呼ぶ）
 -->
-<script src="src/data/constants.js"></script>
-<script src="src/render/common.js"></script>
-<script src="src/logic/state.js"></script>
-<script src="src/logic/ai.js"></script>
-<script src="src/render/view.js"></script>
-<script src="src/logic/app.js"></script>
+
+<!-- ① データ層（定数・マスタデータ） -->
+<script src="src/data/palette.js"></script>
+<script src="src/data/profile.js"></script>
+<script src="src/data/badges.js"></script>
+<script src="src/data/odai.js"></script>
+<script src="src/data/lenses.js"></script>
+<script src="src/data/decorations.js"></script>
+
+<!-- ② コア層（状態・永続化・ユーティリティ） -->
+<script src="src/core/utils.js"></script>
+<script src="src/core/state.js"></script>
+<script src="src/core/persistence.js"></script>
+
+<!-- ③ AI層（API通信・プロンプト） -->
+<script src="src/ai/api.js"></script>
+<script src="src/ai/prompts.js"></script>
+
+<!-- ④ ビュー層（画面ごとの描画関数） -->
+<script src="src/view/components.js"></script>
+<script src="src/view/onboard.view.js"></script>
+<script src="src/view/home.view.js"></script>
+<script src="src/view/lens.view.js"></script>
+<script src="src/view/chat.view.js"></script>
+<script src="src/view/summary.view.js"></script>
+<script src="src/view/calendar.view.js"></script>
+<script src="src/view/box.view.js"></script>
+<script src="src/view/fav.view.js"></script>
+<script src="src/view/notebook.view.js"></script>
+<script src="src/view/takaraCard.view.js"></script>
+<script src="src/view/settings.view.js"></script>
+
+<!-- ⑤ アプリ制御層（App コントローラ・描画パイプライン） -->
+<script src="src/app/theme.js"></script>
+<script src="src/app/stats.js"></script>
+<script src="src/app/dom.js"></script>
+<script src="src/app/controller.js"></script>
+<script src="src/app/notebook.controller.js"></script>
+<script src="src/app/internals.js"></script>
+
+<!-- ⑥ 起動 -->
 <script src="src/main.js"></script>
  <!-- Service Worker 登録 -->
   <script>

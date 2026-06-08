@@ -3,15 +3,13 @@
    キャッシュバージョンを上げるとアップデート適用
    ═══════════════════════════════ */
 
-const CACHE_NAME = 'tks-v6';
+const CACHE_NAME = 'tks-v7';
 
-// キャッシュするファイル一覧
+// キャッシュするファイル一覧（その他の JS は fetch ハンドラで都度キャッシュ）
 const PRECACHE = [
   '/',
   '/index.html',
-  '/tks-style.css',
-  '/tks-render.js',
-  '/tks-logic.js',
+  '/src/assets/style.css',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
