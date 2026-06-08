@@ -1,0 +1,4 @@
+gemini.key
+.env
+node_modules/
+.claude/settings.local.json

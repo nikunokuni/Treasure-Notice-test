@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#e8860a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="たからさがし">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<title>たからさがし</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Kaisei+Decol:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/assets/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="tabs-wrap"></div>
+  <div id="screen-root" style="display:flex;flex-direction:column;flex:1;overflow:hidden;"></div>
+</div>
+
+<!-- PWAアップデートバナー -->
+<div id="update-banner" style="display:none;position:fixed;bottom:60px;left:0;right:0;
+  background:var(--amber);color:white;padding:10px 16px;
+  align-items:center;justify-content:space-between;
+  font-size:12px;z-index:200;gap:8px;">
+  <span>🆕 アップデートがあるよ！</span>
+  <button onclick="App.applyUpdate()"
+    style="background:white;color:var(--amber);border:none;border-radius:20px;
+    padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;">
+    いますぐ更新
+  </button>
+</div>
+
+<!--
+  ★ script 読み込み順序（依存関係の順）
+
+  依存の流れ：データ → コア(状態/ユーティリティ) → AI → ビュー(描画) → アプリ(制御) → 起動
+  ・グローバル関数/定数を script 間で共有する構成（モジュールバンドラ無し）
+  ・後段ほど前段に依存するため、この順序を崩さないこと
+  ・main.js は必ず最後（起動時に render() を呼ぶ）
+-->
+
+<!-- ① データ層（定数・マスタデータ） -->
+<script src="src/data/palette.js"></script>
+<script src="src/data/profile.js"></script>
+<script src="src/data/badges.js"></script>
+<script src="src/data/odai.js"></script>
+<script src="src/data/lenses.js"></script>
+<script src="src/data/decorations.js"></script>
+
+<!-- ② コア層（状態・永続化・ユーティリティ） -->
+<script src="src/core/utils.js"></script>
+<script src="src/core/state.js"></script>
+<script src="src/core/persistence.js"></script>
+
+<!-- ③ AI層（API通信・プロンプト） -->
+<script src="src/ai/api.js"></script>
+<script src="src/ai/prompts.js"></script>
+
+<!-- ④ ビュー層（画面ごとの描画関数） -->
+<script src="src/view/components.js"></script>
+<script src="src/view/onboard.view.js"></script>
+<script src="src/view/home.view.js"></script>
+<script src="src/view/lens.view.js"></script>
+<script src="src/view/chat.view.js"></script>
+<script src="src/view/summary.view.js"></script>
+<script src="src/view/calendar.view.js"></script>
+<script src="src/view/box.view.js"></script>
+<script src="src/view/fav.view.js"></script>
+<script src="src/view/notebook.view.js"></script>
+<script src="src/view/takaraCard.view.js"></script>
+<script src="src/view/settings.view.js"></script>
+
+<!-- ⑤ アプリ制御層（App コントローラ・描画パイプライン） -->
+<script src="src/app/theme.js"></script>
+<script src="src/app/stats.js"></script>
+<script src="src/app/dom.js"></script>
+<script src="src/app/controller.js"></script>
+<script src="src/app/notebook.controller.js"></script>
+<script src="src/app/internals.js"></script>
+
+<!-- ⑥ 起動 -->
+<script src="src/main.js"></script>
+ <!-- Service Worker 登録 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.warn('SW registered:', reg.scope))
+          .catch(err => console.error('SW registration failed:', err));
+      });
+    }
+  </script>
+
+</body>
+</html>
