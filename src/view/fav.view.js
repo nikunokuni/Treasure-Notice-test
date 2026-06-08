@@ -38,7 +38,24 @@ function renderFav() {
       ${hasMoreNote ? renderLoadMoreBtn('App.loadMoreNote()') : ''}
     </div>
     ${_renderNewBadgeModal()}
+    ${_renderNotebookUnlockModal()}
     ${_renderBadgeDetailModal()}`;
+}
+
+/** てちょう解放モーダルを返す（内部ヘルパー） */
+function _renderNotebookUnlockModal() {
+  if (!S.shownNotebookUnlock) return '';
+  return `
+    <div class="modal-overlay badge-new-overlay" onclick="App.closeNotebookUnlock()">
+      <div class="modal-box badge-new-box" onclick="event.stopPropagation()">
+        <div class="badge-new-burst">🎉</div>
+        <div class="badge-new-icon">📔</div>
+        <div class="badge-new-ttl">てちょうが つかえるようになったよ！</div>
+        <div class="badge-new-name">📔 てちょう</div>
+        <div class="badge-new-cond">あたらしいてちょうを つくってみよう</div>
+        <button class="btn-primary badge-new-ok" onclick="App.closeNotebookUnlock()">やったー！</button>
+      </div>
+    </div>`;
 }
 
 /** ノートタブのエントリー1件を返す（内部ヘルパー） */

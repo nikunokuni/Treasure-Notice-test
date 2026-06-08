@@ -105,7 +105,7 @@ http.createServer(async (req, res) => {
   const f = path.join(root, p);
   fs.readFile(f, (e, d) => {
     if (e) { res.writeHead(404); res.end('404'); return; }
-    res.writeHead(200, { 'Content-Type': types[path.extname(f)] || 'application/octet-stream' });
+    res.writeHead(200, { 'Content-Type': types[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(d);
   });
 }).listen(port, () => console.log('serving on', port, GEMINI_API_KEY ? '(API key loaded)' : '(NO API key — set gemini.key)'));

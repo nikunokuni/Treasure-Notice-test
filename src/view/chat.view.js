@@ -50,6 +50,23 @@ function renderChat() {
         <button class="finish-btn finish-btn-ready" onclick="App.goSummary()">
           📦 たからをしまう
         </button>` : ''}
+    </div>
+    ${_renderFirstStickerModal()}`;
+}
+
+/** 初回シール取得モーダルを返す（内部ヘルパー） */
+function _renderFirstStickerModal() {
+  if (!S.firstStickerPending) return '';
+  return `
+    <div class="modal-overlay badge-new-overlay" onclick="App.closeFirstStickerModal()">
+      <div class="modal-box badge-new-box" onclick="event.stopPropagation()">
+        <div class="badge-new-burst">🎉</div>
+        <div class="badge-new-icon">🎀</div>
+        <div class="badge-new-ttl">はじめてのシール！</div>
+        <div class="badge-new-name">🎀 シールをゲットしたよ</div>
+        <div class="badge-new-cond">せっていの「シールをはる」で かざってみよう</div>
+        <button class="btn-primary badge-new-ok" onclick="App.closeFirstStickerModal()">やったー！</button>
+      </div>
     </div>`;
 }
 

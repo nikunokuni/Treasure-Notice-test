@@ -9,6 +9,8 @@
 
 /** てちょう一覧セクション（おきにいりタブ内）を返す */
 function renderNotebookSection() {
+  if (!S.notebookUnlocked) return '';
+
   const owned  = S.ownedPageThemes || ['plain'];
   const books  = S.notebooks || [];
   const canAdd = hasNotebookSlot();

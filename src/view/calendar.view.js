@@ -29,8 +29,8 @@ function renderCal() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const monthName   = `${year}ねん${month + 1}がつ`;
   const dows        = ['日', '月', '火', '水', '木', '金', '土'];
-  const monthDays   = Object.keys(dayMap).length;
-  const monthTakara = Object.values(dayMap).reduce((a, v) => a + v.length, 0);
+  const totalDays   = calcTotalDays();
+  const totalTakara = S.records.length;
 
   // カレンダーセルを構築
   let cells = '';
@@ -49,21 +49,24 @@ function renderCal() {
 
   return `
     <div class="content">
+      <div class="cal-month-stats">
+        <div class="cal-month-stat">
+          <span class="cal-month-stat-icon">📅</span>
+          <span class="cal-month-stat-num">${totalDays}</span>
+          <span class="cal-month-stat-lbl">にち</span>
+        </div>
+        <div class="cal-month-stat-div"></div>
+        <div class="cal-month-stat">
+          <span class="cal-month-stat-lbl">たから</span>
+          <span class="cal-month-stat-icon">📦</span>
+          <span class="cal-month-stat-num">${totalTakara}</span>
+          <span class="cal-month-stat-lbl">こ</span>
+        </div>
+      </div>
       <div class="cal-header">
         <button class="cal-nav" onclick="App.calPrev()">‹</button>
         <div class="cal-month">${monthName}</div>
         <button class="cal-nav" onclick="App.calNext()">›</button>
-      </div>
-      <div class="cal-month-stats">
-        <div class="cal-month-stat">
-          <span class="cal-month-stat-num">${monthDays}</span>
-          <span class="cal-month-stat-lbl">にち たんけん</span>
-        </div>
-        <div class="cal-month-stat-div"></div>
-        <div class="cal-month-stat">
-          <span class="cal-month-stat-num">${monthTakara}</span>
-          <span class="cal-month-stat-lbl">こ たから</span>
-        </div>
       </div>
       <div class="cal-grid">
         ${dows.map((d, i) => `<div class="cal-dow ${i === 0 ? 'sun' : i === 6 ? 'sat' : ''}">${d}</div>`).join('')}

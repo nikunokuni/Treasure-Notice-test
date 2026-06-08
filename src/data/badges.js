@@ -85,8 +85,8 @@ const BADGE_DEFS = [
 
   // ── 連続日数（進化型） ──
   { id:'streak', levels:[
-    { count:1,  icon:'🔥',   name:'はじめてのれんぞく',   cond:'1にちれんぞくでたからさがしをした',  rarity:'normal', check: s=>s.streak>=1  },
-    { count:7,  icon:'🔥✨', name:'1しゅうかんれんぞく！', cond:'7にちれんぞくでたからさがしをした',  rarity:'rare',   check: s=>s.streak>=7  },
+    { count:3,  icon:'🔥',   name:'はじめてのれんぞく',   cond:'1にちれんぞくでたからさがしをした',  rarity:'normal', check: s=>s.streak>=1  },
+    { count:10,  icon:'🔥✨', name:'1しゅうかんれんぞく！', cond:'7にちれんぞくでたからさがしをした',  rarity:'rare',   check: s=>s.streak>=7  },
     { count:30, icon:'🌟',  name:'1かげつれんぞく！',    cond:'30にちれんぞくでたからさがしをした', rarity:'epic',   check: s=>s.streak>=30 },
   ]},
 
@@ -102,6 +102,13 @@ const BADGE_DEFS = [
   ]},
   { id:'feedback', levels:[
     { count:1, icon:'📨',  name:'アンケートにこたえた', cond:'アンケートにこたえた',          rarity:'normal', check: s=>!!(s.sentFeedback) },
+  ]},
+
+  // ── シールをはる（進化型） ──
+  { id:'sticker', levels:[
+    { count:1,  icon:'🎀',   name:'はじめてのシール',   cond:'シールを1まいはった',   rarity:'normal', check: s=>Object.values(s.tabStickers||{}).flat().length>=1  },
+    { count:10, icon:'🎀✨', name:'シール10まい！',     cond:'シールを10まいはった',  rarity:'rare',   check: s=>Object.values(s.tabStickers||{}).flat().length>=10 },
+    { count:30, icon:'🎖️',  name:'シールのたつじん！', cond:'シールを30まいはった',  rarity:'epic',   check: s=>Object.values(s.tabStickers||{}).flat().length>=30 },
   ]},
 
   // ── 未定2枠（将来用のプレースホルダー） ──

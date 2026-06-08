@@ -12,9 +12,16 @@ Object.assign(App, {
     const prev = S.tab;
     S.tab  = tab;
     S.flow = 'home';
-    // お気に入りタブを開いたとき、未表示バッヂがあれば順番に表示
-    if (tab === 'fav' && S.newBadges.length > 0) {
-      S.shownBadgeModal = S.newBadges.shift();
+    // お気に入りタブを開いたとき、てちょう解放演出 → 未表示バッヂの順で表示
+    if (tab === 'fav') {
+      if (S.notebookUnlockPending) {
+        S.notebookUnlockPending = false;
+        S.notebookUnlocked      = true;
+        S.shownNotebookUnlock   = true;
+        persistSave();
+      } else if (S.newBadges.length > 0) {
+        S.shownBadgeModal = S.newBadges.shift();
+      }
     }
     render();
     if (tab === 'cal' && prev !== 'cal') setTimeout(triggerCalBurst, 100);
@@ -218,6 +225,11 @@ Object.assign(App, {
     if (!txt || S.isLoading) return;
 
     S.messages.push({ role: S.speaker, text: txt });
+    if (S.speaker === 'child') {
+      S.childChatCount = (S.childChatCount || 0) + 1;
+      grantChatStickers();
+      persistSave();
+    }
     S.speaker   = 'child';
     S.isLoading = true;
     S.lastError = false;
@@ -252,7 +264,7 @@ Object.assign(App, {
           S.showDecisionButtons = true;
         } else {
           // それ以外: 基本（深掘り）+ ランダムで1つだけ追加
-          const canParent  = S.phase3Turns >= 2 && !S.parentBridgeDone && S.user.parentName;
+          const canParent  = S.phase3Turns >= 2 && !S.parentBridgeDone && S.user.parentName && S.user.parentName !== 'ひとり';
           const canOpinion = !S.phase3OpinionDone;
           const canCompare = !S.phase3CompareDone;
           const rand = Math.random();
@@ -595,6 +607,14 @@ Object.assign(App, {
     BADGES.forEach(b => {
       if (!prevEarned.has(b.id) && b.check(S)) S.newBadges.push(b.id);
     });
+
+    // てちょう解放を検出（0さつ → 1さつ以上になった瞬間に演出をキュー）
+    if (!S.notebookUnlocked && !S.notebookUnlockPending && calcNotebookLimit() >= 1) {
+      S.notebookUnlockPending = true;
+    }
+
+    // 新規てちょう枠ぶんのテーマを付与（10日ボーナス＝plain固定／バッヂ枠＝ランダム）
+    grantNotebookThemes();
   },
 
 
@@ -866,7 +886,73 @@ Object.assign(App, {
     render();
   },
   closeBadge()         { S.badgeModal = null; S.shownBadgeModal = null; render(); },
+  closeNotebookUnlock(){ S.shownNotebookUnlock = false; render(); },
   dismissStreakPop()   { S.streakBrokenPop = false; render(); },
+
+  // ── シール（チャット報酬・ホーム貼り付け） ──
+  closeFirstStickerModal() {
+    S.firstStickerPending = false;
+    S.shownFirstSticker   = true;
+    persistSave();
+    render();
+  },
+
+  /** 「シールをはる」モードを開始（ホーム画面に切り替えてオーバーレイ表示） */
+  openStickerPlaceMode() {
+    S.stickerPlaceMode = true;
+    S.stickerPlacing   = null;
+    App.switchTab('home');
+  },
+
+  closeStickerPlaceMode() {
+    S.stickerPlaceMode = false;
+    S.stickerPlacing   = null;
+    render();
+  },
+
+  /** トレイのシールを選択 → 配置待ち状態にする（同じシール再タップでキャンセル） */
+  pickHomeSticker(idx) {
+    const id = S.ownedStickers[idx];
+    if (!id) return;
+    const st = STICKERS.find(s => s.id === id);
+    if (!st) return;
+    S.stickerPlacing = (S.stickerPlacing && S.stickerPlacing.ownedIndex === idx)
+      ? null
+      : { ownedIndex: idx, id, emoji: st.emoji };
+    render();
+  },
+
+  /** 画面をタップしてシールを配置（所持シールを1枚消費・バッヂ検出あり） */
+  placeHomeSticker(event) {
+    if (!S.stickerPlacing) return;
+    const canvas = document.getElementById('home-sticker-canvas');
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const p    = S.stickerPlacing;
+
+    // バッヂ検出：push 前に「達成済みセット」を記録
+    const prevEarned = new Set(BADGES.filter(b => b.check(S)).map(b => b.id));
+
+    // 現在タブのシール配列に追加
+    if (!S.tabStickers[S.tab]) S.tabStickers[S.tab] = [];
+    S.tabStickers[S.tab].push({
+      id:    p.id,
+      emoji: p.emoji,
+      x: Math.max(0, Math.round(event.clientX - rect.left - 20)),
+      y: Math.max(0, Math.round(event.clientY - rect.top  - 20)),
+    });
+    S.ownedStickers.splice(p.ownedIndex, 1);
+    S.stickerPlacing = null;
+
+    // push 後に新規達成バッヂをキューへ
+    BADGES.forEach(b => {
+      if (!prevEarned.has(b.id) && b.check(S)) S.newBadges.push(b.id);
+    });
+
+    persistSave();
+    render();
+  },
 
   addCustomTag() {
     const inp = document.getElementById('custom-tag-input');

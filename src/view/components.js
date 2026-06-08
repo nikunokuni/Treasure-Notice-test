@@ -51,6 +51,68 @@ function renderTabs() {
     <div class="tab-line"></div>`;
 }
 
+/**
+ * タブコンテンツをシールレイヤーでラップする（全タブ共通）
+ * ・stickerPlaceMode 中  → disabled-layer + タップ配置オーバーレイ + トレイ
+ * ・通常表示（シールあり）→ 絶対配置のシールを重ねるだけ
+ * ・通常表示（シールなし）→ 何もせずそのままreturn
+ */
+function wrapWithStickerLayer(innerHtml) {
+  const placed = _renderPlacedTabStickers();
+
+  if (S.stickerPlaceMode) {
+    return `
+      <div class="home-sticker-mode-wrap">
+        <div class="home-sticker-canvas" id="home-sticker-canvas" onclick="App.placeHomeSticker(event)">
+          <div class="home-sticker-disabled-layer">${innerHtml}</div>
+          ${placed}
+        </div>
+        ${_renderStickerTray()}
+      </div>`;
+  }
+
+  const tabArr = (S.tabStickers || {})[S.tab] || [];
+  if (tabArr.length === 0) return innerHtml;
+  return `
+    <div class="tab-sticker-layer" id="home-sticker-canvas">
+      ${innerHtml}
+      ${placed}
+    </div>`;
+}
+
+/** 現在タブに貼られたシール一覧HTMLを返す（内部ヘルパー） */
+function _renderPlacedTabStickers() {
+  const arr = (S.tabStickers || {})[S.tab] || [];
+  return arr.map(s => `
+    <div class="home-placed-sticker" style="left:${s.x}px; top:${s.y}px;">${esc(s.emoji)}</div>`
+  ).join('');
+}
+
+/** シールをはるモードのトレイHTMLを返す（内部ヘルパー） */
+function _renderStickerTray() {
+  const owned = S.ownedStickers || [];
+  const items = owned.map((id, i) => {
+    const st = STICKERS.find(s => s.id === id);
+    if (!st) return '';
+    const sel = S.stickerPlacing && S.stickerPlacing.ownedIndex === i;
+    return `
+      <div class="home-sticker-tray-item ${sel ? 'selected' : ''}" onclick="App.pickHomeSticker(${i})">
+        <span class="home-sticker-tray-emoji">${st.emoji}</span>
+      </div>`;
+  }).join('');
+
+  const label = owned.length === 0
+    ? 'シールがまだないよ'
+    : (S.stickerPlacing ? 'はりたい ばしょを タップしてね' : 'どのシールをはる？');
+
+  return `
+    <div class="home-sticker-tray">
+      <div class="home-sticker-tray-label">${label}</div>
+      <div class="home-sticker-tray-scroll">${items}</div>
+      <button class="home-sticker-done-btn" onclick="App.closeStickerPlaceMode()">おわる</button>
+    </div>`;
+}
+
 /** チャットヘッダーを返す */
 function renderChatHeader() {
   const lens = LENSES.find(l => l.id === S.lens);

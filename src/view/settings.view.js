@@ -63,33 +63,35 @@ function _renderSettingsKid() {
     <div class="settings-section">
       <div class="settings-ttl">いっしょにするひと</div>
       <div class="settings-field">
-        <div class="settings-field-label">よびかた</div>
         <div class="parent-chips">${renderParentChips(u.parentName)}</div>
       </div>
     </div>
 
     <div class="settings-section">
       <div class="settings-ttl">🎨 アプリのいろ</div>
-      <div class="settings-field-hint">パパ・ママといっしょにえらんでね</div>
       <div class="color-theme-grid">${colorChips}</div>
     </div>
 
     <div class="settings-section">
-      <div class="settings-ttl">📌 カードのふせん</div>
+      <div class="settings-ttl">📌 ふせんのいろ</div>
       <div class="sticky-color-grid">${stickyBtns}</div>
     </div>
 
     <div class="settings-section">
-      <div class="settings-ttl">表示設定</div>
       <div class="settings-field">
-        <div class="settings-field-label">文字サイズ</div>
+        <div class="settings-field-label">もじサイズ</div>
         <div class="font-size-chips">
           <div class="font-size-chip ${fs === 'small'  ? 'sel' : ''}" onclick="App.setFontSize('small')">ちいさい</div>
           <div class="font-size-chip ${fs === 'medium' ? 'sel' : ''}" onclick="App.setFontSize('medium')">ふつう</div>
           <div class="font-size-chip ${fs === 'large'  ? 'sel' : ''}" onclick="App.setFontSize('large')">おおきい</div>
         </div>
       </div>
-    </div>`;
+    </div>
+
+    ${S.shownFirstSticker ? `
+    <div class="settings-section">
+      <button class="btn-primary sticker-place-btn" onclick="App.openStickerPlaceMode()">🎀 シールをはる</button>
+    </div>` : ''}`;
 }
 
 /** おとなよう設定を返す（内部ヘルパー） */
@@ -117,7 +119,7 @@ function _renderSettingsAdult() {
   return `
     <div class="settings-section-adult">
       <div class="settings-ttl-adult">ウィークリーレポート</div>
-      <div class="settings-field-hint">今週の学びをAIがまとめるよ（${u.parentName}向け）</div>
+      <div class="settings-field-hint">今週の学びをAIがまとめるよ</div>
       ${reportSection}
     </div>
 
@@ -136,7 +138,7 @@ function _renderSettingsAdult() {
 
     <div class="settings-section-adult">
       <div class="settings-ttl-adult">意見・要望</div>
-      <div class="settings-field-hint">アプリをよりよくするために、きいてね！</div>
+      <div class="settings-field-hint">よりよいたからさがしのため、ぜひ皆様のご意見・ご要望をお聞かせください。</div>
       <button class="btn-primary settings-feedback-btn" onclick="App.sendFeedback()">📨 フォームをひらく</button>
     </div>
 

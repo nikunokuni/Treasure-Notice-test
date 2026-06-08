@@ -47,8 +47,44 @@ function calcBadgePoints() {
 
 /** てちょうの最大ページ数を返す */
 function calcNotebookLimit() {
-  const points = calcBadgePoints();
-  return 1 + Math.floor(points / 15) + (S.extraNotebookPages ?? 0);
+  const points     = calcBadgePoints();
+  // 通算たんけん日数が10日に達したら +1（日数は減らないため自然と「初回のみ」になる）
+  const daysBonus  = calcTotalDays() >= 10 ? 1 : 0;
+  return Math.floor(points / 15) + daysBonus + (S.extraNotebookPages ?? 0);
+}
+
+/**
+ * てちょう新規枠ぶんのテーマを ownedPageThemes に付与する
+ * ・10日ボーナス枠 → plain固定（1回だけ）
+ * ・バッヂポイント枠 → 全5種からランダム（重複あり）
+ */
+function grantNotebookThemes() {
+  const pointSlots = Math.floor(calcBadgePoints() / 15);
+  const daysBonus  = calcTotalDays() >= 10 ? 1 : 0;
+
+  if (daysBonus === 1 && !S.grantedDaysBonusTheme) {
+    S.ownedPageThemes.push('plain');
+    S.grantedDaysBonusTheme = true;
+  }
+
+  while ((S.grantedPointThemes ?? 0) < pointSlots) {
+    const theme = NOTEBOOK_THEMES[Math.floor(Math.random() * NOTEBOOK_THEMES.length)];
+    S.ownedPageThemes.push(theme.id);
+    S.grantedPointThemes = (S.grantedPointThemes ?? 0) + 1;
+  }
+}
+
+/** チャット回数（50回ごと）に応じてシールを付与する（永続・全種類からランダム・重複あり） */
+function grantChatStickers() {
+  const slots = Math.floor((S.childChatCount || 0) / 50);
+  while ((S.grantedChatStickers ?? 0) < slots) {
+    const sticker = STICKERS[Math.floor(Math.random() * STICKERS.length)];
+    S.ownedStickers.push(sticker.id);
+    S.grantedChatStickers = (S.grantedChatStickers ?? 0) + 1;
+    if (S.ownedStickers.length === 1 && !S.shownFirstSticker) {
+      S.firstStickerPending = true;
+    }
+  }
 }
 
 /** てちょうに空きがあるか */

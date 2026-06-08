@@ -22,11 +22,19 @@ function persistSave() {
       lastLens:      S.lastLens,
       theme:         S.theme,
       xPostCount:       S.xPostCount       ?? 0,
+      childChatCount:   S.childChatCount   ?? 0,
       sentFeedback:     S.sentFeedback      ?? false,
       changedColor:     S.changedColor      ?? false,
       addedToHomeScreen:S.addedToHomeScreen ?? false,
       ownedPageThemes: S.ownedPageThemes ?? ['plain'],
+      grantedPointThemes:    S.grantedPointThemes    ?? 0,
+      grantedDaysBonusTheme: S.grantedDaysBonusTheme ?? false,
       notebooks:       S.notebooks       ?? [],
+      notebookUnlocked: S.notebookUnlocked ?? false,
+      ownedStickers:       S.ownedStickers       ?? [],
+      grantedChatStickers: S.grantedChatStickers ?? 0,
+      shownFirstSticker:   S.shownFirstSticker   ?? false,
+      tabStickers:         S.tabStickers         ?? { home:[], cal:[], box:[], fav:[], set:[] },
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch(e) { console.warn('save failed:', e); }
@@ -58,11 +66,23 @@ function persistLoad() {
       lastLens:      saved.lastLens      ?? null,
       theme:         saved.theme         ?? 'amber',
       xPostCount:        saved.xPostCount        ?? 0,
+      childChatCount:    saved.childChatCount    ?? 0,
       sentFeedback:      saved.sentFeedback       ?? false,
       changedColor:      saved.changedColor       ?? false,
       addedToHomeScreen: saved.addedToHomeScreen  ?? false,
       ownedPageThemes: saved.ownedPageThemes ?? ['plain'],
+      grantedPointThemes:    saved.grantedPointThemes    ?? 0,
+      grantedDaysBonusTheme: saved.grantedDaysBonusTheme ?? false,
       notebooks:       saved.notebooks       ?? [],
+      // てちょうを既に作成済みのユーザーは解放済み扱い（移行措置）
+      notebookUnlocked: saved.notebookUnlocked ?? ((saved.notebooks || []).length > 0),
+      ownedStickers:       saved.ownedStickers       ?? [],
+      grantedChatStickers: saved.grantedChatStickers ?? 0,
+      shownFirstSticker:   saved.shownFirstSticker   ?? false,
+      // homeStickers からの移行（旧データ互換）
+      tabStickers: saved.tabStickers ?? (saved.homeStickers
+        ? { home: saved.homeStickers, cal:[], box:[], fav:[], set:[] }
+        : { home:[], cal:[], box:[], fav:[], set:[] }),
     });
 
     // ストリーク途切れチェック

@@ -387,6 +387,7 @@ body {
   margin-bottom: 10px; border: 1.5px solid rgba(45,27,0,0.06);
   box-shadow: 0 1px 4px rgba(45,27,0,0.04);
 }
+.home-age-icon  { font-size: 16px; line-height: 1; }
 .home-week-dots { display: flex; gap: 2px; align-items: center; }
 .week-dot      { font-size: 13px; opacity: 0.35; }
 .week-dot.done  { opacity: 1; }
@@ -398,34 +399,46 @@ body {
 .home-greeting-emoji { font-size: 32px; }
 .home-greeting-name  { font-family: 'Kaisei Decol', serif; font-size: var(--fs-xl); color: var(--deep); }
 .home-greeting-sub   { font-size: var(--fs-sm); color: rgba(45,27,0,0.45); }
-.home-type-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 6px 12px; border-radius: 20px; font-size: var(--fs-sm); font-weight: 700;
-  cursor: pointer; margin-bottom: 0; min-height: 36px;
-}
-.htb-age { background: rgba(82,183,136,0.12);    color: var(--mint); }
 
 /* メインアクション付箋ブロック（試験的に画像素材へ差し替え） */
 .main-block {
   position: relative;
-  background-image: url('stickers/rochet.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 0;
+  background: var(--sticky-main-bg);
+  border-radius: 10px 10px 10px 2px;
   padding: 16px;
   margin-bottom: 14px;
-  box-shadow: none;
+  box-shadow: 3px 4px 10px rgba(0,0,0,0.13), 6px 8px 20px rgba(0,0,0,0.07);
+  transform: rotate(-1deg);
   overflow: visible;
 }
-.main-block::before,
-.main-block::after { content: none; }
+.main-block::before {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px;
+  background: radial-gradient(circle at 100% 100%, transparent 62%, #e8e0cc 64%);
+  border-radius: 0 0 10px 0; z-index: 1;
+  pointer-events: none;
+}
+.main-block::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 28px; height: 28px;
+  background: radial-gradient(circle at 100% 100%, rgba(0,0,0,0.14), transparent 66%);
+  z-index: 0; border-radius: 0 0 10px 0;
+  pointer-events: none;
+}
 .main-block-label {
   font-family: 'Kaisei Decol', serif;
   font-size: var(--fs-md); font-weight: 700;
   color: var(--amber); margin-bottom: 12px; letter-spacing: 0.06em;
 }
 .main-block .main-actions { margin-bottom: 0; }
+.main-block-sticky-emoji {
+  position: absolute; bottom: 6px; left: 10px;
+  font-size: 24px; line-height: 1;
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.18));
+  pointer-events: none; z-index: 2;
+}
 
 .main-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 
@@ -622,7 +635,7 @@ body {
 .lens-card-header { display: flex; align-items: center; gap: 7px; }
 .lens-icon   { font-size: 26px; line-height: 1; }
 .lens-name   { font-size: var(--fs-md); font-weight: 900; color: rgba(45,27,0,0.85); letter-spacing: .04em; }
-.lens-desc   { font-size: var(--fs-xs); color: rgba(45,27,0,0.6); line-height: 1.55; }
+.lens-desc   { font-size: var(--fs-xs); color: rgba(45,27,0,0.6); line-height: 1.55; white-space: pre-line; }
 .lens-locked { opacity: .35; pointer-events: none; filter: grayscale(0.6); }
 
 .continue-banner {
@@ -1233,6 +1246,21 @@ body {
 .nb-tray-name             { font-size: 9px; color: var(--deep); text-align: center; word-break: break-all; line-height: 1.3; }
 .nb-tray-note-preview     { font-size: 8px; color: rgba(45,27,0,0.4); text-align: center; }
 .nb-tray-empty            { font-size: var(--fs-xs); color: rgba(45,27,0,0.35); padding: 16px; text-align: center; }
+
+/* ── シール（ホーム貼り付けモード） ── */
+.sticker-place-btn        { width: 100%; }
+.tab-sticker-layer        { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.home-sticker-mode-wrap   { display: flex; flex-direction: column; height: 100%; }
+.home-sticker-canvas      { position: relative; flex: 1; overflow-y: auto; cursor: crosshair; }
+.home-sticker-disabled-layer  { pointer-events: none; }
+.home-placed-sticker      { position: absolute; font-size: 28px; line-height: 1; pointer-events: none; z-index: 5; }
+.home-sticker-tray        { border-top: 1px solid rgba(45,27,0,0.08); background: var(--paper); padding: 8px 10px; }
+.home-sticker-tray-label  { font-size: 11px; color: rgba(45,27,0,0.5); text-align: center; margin-bottom: 6px; }
+.home-sticker-tray-scroll { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.home-sticker-tray-item   { flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; background: var(--paper2); border: 2px solid transparent; transition: border-color .15s; }
+.home-sticker-tray-item.selected { border-color: var(--amber); background: var(--amber-pale); }
+.home-sticker-tray-emoji  { font-size: 24px; line-height: 1; }
+.home-sticker-done-btn    { width: 100%; margin-top: 6px; padding: 8px; border: none; border-radius: 10px; background: var(--amber); color: #fff; font-size: var(--fs-sm); cursor: pointer; }
 /* ── ① ふせん選択ピッカー（画像をバッジサイズに） ── */
 .nb-sticker-picker-wrap  { padding: 6px 4px; width: 100%; }
 .nb-sticker-picker-label { font-size: 9px; color: rgba(45,27,0,0.4); margin-bottom: 6px; padding-left: 4px; }

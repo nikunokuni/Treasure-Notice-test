@@ -17,8 +17,7 @@ function renderHome() {
   return `
     ${_renderStreakBrokenPop()}
     <div class="content">
-      ${_renderHomeStats()}
-      ${_renderProfileBadge(age)}
+      ${_renderHomeStats(age)}
       ${_renderMainActions()}
       ${_renderRandCard(r)}
       ${_renderPrevTakara()}
@@ -42,7 +41,7 @@ function _renderStreakBrokenPop() {
 }
 
 /** ホーム統計ストリップ（週ドット含む）を返す（内部ヘルパー） */
-function _renderHomeStats() {
+function _renderHomeStats(age) {
   const today     = new Date();
   const weekDots  = Array.from({ length: 7 }, (_, i) => {
     const d       = new Date(today);
@@ -57,58 +56,31 @@ function _renderHomeStats() {
     return `<span class="week-dot ${done ? 'done' : ''} ${isToday ? 'today' : ''}">${done ? '✅' : (isToday ? '⭕' : '○')}</span>`;
   }).join('');
 
-  const streakMsg = S.streak === 0      ? 'きょうからはじめよう！'
-    : S.streak < 3                      ? `${S.streak}にちれんぞく！このちょうし！`
-    : S.streak < 7                      ? `すごい！${S.streak}にちれんぞく中🎉`
-    :                                     `${S.streak}にち！もうヒーローだ⭐`;
-
-  const totalDays   = calcTotalDays();
-  const totalTakara = S.records.length;
+  // 今週（月曜〜今日）のたから数
+  const monday = _getMondayOf(today);
+  const weekTakara = S.records.filter(r => {
+    const d = new Date(r.date);
+    return d >= monday && d <= today;
+  }).length;
 
   return `
-    <div class="home-stats-strip">
-      <div class="home-stat-chip">
-        <span class="hsc-lbl">れんぞく</span>
-        <span class="hsc-val">
-          <span class="hsc-icon">🔥</span>
-          <span class="hsc-num">${S.streak}</span><span class="hsc-unit">にち</span>
-        </span>
-      </div>
-      <div class="hsc-divider"></div>
-      <div class="home-stat-chip">
-        <span class="hsc-lbl">つうさん</span>
-        <span class="hsc-val">
-          <span class="hsc-icon">📅</span>
-          <span class="hsc-num">${totalDays}</span><span class="hsc-unit">にち</span>
-        </span>
-      </div>
-      <div class="hsc-divider"></div>
-      <div class="home-stat-chip">
-        <span class="hsc-lbl">たから</span>
+    <div class="home-week-row">
+      <span class="home-age-icon">${age.icon}</span>
+      <div class="home-week-dots">${weekDots}</div>
+      <div class="home-stat-chip hsc-week">
+        <span class="hsc-lbl">こんしゅうのたから</span>
         <span class="hsc-val">
           <span class="hsc-icon">📦</span>
-          <span class="hsc-num">${totalTakara}</span><span class="hsc-unit">こ</span>
+          <span class="hsc-num">${weekTakara}</span><span class="hsc-unit">こ</span>
         </span>
-      </div>
-    </div>
-    <div class="home-week-row">
-      <div class="home-week-dots">${weekDots}</div>
-      <div class="home-streak-msg-inline">${streakMsg}</div>
-    </div>`;
-}
-
-/** 年齢バッジ行を返す（内部ヘルパー） */
-function _renderProfileBadge(age) {
-  return `
-    <div class="home-type-badges">
-      <div class="home-type-badge htb-age" onclick="App.switchTab('set')">
-        ${age.icon} ${esc(age.label)} ›
       </div>
     </div>`;
 }
 
 /** メインアクションブロックを返す（内部ヘルパー） */
 function _renderMainActions() {
+  const stickyColor  = STICKY_COLORS.find(c => c.id === (S.stickyColor || 'yellow')) || STICKY_COLORS[0];
+  const stickyEmoji  = stickyColor.label.split(' ').pop();
   return `
     <div class="main-block">
       <div class="main-block-label">🔍 きょうのたからをさがそう</div>
@@ -126,12 +98,11 @@ function _renderMainActions() {
             <span class="main-photo-icon">📷</span>
             <div>
               <div class="main-action-label">しゃしんでおだいをつくる</div>
-              <div class="main-action-sub">とった写真をAIがよみとるよ</div>
-            </div>
             <span class="main-photo-arrow">›</span>
           </div>
         </div>
       </div>
+      <span class="main-block-sticky-emoji">${stickyEmoji}</span>
     </div>`;
 }
 

@@ -16,6 +16,7 @@ const S = {
   odaiGenerating: false,
   messages: [],
   speaker: 'child',
+  childChatCount: 0,            // 子どもが送ったチャットメッセージの累計数
   isLoading: false,
   lastError: false,
   lastSendPayload: null,
@@ -64,7 +65,9 @@ const S = {
   obColorOpen: false,
   newBadges: [],
    // ── 手帳ゲーム ──
-  ownedPageThemes: ['plain'],   // 所持している手帳テーマID一覧
+  ownedPageThemes: ['plain'],   // 所持している手帳テーマID一覧（重複あり＝獲得回数ぶん積み上がる）
+  grantedPointThemes: 0,        // バッヂポイント枠で付与済みのテーマ数（ランダム付与の進捗カウンタ）
+  grantedDaysBonusTheme: false, // 10日ボーナス枠のテーマ（plain固定）を付与済みか
   notebooks: [],                // 作成済み手帳リスト
   notebookEditing: null,        // 編集中の手帳オブジェクト（null = 非編集中）
   notebookTray: 'badge',        // トレイの選択タブ ('badge'|'sticker'|'fav'|'note')
@@ -72,4 +75,16 @@ const S = {
   notebookStickerPick: null,    // ふせん選択中のトレイ種別 ('fav'|'note'|null)
   notebookStickerSelected: null,// 選択中のふせん画像ID
   shownBadgeModal: null,
+  notebookUnlocked: false,      // てちょう欄を解放したか（一度解放したら表示しつづける）
+  notebookUnlockPending: false, // 解放演出の表示待ち
+  shownNotebookUnlock: false,   // 解放演出モーダルの表示中フラグ
+
+  // ── シール（チャット回数報酬・ホーム貼り付け） ──
+  ownedStickers: [],            // 所持シール一覧（STICKERS の id、重複あり＝獲得回数ぶん積み上がる）
+  grantedChatStickers: 0,       // チャット回数枠（50回ごと）で付与済みのシール数
+  firstStickerPending: false,   // 初回シール取得演出の表示待ち
+  shownFirstSticker: false,     // 初回演出を見せ終えたか（true で「シールをはる」ボタンが出現）
+  stickerPlaceMode: false,      // 「シールをはる」モード中か
+  stickerPlacing: null,         // 配置待ちシール { ownedIndex, id, emoji }
+  tabStickers: { home:[], cal:[], box:[], fav:[], set:[] }, // タブごとに貼られたシール [{ id, emoji, x, y }]
 };

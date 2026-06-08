@@ -85,7 +85,7 @@ function render() {
   const TAB_RENDERERS = { home: renderHome, cal: renderCal, box: renderBox, fav: renderFav, set: renderSettings };
   _setTabsVisible(tabs, true);
   tabs.innerHTML  = renderTabs();
-  root.innerHTML  = (TAB_RENDERERS[S.tab] || renderHome)();
+  root.innerHTML  = wrapWithStickerLayer((TAB_RENDERERS[S.tab] || renderHome)());
   bindEvents();
 }
 
