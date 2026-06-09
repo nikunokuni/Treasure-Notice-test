@@ -7,6 +7,13 @@
    5. レンズ選択
    ══════════════════════════════════ */
 
+/** 年齢グループ→おすすめレンズID */
+const RECOMMENDED_LENSES = {
+  young:  ['ことば', 'じぶん'],
+  middle: ['ことば', 'かず'],
+  older:  ['もしも', 'つながり'],
+};
+
 /** レンズ選択画面を返す */
 function renderLens() {
   const currentLens  = LENSES.find(l => l.id === S.lens);
@@ -14,9 +21,12 @@ function renderLens() {
     ? 'レンズをえらんでね'
     : `${currentLens?.icon} ${esc(S.lens)}レンズではじめる ›`;
 
+  const recommended = RECOMMENDED_LENSES[S.user.ageGroup] ?? [];
+
   const lensCards = LENSES.map(l => `
     <div class="lens-card ${l.cls} ${S.lens === l.id ? 'selected' : ''}"
          onclick="App.selectLens('${l.id}')">
+      ${recommended.includes(l.id) ? '<span class="lens-recommend-badge">⭐ おすすめ</span>' : ''}
       <div class="lens-card-header">
         <span class="lens-icon">${l.icon}</span>
         <div class="lens-name">${esc(l.name)}</div>

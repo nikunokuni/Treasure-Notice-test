@@ -98,7 +98,7 @@ function _renderMainActions() {
             <span class="main-photo-icon">📷</span>
             <div>
               <div class="main-action-label">しゃしんでおだいをつくる</div>
-               <div class="main-action-sub">とったしゃしんをAIがよみとるよ</div>
+              <div class="main-action-sub">とったしゃしんをAIがよみとるよ</div>
             </div>
             <span class="main-photo-arrow">›</span>
           </div>

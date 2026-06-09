@@ -631,6 +631,20 @@ body {
 .lens-つながり { background: #FFE0B2; }
 .lens-じぶん   { background: #FFF9C4; }
 
+/* おすすめバッジ */
+.lens-recommend-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #7a5000;
+  background: rgba(255,210,60,0.55);
+  border: 1.5px solid rgba(200,150,0,0.35);
+  border-radius: 20px;
+  padding: 1px 8px;
+  margin-bottom: 6px;
+  letter-spacing: .04em;
+}
+
 /* カード内要素 */
 .lens-card-header { display: flex; align-items: center; gap: 7px; }
 .lens-icon   { font-size: 26px; line-height: 1; }
