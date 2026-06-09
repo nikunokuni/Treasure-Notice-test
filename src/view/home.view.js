@@ -88,7 +88,7 @@ function _renderMainActions() {
         <div class="main-action-card main-free">
           <div class="main-action-label">✏️ いまきになること</div>
           <div class="free-row">
-            <input class="free-input" id="free-in" placeholder="なんでもかいてみよう…">
+            <input class="free-input" id="free-in" placeholder="いまみえるものは…">
             <button class="free-go" id="free-go-btn">➤</button>
           </div>
         </div>
