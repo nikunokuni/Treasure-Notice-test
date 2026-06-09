@@ -29,8 +29,15 @@ function renderCal() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const monthName   = `${year}ねん${month + 1}がつ`;
   const dows        = ['日', '月', '火', '水', '木', '金', '土'];
-  const totalDays   = calcTotalDays();
-  const totalTakara = S.records.length;
+  // その月の集計
+  const monthTakara = S.records.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  }).length;
+  const monthDays = new Set(S.records.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  }).map(r => new Date(r.date).getDate())).size;
 
   // カレンダーセルを構築
   let cells = '';
@@ -50,17 +57,15 @@ function renderCal() {
   return `
     <div class="content">
       <div class="cal-month-stats">
+        <span class="stats-box-ttl">こんげつのぼうけん</span>
         <div class="cal-month-stat">
-          <span class="cal-month-stat-icon">📅</span>
-          <span class="cal-month-stat-num">${totalDays}</span>
-          <span class="cal-month-stat-lbl">にち</span>
+          <span class="cal-month-stat-icon">📦</span>
+          <div class="cal-month-stat-row"><span class="cal-month-stat-num">${monthTakara}</span><span class="cal-month-stat-lbl">こ</span></div>
         </div>
         <div class="cal-month-stat-div"></div>
         <div class="cal-month-stat">
-          <span class="cal-month-stat-lbl">たから</span>
-          <span class="cal-month-stat-icon">📦</span>
-          <span class="cal-month-stat-num">${totalTakara}</span>
-          <span class="cal-month-stat-lbl">こ</span>
+          <span class="cal-month-stat-icon">📅</span>
+          <div class="cal-month-stat-row"><span class="cal-month-stat-num">${monthDays}</span><span class="cal-month-stat-lbl">にち</span></div>
         </div>
       </div>
       <div class="cal-header">

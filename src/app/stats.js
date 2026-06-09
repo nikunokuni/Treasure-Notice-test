@@ -9,6 +9,21 @@ function calcTotalDays() {
   return days.size;
 }
 
+/** 過去最長連続日数を返す */
+function calcBestStreak() {
+  if (S.records.length === 0) return 0;
+  const days = [...new Set(S.records.map(r => new Date(r.date).toDateString()))]
+    .map(s => new Date(s))
+    .sort((a, b) => a - b);
+  let best = 1, cur = 1;
+  for (let i = 1; i < days.length; i++) {
+    const diff = (days[i] - days[i - 1]) / 86400000;
+    cur = diff === 1 ? cur + 1 : 1;
+    if (cur > best) best = cur;
+  }
+  return best;
+}
+
 /** 昨日の記録を1件返す（なければ null） */
 function getYesterdayRecord() {
   const yesterday = new Date(Date.now() - 86400000).toDateString();

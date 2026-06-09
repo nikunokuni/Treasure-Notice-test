@@ -68,7 +68,7 @@ Object.assign(App, {
   // 1メソッド1プロパティ変更 → render() のシンプルな繰り返しを許容
   setAge(a)        { S.user.ageGroup   = a; persistSave(); render(); },
   setParent(p)     { S.user.parentName = p;     render(); },
-  setTheme(id)     { S.theme = id; S.changedColor = true; applyTheme(); persistSave(); render(); },
+  setTheme(id)     { S.theme = id; S.changedColor = true; applyTheme(); persistSave(); const _y = document.querySelector('.content')?.scrollTop || 0; render(); requestAnimationFrame(() => { const _r = document.querySelector('.content'); if (_r) _r.scrollTop = _y; }); },
   setStickyColor(id, value) {
     S.stickyColor = id;
     document.documentElement.style.setProperty('--sticky-main-bg', value);

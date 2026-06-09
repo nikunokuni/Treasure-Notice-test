@@ -25,13 +25,7 @@ function _renderSettingsKid() {
   const u  = S.user;
   const fs = S.fontSize || 'medium';
 
-  const colorChips = COLOR_THEMES.map(t => `
-    <div class="color-theme-chip ${S.theme === t.id ? 'selected' : ''}"
-         onclick="App.setTheme('${t.id}')"
-         style="background:${t.amber}">
-      <span class="color-theme-check">${S.theme === t.id ? '✓' : ''}</span>
-      <span class="color-theme-name">${t.name}</span>
-    </div>`).join('');
+  const colorWheel = _renderColorWheel();
 
   const stickyBtns = STICKY_COLORS.map(c => `
     <button class="sticky-color-btn ${S.stickyColor === c.id ? 'selected' : ''}"
@@ -69,7 +63,7 @@ function _renderSettingsKid() {
 
     <div class="settings-section">
       <div class="settings-ttl">🎨 アプリのいろ</div>
-      <div class="color-theme-grid">${colorChips}</div>
+      ${colorWheel}
     </div>
 
     <div class="settings-section">
@@ -94,13 +88,74 @@ function _renderSettingsKid() {
     </div>` : ''}`;
 }
 
+/** カラーホイールSVGを返す（内部ヘルパー） */
+function _renderColorWheel() {
+  const cx = 120, cy = 120, R = 112, r = 44;
+  // 色相環順（12時から時計回り）
+  const wheelOrder = ['yellow','amber','orange','rose','red','pink','purple','indigo','blue','teal','green','lime'];
+  const colorMap = {};
+  COLOR_THEMES.forEach(t => { colorMap[t.id] = t.amber; });
+  const paperMap = {};
+  COLOR_THEMES.forEach(t => { paperMap[t.id] = t.paper; });
+
+  const toRad = deg => deg * Math.PI / 180;
+  let paths = '';
+
+  wheelOrder.forEach((id, i) => {
+    const a1 = toRad(i * 30 - 90);
+    const a2 = toRad((i + 1) * 30 - 90);
+    const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1);
+    const x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+    const x3 = cx + r * Math.cos(a2), y3 = cy + r * Math.sin(a2);
+    const x4 = cx + r * Math.cos(a1), y4 = cy + r * Math.sin(a1);
+    const sel = S.theme === id;
+    const stroke = sel ? '#fff' : 'rgba(255,255,255,0.6)';
+    const sw     = sel ? 3 : 1.5;
+    const scale  = sel ? `transform-origin:${cx}px ${cy}px;transform:scale(1.06)` : '';
+    paths += `<path d="M${x1} ${y1} A${R} ${R} 0 0 1 ${x2} ${y2} L${x3} ${y3} A${r} ${r} 0 0 0 ${x4} ${y4}Z"
+      fill="${colorMap[id]}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer;${scale}"
+      onclick="App.setTheme('${id}')"/>`;
+    if (sel) {
+      const ma = toRad((i + 0.5) * 30 - 90);
+      const mr = (R + r) / 2;
+      paths += `<text x="${cx + mr * Math.cos(ma)}" y="${cy + mr * Math.sin(ma)}"
+        text-anchor="middle" dominant-baseline="middle" font-size="13" fill="white"
+        stroke="#0006" stroke-width="2" paint-order="stroke" pointer-events="none">✓</text>`;
+    }
+  });
+
+  // 中央の白・黒セミサークル
+  const selB = S.theme === 'black', selW = S.theme === 'white';
+  paths += `<path d="M${cx} ${cy-r} A${r} ${r} 0 0 0 ${cx} ${cy+r}Z"
+    fill="${colorMap['black']}" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"
+    style="cursor:pointer" onclick="App.setTheme('black')"/>`;
+  paths += `<path d="M${cx} ${cy-r} A${r} ${r} 0 0 1 ${cx} ${cy+r}Z"
+    fill="${paperMap['white']}" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"
+    style="cursor:pointer" onclick="App.setTheme('white')"/>`;
+  paths += `<line x1="${cx}" y1="${cy-r}" x2="${cx}" y2="${cy+r}" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" pointer-events="none"/>`;
+  if (selB) paths += `<text x="${cx-r*0.45}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
+    font-size="13" fill="white" stroke="#0004" stroke-width="2" paint-order="stroke" pointer-events="none">✓</text>`;
+  if (selW) paths += `<text x="${cx+r*0.45}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
+    font-size="13" fill="white" stroke="#0004" stroke-width="2" paint-order="stroke" pointer-events="none">✓</text>`;
+
+  // 現在のテーマ名
+  const cur = COLOR_THEMES.find(t => t.id === S.theme);
+  const label = cur ? cur.name : S.theme === 'white' ? 'しろ' : 'くろ';
+
+  return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 0">
+    <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"
+         style="filter:drop-shadow(0 2px 6px #0002)">${paths}</svg>
+    <div style="font-size:0.85em;color:var(--deep);opacity:0.7">${label}</div>
+  </div>`;
+}
+
 /** おとなよう設定を返す（内部ヘルパー） */
 function _renderSettingsAdult() {
   const u            = S.user;
   const adultLinks   = ADULT_LINKS.map(l => `
     <div class="adult-link-row" onclick="App.openExternalLink('${l.id}')">
       <span>${l.emoji}</span>
-      <span>${l.label}</span>
+      <span>${l.label}${l.sublabel ? `<br><span style="font-size:0.75em;color:#aaa;">${l.sublabel}</span>` : ''}</span>
       <span class="adult-link-arrow">›</span>
     </div>`).join('');
 
@@ -124,26 +179,20 @@ function _renderSettingsAdult() {
     </div>
 
     <div class="settings-section-adult">
-      <div class="settings-ttl-adult">データ管理</div>
       <div class="adult-link-row" onclick="App.exportCSV()">
         <span>📤</span><span>データをエクスポート</span>
         <span class="adult-link-arrow">›</span>
       </div>
       <div class="adult-link-row" onclick="App.triggerImport()">
-        <span>📥</span><span>データをインポート</span>
+        <span>📥</span>
+        <span>データをインポート<br><span style="font-size:0.75em;color:#aaa;">※このアプリでエクスポートしたものを使ってください</span></span>
         <span class="adult-link-arrow">›</span>
       </div>
       <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="App.importCSV(event)">
-    </div>
-
-    <div class="settings-section-adult">
-      <div class="settings-ttl-adult">意見・要望</div>
-      <div class="settings-field-hint">よりよいたからさがしのため、ぜひ皆様のご意見・ご要望をお聞かせください。</div>
-      <button class="btn-primary settings-feedback-btn" onclick="App.sendFeedback()">📨 フォームをひらく</button>
-    </div>
-
-    <div class="settings-section-adult">
-      <div class="settings-ttl-adult">その他</div>
+      <div class="adult-link-row" onclick="App.sendFeedback()">
+        <span>📨</span><span>ご意見・感想・バグ報告</span>
+        <span class="adult-link-arrow">›</span>
+      </div>
       ${adultLinks}
     </div>`;
 }

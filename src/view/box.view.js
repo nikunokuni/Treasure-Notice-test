@@ -28,9 +28,30 @@ function renderBox() {
     ? recs.filter(r => r.lens === S.boxFilterTag)
     : recs;
 
+  const totalTakara = S.records.length;
+  const totalDays   = calcTotalDays();
+  const bestStreak  = calcBestStreak();
+
   return `
     <div class="content">
       ${S.records.length > 0 ? `
+        <div class="box-total-stats">
+          <span class="stats-box-ttl">ぜんぶのぼうけん</span>
+          <div class="box-total-stat">
+            <span class="box-total-icon">📦</span>
+            <div class="box-total-row"><span class="box-total-num">${totalTakara}</span><span class="box-total-lbl">こ</span></div>
+          </div>
+          <div class="box-total-div"></div>
+          <div class="box-total-stat">
+            <span class="box-total-icon">📅</span>
+            <div class="box-total-row"><span class="box-total-num">${totalDays}</span><span class="box-total-lbl">にち</span></div>
+          </div>
+          <div class="box-total-div"></div>
+          <div class="box-total-stat">
+            <span class="box-total-icon">🔥</span>
+            <div class="box-total-row"><span class="box-total-num">${bestStreak}</span></div>
+          </div>
+        </div>
         <div class="section-ttl">にちべつのたから（1しゅうかん）</div>
         <div class="week-bar-card">
           <div class="week-bar-grid">${_renderWeekBars()}</div>

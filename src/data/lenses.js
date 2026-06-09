@@ -23,6 +23,7 @@ const LENSES = [
 
 // ── 大人用：外部リンク定義 ──
 const ADULT_LINKS = [
+  { id:'enjoy',    label:'もっとたのしむ',       sublabel:'アプリ内アイテムを購入できます', emoji:'🎉', url:'' },
   { id:'terms',    label:'利用規約',             emoji:'📄', url:'' },
   { id:'privacy',  label:'プライバシーポリシー', emoji:'🔒', url:'' },
   { id:'about',    label:'たからさがしとは',     emoji:'🔍', url:'' },

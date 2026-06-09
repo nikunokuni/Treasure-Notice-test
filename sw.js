@@ -3,7 +3,7 @@
    キャッシュバージョンを上げるとアップデート適用
    ═══════════════════════════════ */
 
-const CACHE_NAME = 'tks-v14';
+const CACHE_NAME = 'tks-v18';
 
 // キャッシュするファイル一覧（その他の JS は fetch ハンドラで都度キャッシュ）
 const PRECACHE = [

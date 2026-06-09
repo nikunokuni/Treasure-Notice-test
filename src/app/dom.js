@@ -56,6 +56,10 @@ function render() {
   const root = $id('screen-root');
   const tabs = $id('tabs-wrap');
 
+  // スクロール位置を保存
+  const scrollEl = root.querySelector('.content');
+  const savedScrollTop = scrollEl ? scrollEl.scrollTop : 0;
+
   // オンボーディング未完了
   if (!S.onboarded) {
     _setTabsVisible(tabs, false);
@@ -87,6 +91,12 @@ function render() {
   tabs.innerHTML  = renderTabs();
   root.innerHTML  = wrapWithStickerLayer((TAB_RENDERERS[S.tab] || renderHome)());
   bindEvents();
+
+  // スクロール位置を復元
+  if (savedScrollTop > 0) {
+    const newScrollEl = root.querySelector('.content');
+    if (newScrollEl) newScrollEl.scrollTop = savedScrollTop;
+  }
 }
 
 /** タブバーの表示・非表示を切り替える（render 内の共通処理） */
