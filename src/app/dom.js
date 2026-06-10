@@ -4,10 +4,12 @@
    ═══════════════════════════════════════════════════════════ */
 
 function scrollChat() {
-  setTimeout(() => {
-    const el = $id('chat-area');
-    if (el) el.scrollTop = el.scrollHeight;
-  }, 80);
+  const el = $id('chat-area');
+  if (!el) return;
+  el.scrollTop = el.scrollHeight;
+  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 80);
+  // ソフトウェアキーボードの開閉アニメーション分を待って再スクロール
+  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 320);
 }
 
 /** カレンダー画面を開いたとき、記録絵文字を爆発させるアニメ */
@@ -116,7 +118,11 @@ function _setTabsVisible(tabsEl, visible) {
 function bindEvents() {
   // チャット送信（Enter キー）
   const chatInput = $id('chat-in');
-  if (chatInput) chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') App.sendChat(); });
+  if (chatInput) {
+    chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') App.sendChat(); });
+    // 入力欄フォーカス時（キーボード表示時）にチャット欄を最下部へスクロール
+    chatInput.addEventListener('focus', () => scrollChat());
+  }
 
   // フリー入力（Enter キー＋ボタン）
   const freeInput = $id('free-in');
