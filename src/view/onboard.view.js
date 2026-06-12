@@ -47,7 +47,7 @@ function _renderOnboardStep(s, u) {
     </div>
     <div class="form-block">
       <div class="form-label"><em>ねんれい</em>をえらんでね</div>
-      ${renderAgeIconRow(u.ageGroup, 'App.toggleObAge()', S.obAgeOpen)}
+      ${renderAgeIconRow(u.ageGroup)}
     </div>`;
 
   if (s === 1) return `
@@ -82,30 +82,15 @@ function _renderOnboardStep(s, u) {
 /* ── 年齢 共通部品 ── */
 
 /** 年齢アイコン行（選択UI）を返す */
-function renderAgeIconRow(current, toggleFn, isOpen) {
-  const icons = AGE_PROMPTS.map(a => `
-    <div class="icon-sel-item ${current === a.id ? 'icon-sel-active' : ''}">
-      <div class="icon-sel-badge ${current === a.id ? 'icon-sel-badge-on' : ''}">${a.icon}</div>
-      ${current === a.id ? `<div class="icon-sel-current-lbl">${a.label}</div>` : ''}
-    </div>`).join('');
+function renderAgeIconRow(current) {
   return `
-    <div class="icon-row-select" onclick="${toggleFn}">
-      ${icons}
-      <span class="icon-row-chevron ${isOpen ? 'open' : ''}">▾</span>
-    </div>
-    ${isOpen ? `<div class="icon-row-detail">${renderAgeCards(current)}</div>` : ''}`;
-}
-
-/** 年齢カード一覧を返す */
-function renderAgeCards(current) {
-  return AGE_PROMPTS.map(a => `
-    <div class="type-card ${current === a.id ? 'sel-age' : ''}" onclick="App.setAge('${a.id}')">
-      <div class="type-badge type-badge-age">${a.icon}</div>
-      <div class="type-info">
-        <div class="type-name">${a.label}</div>
-        <div class="type-desc">${a.desc}</div>
-      </div>
-    </div>`).join('');
+    <div class="icon-row-select">
+      ${AGE_PROMPTS.map(a => `
+        <div class="icon-sel-item ${current === a.id ? 'icon-sel-active' : ''}" onclick="App.setAge('${a.id}')">
+          <div class="icon-sel-badge ${current === a.id ? 'icon-sel-badge-on' : ''}">${a.icon}</div>
+          ${current === a.id ? `<div class="icon-sel-current-lbl">${a.label}</div>` : ''}
+        </div>`).join('')}
+    </div>`;
 }
 
 /** 保護者よびかたチップ一覧を返す */

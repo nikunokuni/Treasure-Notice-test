@@ -131,18 +131,9 @@ function bindEvents() {
   const freeBtn = $id('free-go-btn');
   if (freeBtn) freeBtn.addEventListener('click', () => App.submitFree());
 
-  // お題リロール
-  const rerollBtn = $id('reroll-btn');
-  if (rerollBtn) rerollBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    S.odaiGenerating = true;
-    render();
-    App._generateAiOdai();
-  });
-
-  // ランダムお題カードタップ
+  // ランダムお題カードタップ（AIでお題を生成してレンズ画面へ）
   const randCard = $id('rand-card');
-  if (randCard) randCard.addEventListener('click', () => App.goToLens(S.randOdai));
+  if (randCard) randCard.addEventListener('click', () => App.pickRandomOdai());
 
   // 写真アップロード
   const photoInput = $id('photo-input');

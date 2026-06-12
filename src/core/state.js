@@ -12,7 +12,6 @@ const S = {
   flow: 'home',
   odai: null,
   lens: null,
-  randOdai: null,
   odaiGenerating: false,
   messages: [],
   speaker: 'child',
@@ -30,6 +29,7 @@ const S = {
   phase3OpinionDone: false,
   phase3CompareDone: false,
   showDecisionButtons: false,
+  phase4ConfirmDone: false,
   takaraMemory: null,
   summaryItems: [],
   summaryOpinion: [],
@@ -56,9 +56,6 @@ const S = {
   streakBrokenPop: false,
   streakBrokenCount: 0,
   weeklyTakara: null,
-  customTags: [],
-  settingsAgeOpen: false,
-  obAgeOpen: false,
   favPage: 0,
   notePage: 0,
   theme: 'amber',
@@ -86,5 +83,13 @@ const S = {
   shownFirstSticker: false,     // 初回演出を見せ終えたか（true で「シールをはる」ボタンが出現）
   stickerPlaceMode: false,      // 「シールをはる」モード中か
   stickerPlacing: null,         // 配置待ちシール { ownedIndex, id, emoji }
+  stickerRemoveMode: false,     // 「シールをはずす」モード中か
   tabStickers: { home:[], cal:[], box:[], fav:[], set:[] }, // タブごとに貼られたシール [{ id, emoji, x, y }]
+
+  // ── ショップ（たからさがしアイテムショップ） ──
+  shopModal: false,           // ショップモーダルの開閉状態
+  ownedStickyColors: [],       // 購入で獲得したふせんの色id一覧
+  shopPurchaseCount: 0,        // ショップでの購入回数（バッヂ用）
+  devSupportActive: false,     // 開発支援サブスク登録済みか
+  claimedShopBadge: false,     // 無料バッヂを受け取り済みか
 };

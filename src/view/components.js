@@ -83,9 +83,12 @@ function wrapWithStickerLayer(innerHtml) {
 /** 現在タブに貼られたシール一覧HTMLを返す（内部ヘルパー） */
 function _renderPlacedTabStickers() {
   const arr = (S.tabStickers || {})[S.tab] || [];
-  return arr.map(s => `
-    <div class="home-placed-sticker" style="left:${s.x}px; top:${s.y}px;">${esc(s.emoji)}</div>`
-  ).join('');
+  return arr.map((s, i) => {
+    const removable = S.stickerRemoveMode;
+    const onclick   = removable ? `onclick="event.stopPropagation();App.removeHomeSticker(${i})"` : '';
+    return `
+    <div class="home-placed-sticker ${removable ? 'removable' : ''}" style="left:${s.x}px; top:${s.y}px;" ${onclick}>${esc(s.emoji)}</div>`;
+  }).join('');
 }
 
 /** シールをはるモードのトレイHTMLを返す（内部ヘルパー） */
@@ -101,15 +104,20 @@ function _renderStickerTray() {
       </div>`;
   }).join('');
 
-  const label = owned.length === 0
-    ? 'シールがまだないよ'
-    : (S.stickerPlacing ? 'はりたい ばしょを タップしてね' : 'どのシールをはる？');
+  const label = S.stickerRemoveMode
+    ? 'はずしたいシールをタップしてね'
+    : (owned.length === 0
+        ? 'シールがまだないよ'
+        : (S.stickerPlacing ? 'はりたい ばしょを タップしてね' : 'どのシールをはる？'));
 
   return `
     <div class="home-sticker-tray">
       <div class="home-sticker-tray-label">${label}</div>
       <div class="home-sticker-tray-scroll">${items}</div>
-      <button class="home-sticker-done-btn" onclick="App.closeStickerPlaceMode()">おわる</button>
+      <div class="home-sticker-tray-actions">
+        <button class="home-sticker-remove-btn ${S.stickerRemoveMode ? 'active' : ''}" onclick="App.toggleStickerRemoveMode()">🗑️ シールをはずす</button>
+        <button class="home-sticker-done-btn" onclick="App.closeStickerPlaceMode()">おわる</button>
+      </div>
     </div>`;
 }
 

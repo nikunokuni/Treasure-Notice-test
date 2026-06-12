@@ -21,6 +21,10 @@ const LENSES = [
     cls:'lens-じぶん' },
 ];
 
+// ── ショップ（たからさがしアイテムショップ） ──
+const SHOP_URL    = 'https://buy-roan.vercel.app/takarasagashi.html';
+const SHOP_ORIGIN = 'https://buy-roan.vercel.app';
+
 // ── 大人用：外部リンク定義 ──
 const ADULT_LINKS = [
   { id:'enjoy',    label:'もっとたのしむ',       sublabel:'アプリ内アイテムを購入できます', emoji:'🎉', url:'' },

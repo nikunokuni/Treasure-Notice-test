@@ -10,7 +10,7 @@
 /** チャット画面を返す */
 function renderChat() {
   const u        = S.user;
-  const isPhase4 = S.chatPhase >= 4 || S.phase3DecisionAsked;
+  const showFinishBtn = S.phase4ConfirmDone;
   const phaseDots = [1, 2, 3, 4].map(n => `
     <div class="phase-dot-simple ${S.chatPhase > n ? 'phase-s-done' : ''} ${S.chatPhase === n ? 'phase-s-active' : ''}"></div>
     ${n < 4 ? '<div class="phase-line-simple"></div>' : ''}`).join('');
@@ -20,13 +20,11 @@ function renderChat() {
     : `${esc(u.parentName)}もかんがえてみよう…`;
 
   return `
-    <div class="phase-bar-wrap-simple">
-      <div class="phase-bar-simple">${phaseDots}</div>
-    </div>
     <div class="chat-wrap">
-      <div class="speaker-row">
+      <div class="chat-status-row">
         <div class="speaker-btn ${S.speaker === 'child'  ? 'active-child'  : ''}"
              onclick="App.setSpeaker('child')">👦 ${esc(u.name || 'こども')}</div>
+        <div class="phase-bar-simple">${phaseDots}</div>
         <div class="speaker-btn ${S.speaker === 'parent' ? 'active-parent' : ''}"
              onclick="App.setSpeaker('parent')">👨 ${esc(u.parentName)}</div>
       </div>
@@ -46,7 +44,7 @@ function renderChat() {
           ${S.isLoading ? 'disabled' : ''}>
         <button class="chat-send" onclick="App.sendChat()" ${S.isLoading ? 'disabled' : ''}>➤</button>
       </div>
-      ${isPhase4 ? `
+      ${showFinishBtn ? `
         <button class="finish-btn finish-btn-ready" onclick="App.goSummary()">
           📦 たからをしまう
         </button>` : ''}

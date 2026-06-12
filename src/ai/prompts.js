@@ -107,8 +107,14 @@ const PROMPT_CTX_phase3_likes = (likes) => `【追加指示】深掘りの問い
 const PROMPT_CTX_ai_opinion = `【追加指示】深掘りの問いの前に、たからちゃん自身の感想・意見を一言だけ「わたしはね、〜だとおもうんだけど」という形で添えてください。教えるのではなく、一つの見方として自然に話してください。`;
 const PROMPT_CTX_ai_emotion = `【追加指示】深掘りの問いの前に、たからちゃん自身が「これ、すごくふしぎだよね！」「わたしもきになってた！」など、お題への好奇心・驚きを一言だけ自然に表現してください。`;
 const PROMPT_CTX_parent_only = (parentName) => `【必須ルール】子どもへのリアクションを一言だけ。「${parentName}」だけに向けて「${parentName}はどう思いますか？」と話しかけてください。`;
-const PROMPT_PHASE_4 = (odaiName) =>
-  `「${odaiName}ってひとことで言うとどういうもの？」と聞く。答えをもらったら必ず「📦」を使って「たからをしまおう！」と誘導する。`;
+const PROMPT_PHASE_4_VARIANTS = [
+  () => `「ここできづいたことは？」と聞き、子どもが気に入った言葉・気になった言葉・気づいたことを引き出す。`,
+  () => `「これまでのはなしをまとめてみよう」と声をかけ、子どもが気に入った言葉・気になった言葉・気づいたことを子ども自身の言葉でふりかえらせる。`,
+];
+const PROMPT_PHASE_4 = (odaiName) => {
+  const variant = PROMPT_PHASE_4_VARIANTS[Math.floor(Math.random() * PROMPT_PHASE_4_VARIANTS.length)];
+  return `${variant(odaiName)}答えをもらったら必ず「📦」を使って「たからをしまおう！」と誘導する。`;
+};
 
 const PROMPT_PHASE_5 = `子どもがまだ探求を続けたいと選んだ。上記の問いの方向でさらに深掘りする。
 【必須ルール】直前の子どもの回答をそのまま受け取らず、必ず「逆から見る・別の角度に変える・ひっくり返す」で次の問いを作ること。

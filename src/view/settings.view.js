@@ -17,6 +17,19 @@ function renderSettings() {
         <div class="settings-subtab ${tab === 'adult' ? 'active' : ''}" onclick="App.switchSettingsTab('adult')">おとなよう</div>
       </div>
       ${tab === 'kid' ? _renderSettingsKid() : _renderSettingsAdult()}
+      ${renderShopModal()}
+    </div>`;
+}
+
+/** ショップモーダルを返す（内部ヘルパー） */
+function renderShopModal() {
+  if (!S.shopModal) return '';
+  return `
+    <div class="modal-overlay" onclick="App.closeShop()">
+      <div class="modal-box modal-box--shop" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="App.closeShop()">✕</button>
+        <iframe class="shop-iframe" src="${App.buildShopUrl()}" title="ショップ"></iframe>
+      </div>
     </div>`;
 }
 
@@ -50,7 +63,7 @@ function _renderSettingsKid() {
       </div>
       <div class="settings-field settings-row-icon">
         <div class="settings-field-label">ねんれい</div>
-        ${renderAgeIconRow(u.ageGroup, 'App.toggleSettingsAge()', S.settingsAgeOpen)}
+        ${renderAgeIconRow(u.ageGroup)}
       </div>
     </div>
 
@@ -179,16 +192,17 @@ function _renderSettingsAdult() {
     </div>
 
     <div class="settings-section-adult">
-      <div class="adult-link-row" onclick="App.exportCSV()">
-        <span>📤</span><span>データをエクスポート</span>
+      <div class="adult-link-row" onclick="App.exportAllData()">
+        <span>🗂️</span>
+        <span>全データをエクスポート<br><span style="font-size:0.75em;color:#aaa;">きろく・せってい・てちょうなど全情報をバックアップ</span></span>
         <span class="adult-link-arrow">›</span>
       </div>
-      <div class="adult-link-row" onclick="App.triggerImport()">
-        <span>📥</span>
-        <span>データをインポート<br><span style="font-size:0.75em;color:#aaa;">※このアプリでエクスポートしたものを使ってください</span></span>
+      <div class="adult-link-row" onclick="App.triggerImportAllData()">
+        <span>📦</span>
+        <span>全データをインポート<br><span style="font-size:0.75em;color:#aaa;">※このアプリでエクスポートしたものを使ってください</span></span>
         <span class="adult-link-arrow">›</span>
       </div>
-      <input type="file" id="csv-import-input" accept=".csv" style="display:none" onchange="App.importCSV(event)">
+      <input type="file" id="json-import-input" accept=".json" style="display:none" onchange="App.importAllData(event)">
       <div class="adult-link-row" onclick="App.sendFeedback()">
         <span>📨</span><span>ご意見・感想・バグ報告</span>
         <span class="adult-link-arrow">›</span>

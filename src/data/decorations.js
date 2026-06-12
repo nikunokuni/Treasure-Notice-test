@@ -7,9 +7,9 @@
 const NOTEBOOK_THEMES = [
   { id:'plain',  name:'シンプル',  bg:'#fffef7', pattern:'none',        emoji:'📄' },
   { id:'pink',   name:'ピンク',    bg:'#fff0f5', pattern:'polka-pink',  emoji:'🌸' },
-  { id:'blue',   name:'そら',      bg:'#f0f6ff', pattern:'polka-blue',  emoji:'☁️' },
-  { id:'nature', name:'しぜん',    bg:'#f0fdf6', pattern:'polka-green', emoji:'🌿' },
-  { id:'star',   name:'ほし',      bg:'#fffbe0', pattern:'polka-star',  emoji:'⭐' },
+  { id:'blue',   name:'あお',      bg:'#f0f6ff', pattern:'polka-blue',  emoji:'☁️' },
+  { id:'nature', name:'みどり',    bg:'#f0fdf6', pattern:'polka-green', emoji:'🌿' },
+  { id:'star',   name:'きいろ',      bg:'#fffbe0', pattern:'polka-star',  emoji:'⭐' },
 ];
 
 // ── シール素材（絵文字ベース） ──
@@ -20,6 +20,17 @@ const STICKERS = [
   { id:'st10',emoji:'❤️' }, { id:'st11',emoji:'🎵' }, { id:'st12',emoji:'🦋' },
   { id:'st13',emoji:'🌺' }, { id:'st14',emoji:'🍭' }, { id:'st15',emoji:'🎈' },
   { id:'st16',emoji:'🐝' }, { id:'st17',emoji:'🌻' }, { id:'st18',emoji:'🍄' },
+  { id:'st19',emoji:'🐶' }, { id:'st20',emoji:'🐱' }, { id:'st21',emoji:'🐰' },
+  { id:'st22',emoji:'🐻' }, { id:'st23',emoji:'🐼' }, { id:'st24',emoji:'🐯' },
+  { id:'st25',emoji:'🦁' }, { id:'st26',emoji:'🐨' }, { id:'st27',emoji:'🐸' },
+  { id:'st28',emoji:'🐢' }, { id:'st29',emoji:'🐠' }, { id:'st30',emoji:'🐬' },
+  { id:'st31',emoji:'🦄' }, { id:'st32',emoji:'🐧' }, { id:'st33',emoji:'🐤' },
+  { id:'st34',emoji:'🌷' }, { id:'st35',emoji:'🌼' }, { id:'st36',emoji:'🍎' },
+  { id:'st37',emoji:'🍓' }, { id:'st38',emoji:'🍉' }, { id:'st39',emoji:'🍕' },
+  { id:'st40',emoji:'🍩' }, { id:'st41',emoji:'🍰' }, { id:'st42',emoji:'🎂' },
+  { id:'st43',emoji:'🚀' }, { id:'st44',emoji:'🚗' }, { id:'st45',emoji:'🚂' },
+  { id:'st46',emoji:'✈️' }, { id:'st47',emoji:'🎁' }, { id:'st48',emoji:'🎉' },
+  { id:'st49',emoji:'🔥' }, { id:'st50',emoji:'💎' },
 ];
 
 // 付箋カラー選択肢（設定画面で使用）

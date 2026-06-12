@@ -76,25 +76,28 @@ Object.assign(App, {
     render();
   },
   toggleObColor()      { S.obColorOpen      = !S.obColorOpen;      render(); },
-  toggleObAge()        { S.obAgeOpen        = !S.obAgeOpen;        render(); },
-  toggleSettingsAge()  { S.settingsAgeOpen  = !S.settingsAgeOpen;  render(); },
 
 
   // ── AI お題生成 ────────────────────────────
 
-  /** ホーム画面のランダムお題をAIで生成する */
-  async _generateAiOdai() {
+  /** ランダムタップ：AIでお題を生成してレンズ画面へ */
+  async pickRandomOdai() {
+    S.odaiGenerating = true;
+    render();
+
+    let odai;
     try {
       const res = await callAI(
-        [{ role: 'user', content: '日本の子ども（3〜9歳）が日常生活で目にしそうな具体的なものを1つ提案してください。JSONのみ: {"name":"ひらがな短い単語","emoji":"絵文字1つ","label":"カテゴリ"}' }],
+        [{ role: 'user', content: '日本の子ども（3〜9歳）が日常生活で目にしそうな具体的なものを1つ提案してください。JSONのみ: {"name":"ひらがな短い単語","emoji":"絵文字1つ"}' }],
         'JSONのみ返してください（Markdownなし）。具体的な身近なものを。'
       );
-      S.randOdai = JSON.parse(res.replace(/```json|```/g, '').trim());
+      odai = JSON.parse(res.replace(/```json|```/g, '').trim());
     } catch {
-      S.randOdai = pickRand();
+      odai = pickRand();
     }
+
     S.odaiGenerating = false;
-    render();
+    App.goToLens(odai);
   },
 
   goToLens(odai) {
@@ -113,12 +116,12 @@ Object.assign(App, {
     if (!txt) return;
     try {
       const res = await callAI(
-        [{ role: 'user', content: `子どもが「${txt}」と言いました。JSONのみ: {"name":"ひらがな短い単語","emoji":"絵文字","label":"カテゴリ"}` }],
+        [{ role: 'user', content: `子どもが「${txt}」と言いました。JSONのみ: {"name":"ひらがな短い単語","emoji":"絵文字"}` }],
         'JSONのみ返してください（Markdownなし）。'
       );
       App.goToLens(JSON.parse(res.replace(/```json|```/g, '').trim()));
     } catch {
-      App.goToLens({ emoji: '✨', name: txt.slice(0, 10), label: 'きになること' });
+      App.goToLens({ emoji: '✨', name: txt.slice(0, 10) });
     }
   },
 
@@ -154,6 +157,7 @@ Object.assign(App, {
       phase3OpinionDone:    false,
       phase3CompareDone:    false,
       showDecisionButtons:  false,
+      phase4ConfirmDone:    false,
     });
     persistSave();
     render();
@@ -300,6 +304,11 @@ Object.assign(App, {
         S.observationContext = lastChild?.text || '';
         S.chatPhase = 3;
         S.phase3Turns = 0;
+      }
+
+      // Phase 4: 子どもからの返事を受け取ったら「たからをしまう」ボタンを表示
+      if (S.chatPhase === 4) {
+        S.phase4ConfirmDone = true;
       }
 
       S.messages.push({ role: 'ai', text });
@@ -633,7 +642,6 @@ Object.assign(App, {
   nextOdai() {
     S.flow       = 'home';
     S.tab        = 'home';
-    S.randOdai   = null;
     S.prevRecord = null;
     S.noteStamps = [];
     S.currentNote = '';
@@ -772,10 +780,10 @@ Object.assign(App, {
       return;
     }
 
-    const header = ['日付','お題','絵文字','カテゴリ','レンズ','発見1','発見2','発見3','ノート','お気に入り','ステータス'];
+    const header = ['日付','お題','絵文字','レンズ','発見1','発見2','発見3','ノート','お気に入り','ステータス'];
     const rows   = S.records.map(r => [
       r.date ? new Date(r.date).toLocaleDateString('ja-JP') : '',
-      r.odai?.name  || '', r.odai?.emoji || '', r.odai?.label || '',
+      r.odai?.name  || '', r.odai?.emoji || '',
       r.lens        || '',
       r.findings?.[0] || '', r.findings?.[1] || '', r.findings?.[2] || '',
       r.note        || '',
@@ -788,6 +796,38 @@ Object.assign(App, {
       .join('\n');
 
     _downloadBlob('\uFEFF' + csvContent, 'text/csv;charset=utf-8;', `takarasagashi_${new Date().toISOString().slice(0, 10)}.csv`);
+  },
+
+  // ── 全データ JSON エクスポート／インポート ──
+
+  exportAllData() {
+    const data = { ..._buildSaveData(), _exportedAt: new Date().toISOString() };
+    const json = JSON.stringify(data, null, 2);
+    _downloadBlob(json, 'application/json;charset=utf-8;', `takarasagashi_alldata_${new Date().toISOString().slice(0, 10)}.json`);
+  },
+
+  triggerImportAllData() { $id('json-import-input')?.click(); },
+
+  importAllData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const saved = JSON.parse(e.target.result);
+        if (typeof saved !== 'object' || saved === null) throw new Error('不正なデータ');
+        _applySaveData(saved);
+        persistSave();
+        alert('全てのデータをインポートしたよ！');
+        render();
+      } catch (err) {
+        console.error('import error:', err);
+        alert('インポートにしっぱいしたよ。ファイルをたしかめてね。');
+      }
+      event.target.value = '';
+    };
+    reader.readAsText(file, 'UTF-8');
   },
 
   triggerImport() { $id('csv-import-input')?.click(); },
@@ -810,7 +850,7 @@ Object.assign(App, {
             .map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
           if (cols.length < 5) continue;
 
-          const [dateStr, name, emoji, label, lens, f1, f2, f3, note, fav, status] = cols;
+          const [dateStr, name, emoji, lens, f1, f2, f3, note, fav, status] = cols;
           const alreadyExists = S.records.some(r =>
             r.odai?.name === name &&
             r.date &&
@@ -818,7 +858,7 @@ Object.assign(App, {
           );
           if (!alreadyExists) {
             S.records.push({
-              odai:      { name, emoji, label },
+              odai:      { name, emoji },
               lens:      lens || '',
               date:      dateStr ? new Date(dateStr).toISOString() : new Date().toISOString(),
               findings:  [f1, f2, f3].filter(Boolean),
@@ -845,9 +885,67 @@ Object.assign(App, {
   // ── シェア・外部リンク ─────────────────────
 
   openExternalLink(id) {
+    if (id === 'enjoy') { App.openShop(); return; }
     const link = ADULT_LINKS.find(l => l.id === id);
     if (!link?.url) { alert('このページはまだじゅんびちゅうです'); return; }
     window.open(link.url, '_blank', 'noopener,noreferrer');
+  },
+
+  // ── ショップ（たからさがしアイテムショップ） ──
+  openShop()  { S.shopModal = true;  render(); },
+  closeShop() { S.shopModal = false; render(); },
+
+  /** ショップへ渡すURL（所持アイテム/色を伝える） */
+  buildShopUrl() {
+    const owned = [];
+    if (S.claimedShopBadge) owned.push('badge');
+    if (S.devSupportActive) owned.push('devSupport');
+
+    const techoColors = NOTEBOOK_THEMES.map(t => t.id).filter(id => S.ownedPageThemes.includes(id));
+    const fusenColors = STICKY_COLORS.map(c => c.id).filter(id => S.ownedStickyColors.includes(id));
+
+    const params = new URLSearchParams();
+    if (owned.length)       params.set('owned', owned.join(','));
+    if (techoColors.length) params.set('techoColors', techoColors.join(','));
+    if (fusenColors.length) params.set('fusenColors', fusenColors.join(','));
+
+    const qs = params.toString();
+    return SHOP_URL + (qs ? `?${qs}` : '');
+  },
+
+  /** ショップからのpostMessageを受けて特典を付与する */
+  handleShopPurchase(detail) {
+    const { productId, techoType, fusenType } = detail || {};
+    const prevEarned = new Set(BADGES.filter(b => b.check(S)).map(b => b.id));
+
+    switch (productId) {
+      case 'sticker5':
+        for (let i = 0; i < 5; i++) {
+          const sticker = STICKERS[Math.floor(Math.random() * STICKERS.length)];
+          S.ownedStickers.push(sticker.id);
+        }
+        break;
+      case 'techoDiary':
+        if (techoType) S.ownedPageThemes.push(techoType);
+        break;
+      case 'fusen':
+        if (fusenType && !S.ownedStickyColors.includes(fusenType)) S.ownedStickyColors.push(fusenType);
+        break;
+      case 'badge':
+        S.claimedShopBadge = true;
+        break;
+      case 'devSupport':
+        S.devSupportActive = true;
+        break;
+      default:
+        return;
+    }
+
+    S.shopPurchaseCount = (S.shopPurchaseCount || 0) + 1;
+    BADGES.forEach(b => { if (!prevEarned.has(b.id) && b.check(S)) S.newBadges.push(b.id); });
+
+    persistSave();
+    render();
   },
 
   sendFeedback() {
@@ -905,8 +1003,26 @@ Object.assign(App, {
   },
 
   closeStickerPlaceMode() {
-    S.stickerPlaceMode = false;
-    S.stickerPlacing   = null;
+    S.stickerPlaceMode  = false;
+    S.stickerPlacing    = null;
+    S.stickerRemoveMode = false;
+    render();
+  },
+
+  /** 「シールをはずす」モードの切替 */
+  toggleStickerRemoveMode() {
+    S.stickerRemoveMode = !S.stickerRemoveMode;
+    S.stickerPlacing    = null;
+    render();
+  },
+
+  /** ホームに貼ったシールをはずして手持ちにもどす */
+  removeHomeSticker(idx) {
+    const arr     = (S.tabStickers || {})[S.tab] || [];
+    const removed = arr.splice(idx, 1)[0];
+    if (!removed) return;
+    S.ownedStickers.push(removed.id);
+    persistSave();
     render();
   },
 
@@ -916,6 +1032,7 @@ Object.assign(App, {
     if (!id) return;
     const st = STICKERS.find(s => s.id === id);
     if (!st) return;
+    S.stickerRemoveMode = false;
     S.stickerPlacing = (S.stickerPlacing && S.stickerPlacing.ownedIndex === idx)
       ? null
       : { ownedIndex: idx, id, emoji: st.emoji };
@@ -951,15 +1068,6 @@ Object.assign(App, {
     });
 
     persistSave();
-    render();
-  },
-
-  addCustomTag() {
-    const inp = document.getElementById('custom-tag-input');
-    const val = inp?.value?.trim();
-    if (!val) return;
-    if (!S.customTags.includes(val)) { S.customTags.push(val); persistSave(); }
-    if (inp) inp.value = '';
     render();
   },
 

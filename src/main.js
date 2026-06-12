@@ -29,8 +29,27 @@ setTimeout(() => {
   if (S.streakBrokenPop) { S.streakBrokenPop = false; render(); }
 }, 5000);
 
+// ── ホーム画面に追加されたかを検知 ──
+function _markAddedToHomeScreen() {
+  if (S.addedToHomeScreen) return;
+  S.addedToHomeScreen = true;
+  persistSave();
+  render();
+}
+window.addEventListener('appinstalled', _markAddedToHomeScreen);
+
+// ── ショップ（iframe）からの購入完了通知を受け取る ──
+window.addEventListener('message', (event) => {
+  if (event.origin !== SHOP_ORIGIN) return;
+  if (event.data?.type !== 'takara-purchase') return;
+  App.handleShopPurchase(event.data);
+});
+
 // ── 起動シーケンス ──
 persistLoad();
 applyFontSize();
 applyTheme();
+if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+  _markAddedToHomeScreen();
+}
 render();

@@ -11,15 +11,13 @@
 function renderHome() {
   const u    = S.user;
   const age  = AGE_PROMPTS.find(a => a.id === (u.ageGroup || 'young')) || AGE_PROMPTS[0];
-  const r    = S.randOdai || pickRand();
-  if (!S.randOdai) S.randOdai = r;
 
   return `
     ${_renderStreakBrokenPop()}
     <div class="content">
       ${_renderHomeStats(age)}
       ${_renderMainActions()}
-      ${_renderRandCard(r)}
+      ${_renderRandCard()}
       ${_renderPrevTakara()}
     </div>`;
 }
@@ -63,6 +61,10 @@ function _renderHomeStats(age) {
     return d >= monday && d <= today;
   }).length;
 
+  // シールまでのこりやりとり数
+  const chatCount     = S.childChatCount || 0;
+  const stickerLeft   = 50 - (chatCount % 50);
+
   return `
     <div class="home-week-row">
       <span class="home-age-icon">${age.icon}</span>
@@ -74,7 +76,8 @@ function _renderHomeStats(age) {
           <span class="hsc-num">${weekTakara}</span><span class="hsc-unit">こ</span>
         </span>
       </div>
-    </div>`;
+    </div>
+    <div class="home-sticker-progress">🎀 あと${stickerLeft}かいのやりとりでシールがもらえるよ</div>`;
 }
 
 /** メインアクションブロックを返す（内部ヘルパー） */
@@ -93,14 +96,9 @@ function _renderMainActions() {
           </div>
         </div>
         <div class="main-action-card main-photo">
-          <input type="file" accept="image/*" id="photo-input">
-          <div class="main-photo-inner">
-            <span class="main-photo-icon">📷</span>
-            <div>
-              <div class="main-action-label">しゃしんでおだいをつくる</div>
-              <div class="main-action-sub">とったしゃしんをAIがよみとるよ</div>
-            </div>
-            <span class="main-photo-arrow">›</span>
+          <div class="main-photo-tap">
+            <input type="file" accept="image/*" id="photo-input">
+            <img class="main-photo-img" src="src/assets/stickers/camera.png" alt="しゃしんでおだいをつくる">
           </div>
         </div>
       </div>
@@ -109,7 +107,7 @@ function _renderMainActions() {
 }
 
 /** ランダムおだいカード（ミニ）を返す（内部ヘルパー） */
-function _renderRandCard(r) {
+function _renderRandCard() {
   if (S.odaiGenerating) return `
     <div class="rand-card-mini rand-loading">
       ${renderSpinner(14)}
@@ -117,9 +115,8 @@ function _renderRandCard(r) {
     </div>`;
   return `
     <div class="rand-card-mini" id="rand-card">
-      <span class="rand-mini-emoji">${r.emoji}</span>
-      <span class="rand-mini-label">🎲 ランダム：${esc(r.name)}</span>
-      <button class="rand-mini-reroll" id="reroll-btn">ふりなおす</button>
+      <span class="rand-mini-emoji">🎲</span>
+      <span class="rand-mini-label">ランダム</span>
       <span class="rand-mini-arrow">›</span>
     </div>`;
 }

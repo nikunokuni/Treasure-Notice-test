@@ -132,10 +132,22 @@ function renderNotebookCanvas(nb, theme) {
 
   return `
     <div class="nb-canvas nb-canvas--grid" id="nb-canvas"
-         style="background:${theme.bg}"
+         style="${_themeBgStyle(theme)}"
          onclick="App.placeItem(event)">
       ${items}
     </div>`;
+}
+
+/** テーマの背景スタイル文字列を返す（内部ヘルパー、プレーンは方眼紙模様つき） */
+function _themeBgStyle(theme) {
+  if (theme.pattern === 'none') {
+    return `background-color:${theme.bg};` +
+      `background-image:` +
+        `linear-gradient(rgba(45,27,0,0.04) 1px, transparent 1px),` +
+        `linear-gradient(90deg, rgba(45,27,0,0.04) 1px, transparent 1px);` +
+      `background-size:14px 14px;`;
+  }
+  return `background:${theme.bg}`;
 }
 
 /**
@@ -162,7 +174,7 @@ function renderNotebookCanvasReadonly(nb, theme) {
 
   return `
     <div class="nb-canvas nb-canvas--readonly"
-         style="background:${theme.bg};transform:scale(${scale});margin-bottom:${negH}px;margin-right:${negW}px">
+         style="${_themeBgStyle(theme)}transform:scale(${scale});margin-bottom:${negH}px;margin-right:${negW}px">
       ${items}
       ${hint}
     </div>`;
