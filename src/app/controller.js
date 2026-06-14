@@ -13,7 +13,7 @@ Object.assign(App, {
     S.tab  = tab;
     S.flow = 'home';
     // お気に入りタブを開いたとき、てちょう解放演出 → 未表示バッヂの順で表示
-    if (tab === 'fav') {
+    if (tab === 'fav' && !S.stickerPlaceMode) {
       if (S.notebookUnlockPending) {
         S.notebookUnlockPending = false;
         S.notebookUnlocked      = true;
@@ -110,6 +110,9 @@ Object.assign(App, {
 
   replayOdai(odai) { App.goToLens(odai); },
 
+  /** 写真判定の候補から選んだものをおだいにしてレンズ選択画面へ */
+  choosePhotoOdai(item) { App.goToLens({ ...item, fromPhoto: true }); },
+
   /** フリーテキスト入力をお題に変換してレンズ画面へ */
   async submitFree() {
     const txt = $id('free-in')?.value?.trim();
@@ -148,14 +151,13 @@ Object.assign(App, {
       chatPhase:            1,
       lastLens:             S.lens,
       speaker:              'child',
-      currentSummary:       '',
       situationContext:     '',
       observationContext:   '',
+      deepDiveGoal:         '',
       parentBridgeDone:     false,
       phase3Turns:          0,
       phase3DecisionAsked:  false,
       phase3OpinionDone:    false,
-      phase3CompareDone:    false,
       showDecisionButtons:  false,
       phase4ConfirmDone:    false,
     });
@@ -242,9 +244,13 @@ Object.assign(App, {
     scrollChat();
 
     try {
-      // 興味判定
-      const interest     = await App._checkInterest(txt);
-      const isInterested = interest?.is_interested !== false;
+      // 興味判定（3回に1回だけ判定し、それ以外は前回値を流用）
+      let isInterested = S.lastIsInterested !== false;
+      if (S.childChatCount % 3 === 0) {
+        const interest = await App._checkInterest(txt);
+        isInterested   = interest?.is_interested !== false;
+        S.lastIsInterested = isInterested;
+      }
 
       // 文体・トーン変化の検出（前回の平均文字数と比較）
       const kidAvgLen        = S.takaraMemory?.kidStyle?.avgLen || 0;
@@ -254,7 +260,6 @@ Object.assign(App, {
       // フェーズ3のターン管理
       let showPhase3Decision = false;
       let showPhase3Likes    = false;
-      let showPhase3Compare  = false;
       let showAiOpinion      = false;
       let showAiEmotion      = false;
       let showParentOnly     = false;
@@ -270,13 +275,11 @@ Object.assign(App, {
           // それ以外: 基本（深掘り）+ ランダムで1つだけ追加
           const canParent  = S.phase3Turns >= 2 && !S.parentBridgeDone && S.user.parentName && S.user.parentName !== 'ひとり';
           const canOpinion = !S.phase3OpinionDone;
-          const canCompare = !S.phase3CompareDone;
           const rand = Math.random();
           let cum = 0;
 
           if      (canParent  && rand < (cum += 1/10))  { showParentOnly = true; S.parentBridgeDone = true; }
           else if (canOpinion && rand < (cum += 1/10))  { showAiOpinion  = true; S.phase3OpinionDone = true; }
-          else if (canCompare && rand < (cum += 1/4))   { showPhase3Compare = true; S.phase3CompareDone = true; }
           else if (S.user.likes && rand < (cum += 1/6)) { showPhase3Likes = true; }
           else if (rand < (cum += 1/3))                 { showAiEmotion  = true; }
           // else: 基本の深掘りのみ
@@ -286,7 +289,7 @@ Object.assign(App, {
       // AI返答を取得
       let text = await callAI(
         App._buildApiMsgs(),
-        chatSystem({ isInterested, showParentOnly, showPhase3Decision, showPhase3Likes, showPhase3Compare, showAiOpinion, showAiEmotion, showStyleConcern, showStylePraise })
+        chatSystem({ isInterested, showParentOnly, showPhase3Decision, showPhase3Likes, showAiOpinion, showAiEmotion, showStyleConcern, showStylePraise })
       );
 
       // Phase 1 → 2: 🔷 シグナルを検出
@@ -304,6 +307,7 @@ Object.assign(App, {
         S.observationContext = lastChild?.text || '';
         S.chatPhase = 3;
         S.phase3Turns = 0;
+        S.deepDiveGoal = await decideDeepDiveGoal();
       }
 
       // Phase 4: 子どもからの返事を受け取ったら「たからをしまう」ボタンを表示
@@ -944,9 +948,12 @@ Object.assign(App, {
     S.shopPurchaseCount = (S.shopPurchaseCount || 0) + 1;
     BADGES.forEach(b => { if (!prevEarned.has(b.id) && b.check(S)) S.newBadges.push(b.id); });
 
+    S.purchaseCompleteAlert = true;
     persistSave();
     render();
   },
+
+  closePurchaseCompleteAlert() { S.purchaseCompleteAlert = false; render(); },
 
   sendFeedback() {
     S.sentFeedback = true;

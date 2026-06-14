@@ -16,18 +16,18 @@ const S = {
   messages: [],
   speaker: 'child',
   childChatCount: 0,            // 子どもが送ったチャットメッセージの累計数
+  lastIsInterested: true,        // 直近の興味判定結果（3回に1回だけ判定し、それ以外は前回値を流用）
   isLoading: false,
   lastError: false,
   lastSendPayload: null,
   // ── チャット進行（chattest 由来の5フェーズ制御） ──
   situationContext: '',
   observationContext: '',
-  currentSummary: '',
+  deepDiveGoal: '',
   parentBridgeDone: false,
   phase3Turns: 0,
   phase3DecisionAsked: false,
   phase3OpinionDone: false,
-  phase3CompareDone: false,
   showDecisionButtons: false,
   phase4ConfirmDone: false,
   takaraMemory: null,
@@ -88,6 +88,7 @@ const S = {
 
   // ── ショップ（たからさがしアイテムショップ） ──
   shopModal: false,           // ショップモーダルの開閉状態
+  purchaseCompleteAlert: false, // 「かいものかんりょうしました」アラームの表示状態
   ownedStickyColors: [],       // 購入で獲得したふせんの色id一覧
   shopPurchaseCount: 0,        // ショップでの購入回数（バッヂ用）
   devSupportActive: false,     // 開発支援サブスク登録済みか

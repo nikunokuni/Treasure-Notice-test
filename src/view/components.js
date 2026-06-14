@@ -115,7 +115,7 @@ function _renderStickerTray() {
       <div class="home-sticker-tray-label">${label}</div>
       <div class="home-sticker-tray-scroll">${items}</div>
       <div class="home-sticker-tray-actions">
-        <button class="home-sticker-remove-btn ${S.stickerRemoveMode ? 'active' : ''}" onclick="App.toggleStickerRemoveMode()">🗑️ シールをはずす</button>
+        <button class="home-sticker-remove-btn ${S.stickerRemoveMode ? 'active' : ''}" onclick="App.toggleStickerRemoveMode()">${S.stickerRemoveMode ? '🎀 シールをはる' : '🗑️ シールをはずす'}</button>
         <button class="home-sticker-done-btn" onclick="App.closeStickerPlaceMode()">おわる</button>
       </div>
     </div>`;

@@ -10,13 +10,13 @@ export default async function handler(req) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         system_instruction: {
-          parts: [{ text: 'JSONのみ返してください（Markdownなし）: {"name":"ひらがな短い単語","emoji":"絵文字1つ","label":"カテゴリ"}' }],
+          parts: [{ text: 'JSONのみ返してください（Markdownなし）: {"items":[{"name":"ひらがな短い単語","emoji":"絵文字1つ"}]}' }],
         },
         contents: [{
           role: 'user',
           parts: [
             { inline_data: { mime_type: mime, data: b64 } },
-            { text: 'この写真の主な物を教えてください。' },
+            { text: 'この写真に写っている主な物を、最大4つまで教えてください。' },
           ],
         }],
         generationConfig: { maxOutputTokens: 200 },

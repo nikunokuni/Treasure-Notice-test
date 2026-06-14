@@ -18,6 +18,21 @@ function renderSettings() {
       </div>
       ${tab === 'kid' ? _renderSettingsKid() : _renderSettingsAdult()}
       ${renderShopModal()}
+      ${renderPurchaseCompleteAlert()}
+    </div>`;
+}
+
+/** 「かいものかんりょうしました」アラームを返す（内部ヘルパー） */
+function renderPurchaseCompleteAlert() {
+  if (!S.purchaseCompleteAlert) return '';
+  return `
+    <div class="modal-overlay badge-new-overlay" onclick="App.closePurchaseCompleteAlert()">
+      <div class="modal-box badge-new-box" onclick="event.stopPropagation()">
+        <div class="badge-new-burst">🎉</div>
+        <div class="badge-new-icon">🛍️</div>
+        <div class="badge-new-name">かいものかんりょうしました</div>
+        <button class="btn-primary badge-new-ok" onclick="App.closePurchaseCompleteAlert()">やったー！</button>
+      </div>
     </div>`;
 }
 

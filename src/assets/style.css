@@ -926,13 +926,18 @@ body {
   aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; font-size: var(--fs-sm);
   color: rgba(45,27,0,0.5); cursor: default; background: rgba(255,255,255,0.5);
+  position: relative;
 }
 .cal-day.empty          { background: transparent; }
 .cal-day.today          { background: var(--amber-pale); color: var(--amber); font-weight: 700; border: 1.5px solid rgba(232,134,10,0.3); }
 .cal-day.stamped        { background: white; cursor: pointer; min-height: 48px; }
 .cal-day.stamped:hover  { background: var(--amber-pale); }
 .cal-day-num            { font-size: 11px; }
-.cal-stamp              { font-size: 22px; line-height: 1; }
+.cal-day-num--stamped   {
+  position: absolute; top: 2px; left: 4px; font-size: 9px;
+  color: rgba(45,27,0,0.4); line-height: 1;
+}
+.cal-stamp              { font-size: min(9vw, 38px); line-height: 1; }
 
 /* モーダル */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
@@ -1291,7 +1296,9 @@ body {
 
 /* ── シール（ホーム貼り付けモード） ── */
 .sticker-place-btn        { width: 100%; }
-.tab-sticker-layer        { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.tab-sticker-layer        { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
+.tab-sticker-layer > .content,
+.home-sticker-canvas .content { flex: none; overflow-y: visible; }
 .home-sticker-mode-wrap   { display: flex; flex-direction: column; height: 100%; }
 .home-sticker-canvas      { position: relative; flex: 1; overflow-y: auto; cursor: crosshair; }
 .home-sticker-disabled-layer  { pointer-events: none; }
@@ -1491,6 +1498,20 @@ body {
 .photo-loading-wrap  { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:32px; }
 .photo-loading-img   { width:100%; max-height:200px; object-fit:cover; border-radius:16px; }
 .photo-loading-text  { font-size:13px; color:rgba(45,27,0,0.5); }
+
+/* 写真候補選択 */
+.photo-choice-wrap   { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:32px; }
+.photo-choice-text   { font-size: var(--fs-base); color: rgba(45,27,0,0.7); font-weight:700; }
+.photo-choice-list   { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.photo-choice-item   {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  width:84px; padding:12px 8px; border-radius:14px;
+  border:1.5px solid rgba(232,134,10,0.2); background:#fff; cursor:pointer;
+}
+.photo-choice-item:hover { box-shadow: 4px 6px 16px rgba(0,0,0,0.12); }
+.photo-choice-emoji  { font-size:28px; }
+.photo-choice-name   { font-size: var(--fs-sm); font-weight:700; color: var(--deep); }
+.photo-choice-back   { width:auto; padding:8px 20px; }
 
 /* 写真エラー */
 .photo-error-wrap    { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px; text-align:center; }

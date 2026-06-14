@@ -157,13 +157,32 @@ async function _handlePhotoUpload(e) {
 
     try {
       const result = await analyzePhoto(b64, file.type);
-      App.goToLens(result);
+      const items   = result.items || [];
+      if (items.length === 0) throw new Error('no items');
+      _showPhotoChoices(items);
     } catch (err) {
       console.error('photo error:', err);
       _showPhotoError();
     }
   };
   reader.readAsDataURL(file);
+}
+
+/** 写真から複数の候補を見つけたとき、どれにするか選ばせるUIを表示 */
+function _showPhotoChoices(items) {
+  const root = $id('screen-root');
+  root.innerHTML = `
+    <div class="photo-choice-wrap">
+      <div class="photo-choice-text">どれにする？</div>
+      <div class="photo-choice-list">
+        ${items.map(item => `
+          <button class="photo-choice-item" onclick="App.choosePhotoOdai(${JSON.stringify(item)})">
+            <span class="photo-choice-emoji">${item.emoji}</span>
+            <span class="photo-choice-name">${item.name}</span>
+          </button>`).join('')}
+      </div>
+      <button class="btn-secondary photo-choice-back" onclick="App.closeChatFlow()">もどる</button>
+    </div>`;
 }
 
 /** 写真解析中のローディング UI を表示 */
